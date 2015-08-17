@@ -4,7 +4,7 @@ var rewire = require('rewire');
 var commandUtils = rewire('../../../socket-router/command-utils');
 var fixtures = require('../../integration/fixtures');
 var λ = require('highland');
-var _ = require('lodash-mixins');
+var _ = require('@intel-js/lodash-mixins');
 
 describe('command utils', function () {
   var revoke, apiRequest, responseStream;

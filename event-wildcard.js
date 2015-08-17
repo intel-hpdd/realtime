@@ -23,7 +23,7 @@
 
 
 var emit = require('events').EventEmitter.prototype.emit;
-var _ = require('lodash-mixins');
+var _ = require('@intel-js/lodash-mixins');
 
 module.exports = function eventWildcard (socket, next) {
   if (socket.onevent !== onEvent)

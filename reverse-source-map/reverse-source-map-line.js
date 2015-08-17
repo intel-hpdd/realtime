@@ -21,21 +21,12 @@
 
 'use strict';
 
-var fs = require('fs');
-var srcmapReverse = require('srcmap-reverse');
 var λ = require('highland');
-var conf = require('../conf');
-var bufferString = require('through').bufferString;
-
-var sourceMap = λ(fs.createReadStream(conf.get('SOURCE_MAP_PATH')));
+var reverser = require('./reverser');
 
 var trace = λ(process.stdin)
   .otherwise(λ(['']));
 
-var reverser = srcmapReverse.execute.apply.bind(srcmapReverse.execute, srcmapReverse);
-
-λ([trace, sourceMap])
-  .flatMap(bufferString)
-  .collect()
-  .map(reverser)
+trace
+  .through(reverser)
   .pipe(process.stdout);

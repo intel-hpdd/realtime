@@ -23,8 +23,8 @@
 
 var conf = require('./conf');
 var url = require('url');
-var _ = require('lodash-mixins');
-var getReq = require('req');
+var _ = require('@intel-js/lodash-mixins');
+var getReq = require('@intel-js/req');
 var format = require('util').format;
 
 var serverHttpUrl = url.parse(conf.get('SERVER_HTTP_URL'));

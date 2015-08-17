@@ -22,8 +22,6 @@
 'use strict';
 
 var nconf = require('nconf');
-var path = require('path');
-var _ = require('lodash-mixins');
 
 var conf = nconf
   .env()
@@ -35,14 +33,10 @@ var conf = nconf
   });
 
 if (conf.get('NODE_ENV') === 'test') {
-  var logDir = _.range(3).reduce(function getLogPath (dir) {
-    return path.dirname(dir);
-  }, __dirname);
-
-  conf.set('SERVER_HTTP_URL', 'https://localhost:8000/');
+  conf.set('SERVER_HTTP_URL', 'https://localhost:9200/');
   conf.set('SOURCE_MAP_PATH', __dirname + '/test/integration/fixtures/built-fd5ce21b.js.map');
-  conf.set('REALTIME_PORT', 8888);
-  conf.set('LOG_PATH', logDir);
+  conf.set('REALTIME_PORT', 9201);
+  conf.set('LOG_PATH', __dirname);
 }
 
 module.exports = conf;

@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash-mixins');
+var _ = require('@intel-js/lodash-mixins');
 var rewire = require('rewire');
 var serializeError = rewire('../../../serialize-error');
 

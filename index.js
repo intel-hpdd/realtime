@@ -28,7 +28,7 @@ var serializeError = require('./serialize-error');
 var eventWildcard = require('./event-wildcard');
 var conf = require('./conf');
 var logger = require('./logger');
-var _ = require('lodash-mixins');
+var _ = require('@intel-js/lodash-mixins');
 
 // Don't limit to pool to 5 in node 0.10.x
 var https = require('https');

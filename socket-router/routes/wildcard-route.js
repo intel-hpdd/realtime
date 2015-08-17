@@ -22,8 +22,8 @@
 'use strict';
 
 var λ = require('highland');
-var _ = require('lodash-mixins');
-var through = require('through');
+var _ = require('@intel-js/lodash-mixins');
+var through = require('@intel-js/through');
 var apiRequest = require('../../api-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');

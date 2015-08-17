@@ -21,7 +21,7 @@
 
 'use strict';
 
-var getRouter = require('router');
+var getRouter = require('@intel-js/router');
 var logStart = require('./middleware/log-start');
 var addCredentials = require('./middleware/add-credentials');
 var end = require('./middleware/end');

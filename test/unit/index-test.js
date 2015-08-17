@@ -59,6 +59,7 @@ describe('realtime index test', function () {
       eventWildcard = jasmine.createSpy('eventWildcard');
 
       revert = start.__set__({
+        conf: conf,
         createIo: createIo,
         logger: logger,
         requestValidator: requestValidator,

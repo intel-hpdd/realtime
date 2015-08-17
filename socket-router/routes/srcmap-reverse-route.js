@@ -21,7 +21,7 @@
 
 'use strict';
 
-var _ = require('lodash-mixins');
+var _ = require('@intel-js/lodash-mixins');
 var apiRequest = require('../../api-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');

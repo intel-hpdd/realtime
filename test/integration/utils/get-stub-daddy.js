@@ -1,6 +1,6 @@
 'use strict';
 
-var getStubDaddy = require('stub-daddy');
+var getStubDaddy = require('@intel-js/stub-daddy');
 var conf = require('../../../conf');
 var url = require('url');
 

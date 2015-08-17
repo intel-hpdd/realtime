@@ -21,38 +21,19 @@
 
 'use strict';
 
-
-var λ = require('highland');
-var _ = require('@intel-js/lodash-mixins');
-var exec = require('child_process').exec;
-var format = require('util').format;
+var conf = require('../conf');
 var bufferString = require('@intel-js/through').bufferString;
-var logger = require('./../logger');
+var createReadStream = require('fs').createReadStream;
+var reverseSrcMap = require('@intel-js/srcmap-reverse');
+var λ = require('highland');
 
-module.exports = function reverseSourceMap (trace) {
-  var lines = trace.split('\n');
+module.exports = function reverser (s) {
+  var sourceMapStream = λ(createReadStream(conf.get('SOURCE_MAP_PATH')));
 
-  var logError = _.partialRight(logger.error.bind(logger), 'Reversing source map');
-  var logErrorOnce = _.once(logError);
-
-  return λ(lines)
-    .map(function (line) {
-      return λ(function generator (push) {
-        var reverse = exec(format('node %s/reverse-source-map-line.js', __dirname), function (err, x) {
-          if (err) {
-            logErrorOnce(err);
-            push(null, line + '\n');
-          } else {
-            push(null, x);
-          }
-
-          push(null, λ.nil);
-        });
-
-        reverse.stdin.write(line);
-        reverse.stdin.end();
-      });
-    })
-    .parallel(lines.length)
-    .through(bufferString);
+  return λ([sourceMapStream, s])
+    .flatMap(bufferString)
+    .collect()
+    .map(function overReverseSrcMap (arr) {
+      return reverseSrcMap(arr[0])(arr[1]);
+    });
 };

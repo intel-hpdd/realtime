@@ -22,7 +22,7 @@
 'use strict';
 
 var routes = require('./routes');
-var _ = require('lodash-mixins');
+var _ = require('@intel-js/lodash-mixins');
 
 module.exports = _.once(function addRoutes () {
   routes.testHostRoute();

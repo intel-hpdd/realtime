@@ -22,7 +22,7 @@
 'use strict';
 
 var λ = require('highland');
-var through = require('through');
+var through = require('@intel-js/through');
 var apiRequest = require('../../api-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');

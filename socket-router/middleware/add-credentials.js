@@ -21,7 +21,7 @@
 
 'use strict';
 
-var _ = require('lodash-mixins');
+var _ = require('@intel-js/lodash-mixins');
 
 var regexp = /csrftoken=([^;|$]+)/;
 
