@@ -16,11 +16,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/intel-js/realtime.git"
+    "url": "https://github.com/intel-js/realtime.git",
+    "unit": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/unit/**/*-test.js"
   },
   "author": "IML Team",
   "license": "MIT",
   "dependencies": {
+    "@intel-js/fp": "1.0.4",
+    "@intel-js/obj": "1.0.3",
     "bunyan": "1.4.0",
     "highland": "2.5.1",
     "json-mask": "0.3.4",

@@ -27,25 +27,23 @@ var apiRequest = require('../../api-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');
 var commandUtils = require('../command-utils');
+var fp = require('@intel-js/fp');
 
 module.exports = function testHostRoute () {
-  /**
-   * Handles any posts to /test_host.
-   * @param {Object} req
-   * @param {Object} resp
-   */
   socketRouter.post('/test_host', function getStatus (req, resp, next) {
+    var removeUndefined = fp.filter(fp.flow(fp.eq(undefined), fp.not));
+    var pullIds = fp.flow(
+      fp.lensProp('objects'),
+      fp.map(fp.pathLens(['command', 'id'])),
+      removeUndefined
+    );
+
     var stream = λ(function generator (push, next) {
       apiRequest('/test_host', req.data)
-        .pluck('objects')
-        .flatten()
-        .pluck('command')
-        .pluck('id')
-        .through(through.collectValues)
-        .map(builder)
-        .flatMap(commandUtils.getCommands)
+        .map(pullIds)
+        .filter(fp.lensProp('length'))
+        .flatMap(commandUtils.waitForCommands)
         .through(commandUtils.getSteps)
-        .through(through.collectValues)
         .errors(pushSerializeError)
         .pull(function pullResponse (err, x) {
           if (err)
@@ -68,12 +66,3 @@ module.exports = function testHostRoute () {
     next(req, resp, stream);
   });
 };
-
-function builder (ids) {
-  return {
-    qs: {
-      id__in: ids,
-      limit: 0
-    }
-  };
-}

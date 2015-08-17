@@ -21,41 +21,73 @@
 
 'use strict';
 
-var through = require('through');
 var apiRequest = require('../api-request');
-var _ = require('lodash-mixins');
 var λ = require('highland');
+var fp = require('@intel-js/fp');
+var obj = require('@intel-js/obj');
 
-exports.getCommands = _.curry(function getCommand (req) {
+var objectsLens = fp.lensProp('objects');
+
+exports.getCommands = function getCommand (ids) {
   var objects;
+  var pickValues = fp.flow(obj.pick.bind(null, ['cancelled', 'complete', 'errored']), obj.values);
 
-  // requests commands, only returns
-  // values when all are finished.
-  return apiRequest('/command', req)
-    .pluck('objects')
-    .tap(function (x) {
+  var commandsFinished = fp.flow(
+    fp.map(pickValues),
+    fp.map(fp.some(fp.identity)),
+    fp.every(fp.identity)
+  );
+
+  return apiRequest('/command', {
+    qs: {
+      id__in: ids,
+      limit: 0
+    }
+  })
+    .map(objectsLens)
+    .tap(function setObjects (x) {
       objects = x;
     })
-    .flatten()
-    .through(through.pluckValues(['cancelled', 'complete', 'errored']))
-    .map(_.some)
-    .through(through.every)
-    .compact()
+    .map(commandsFinished)
+    .filter(fp.identity)
     .map(function returnObjects () {
       return objects;
-    })
-    .flatten();
-});
+    });
+};
+
+exports.waitForCommands = function waitForCommands (ids) {
+  var done;
+
+
+  return λ(function generator (push, next) {
+    exports.getCommands(ids)
+      .pull(function pullResponse (err, x) {
+        if (err) {
+          push(err);
+          global.setTimeout(next, 1000);
+        } else if (x === λ.nil && !done) {
+          global.setTimeout(next, 1000);
+        } else {
+          done = true;
+          push(null, x);
+          push(null, λ.nil);
+        }
+      });
+  });
+};
 
 var jobRegexp = /^\/api\/job\/(\d+)\/$/;
 
-exports.getSteps = _.curry(function getSteps (s) {
+var getJobIds = fp.flow(
+  fp.map(fp.lensProp('jobs')),
+  fp.unwrap,
+  fp.map(fp.invokeMethod('match', [jobRegexp])),
+  fp.map(fp.lensProp('1'))
+);
+
+exports.getSteps = function getSteps (s) {
   return s
-    .pluck('jobs')
-    .flatten()
-    .invoke('match', [jobRegexp])
-    .map(λ.get(1))
-    .through(through.collectValues)
+    .map(getJobIds)
     .flatMap(function getJobs (ids) {
       return apiRequest('/job', {
         qs: {
@@ -65,9 +97,8 @@ exports.getSteps = _.curry(function getSteps (s) {
         jsonMask: 'objects(step_results,steps)'
       });
     })
-    .pluck('objects')
-    .flatten()
-    .map(function getSteps (job) {
+    .map(objectsLens)
+    .map(fp.map(function getSteps (job) {
       return job.step_results[job.steps[0]];
-    });
-});
+    }));
+};

@@ -23,6 +23,17 @@
 
 var conf = require('./conf');
 var start = require('./index');
+var logger = require('./logger');
+var fp = require('@intel-js/fp');
+
+var tryLogging = fp.curry(2, function tryLogging (level, msg) {
+  try {
+    logger[level].apply(logger, msg);
+  } catch (e) {
+    console.log.apply(console, msg);
+  }
+});
+
 
 if (conf.get('RUNNER') === 'supervisor') {
   process.on('SIGINT', cleanShutdown('SIGINT (Ctrl-C)'));
@@ -31,10 +42,15 @@ if (conf.get('RUNNER') === 'supervisor') {
 
 function cleanShutdown (signal) {
   return function cleanShutdownInner () {
-    console.log('Caught ' + signal + ', shutting down cleanly.');
+    tryLogging('info', ['Caught ' + signal + ', shutting down cleanly.']);
     // Exit with 0 to keep supervisor happy.
     process.exit(0);
   };
 }
+
+process.on('uncaughtException', function (err) {
+  tryLogging('error', [err, 'unhandledException']);
+  process.exit(1);
+});
 
 start();

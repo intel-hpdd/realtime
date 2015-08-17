@@ -23,11 +23,9 @@ describe('command utils', function () {
   });
 
   describe('get commands', function () {
-    var req, result, commandData;
+    var result, commandData;
 
     beforeEach(function () {
-      req = {};
-
       commandData = [
         {
           objects: [
@@ -43,18 +41,22 @@ describe('command utils', function () {
         }
       ];
 
-      result = commandUtils.getCommands(req);
+      result = commandUtils.getCommands(['1', '2']);
     });
 
     it('should call apiRequest', function () {
       result.each(_.noop);
 
-      expect(apiRequest).toHaveBeenCalledOnceWith('/command', req);
+      expect(apiRequest).toHaveBeenCalledOnceWith('/command', {
+        qs: {
+          id__in: ['1', '2'],
+          limit: 0
+        }
+      });
     });
 
     it('should send the original data', function () {
       result
-        .collect()
         .each(function (data) {
           expect(data).toEqual(commandData[0].objects);
         });
@@ -92,6 +94,90 @@ describe('command utils', function () {
     });
   });
 
+  describe('wait for commands', function () {
+    var waiter, getCommands, commandStream, revoke2, timeout;
+
+    beforeEach(function () {
+      commandStream = λ();
+
+      getCommands = jasmine
+        .createSpy('getCommands')
+        .and.returnValue(commandStream);
+
+      revoke = commandUtils.__set__('exports', {
+        getCommands: getCommands
+      });
+
+      timeout = jasmine.createSpy('setTimeout');
+
+      revoke2 = commandUtils.__set__('global', {
+        setTimeout: timeout
+      });
+
+      waiter = commandUtils.waitForCommands(['1', '2']);
+    });
+
+    afterEach(function () {
+      revoke();
+      revoke2();
+    });
+
+    it('should be a function', function () {
+      expect(commandUtils.waitForCommands).toEqual(jasmine.any(Function));
+    });
+
+    it('should return a stream', function () {
+      expect(λ.isStream(waiter)).toBe(true);
+    });
+
+    describe('getting values', function () {
+      var spy;
+
+      beforeEach(function () {
+        spy = jasmine.createSpy('spy');
+        waiter.pull(spy);
+      });
+
+      it('should pass the ids to getCommands', function () {
+        expect(getCommands).toHaveBeenCalledOnceWith(['1', '2']);
+      });
+
+      it('should push the value downstream', function () {
+        commandStream.write({ foo: 'bar' });
+
+        expect(spy).toHaveBeenCalledOnceWith(null, { foo: 'bar' });
+      });
+
+      it('should push nil downstream', function () {
+        commandStream.write({ foo: 'bar' });
+        waiter.pull(spy);
+
+        expect(spy).toHaveBeenCalledOnceWith(null, λ.nil);
+      });
+
+      it('should push an error downstream', function () {
+        var err = new Error('boom!');
+
+        commandStream.write(new StreamError(err));
+
+        expect(spy).toHaveBeenCalledOnceWith(err, undefined);
+      });
+
+      it('should call next on Error', function () {
+        var err = new Error('boom!');
+        commandStream.write(new StreamError(err));
+
+        expect(timeout).toHaveBeenCalledOnceWith(jasmine.any(Function), 1000);
+      });
+
+      it('should call timeout on nil', function () {
+        commandStream.end();
+
+        expect(timeout).toHaveBeenCalledOnceWith(jasmine.any(Function), 1000);
+      });
+    });
+  });
+
   describe('get steps', function () {
     var commands, jobs, commandStream, resultStream, spy;
 
@@ -104,7 +190,7 @@ describe('command utils', function () {
         .twoServers.response.data;
 
       commandStream = λ();
-      resultStream = commandUtils.getSteps(commandStream.flatten());
+      resultStream = commandUtils.getSteps(commandStream);
     });
 
     it('should call apiRequest with job ids', function () {
@@ -130,7 +216,6 @@ describe('command utils', function () {
 
       resultStream
         .errors(done.fail)
-        .collect()
         .each(function (x) {
           var obj = _(jobs.objects)
             .pluck('step_results')
