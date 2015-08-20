@@ -1,5 +1,5 @@
 {
-  "name": "realtime",
+  "name": "@intel-js/realtime",
   "version": "3.0.1",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
@@ -16,8 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/intel-js/realtime.git",
-    "unit": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/unit/**/*-test.js"
+    "url": "https://github.com/intel-js/realtime.git"
   },
   "author": "IML Team",
   "license": "MIT",
