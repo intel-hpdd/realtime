@@ -1,6 +1,6 @@
 {
   "name": "@intel-js/realtime",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
     "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
@@ -45,5 +45,7 @@
     "pre-commit": "1.1.1",
     "proxyquire": "1.6.0",
     "rewire": "2.3.4"
-  }
+  },
+  "whitelist": ["@intel-js/stub-daddy", "jasmine", "jasmine-n-matchers", "krusty-jasmine-reporter", "proxyquire",
+    "rewire"]
 }
