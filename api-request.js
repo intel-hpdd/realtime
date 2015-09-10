@@ -23,7 +23,8 @@
 
 var conf = require('./conf');
 var url = require('url');
-var _ = require('@intel-js/lodash-mixins');
+var obj = require('@intel-js/obj');
+var fp = require('@intel-js/fp');
 var getReq = require('@intel-js/req');
 var format = require('util').format;
 
@@ -39,16 +40,15 @@ var apiFormat = format.bind(format, '/api%s');
 
 var req = getReq();
 
-module.exports = _.curry(function apiRequest (path, options) {
+module.exports = fp.curry(2, function apiRequest (path, options) {
   path = path
     .replace(/^\/*/, '/')
     .replace(/\/*$/, '/');
 
-  var opts = _.merge({}, options, hostOptions);
+  var opts = obj.merge({}, options, hostOptions);
   opts.path = apiFormat(path);
 
-  return req.bufferRequest(opts)
-    .pluck('body');
+  return req.bufferRequest(opts);
 });
 
 module.exports.waitForRequests = req.waitForRequests;

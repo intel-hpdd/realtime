@@ -4,7 +4,8 @@ var rewire = require('rewire');
 var commandUtils = rewire('../../../socket-router/command-utils');
 var fixtures = require('../../integration/fixtures');
 var λ = require('highland');
-var _ = require('@intel-js/lodash-mixins');
+var obj = require('@intel-js/obj');
+var fp = require('@intel-js/fp');
 
 describe('command utils', function () {
   var revoke, apiRequest, responseStream;
@@ -45,7 +46,7 @@ describe('command utils', function () {
     });
 
     it('should call apiRequest', function () {
-      result.each(_.noop);
+      result.each(fp.noop);
 
       expect(apiRequest).toHaveBeenCalledOnceWith('/command', {
         qs: {
@@ -61,7 +62,9 @@ describe('command utils', function () {
           expect(data).toEqual(commandData[0].objects);
         });
 
-      responseStream.write(commandData[0]);
+      responseStream.write({
+        body: commandData[0]
+      });
       responseStream.end();
     });
 
@@ -80,10 +83,12 @@ describe('command utils', function () {
     });
 
     it('should not return on unfinished commands', function () {
-      var incompleteData = _.cloneDeep(commandData);
+      var incompleteData = obj.clone(commandData);
       incompleteData[0].objects[0].complete = false;
 
-      responseStream.write(incompleteData[0]);
+      responseStream.write({
+        body: incompleteData[0]
+      });
       responseStream.end();
 
       result
@@ -197,7 +202,7 @@ describe('command utils', function () {
       commandStream.write(commands);
       commandStream.end();
 
-      resultStream.each(_.noop);
+      resultStream.each(fp.noop);
 
       expect(apiRequest).toHaveBeenCalledOnceWith('/job', {
         qs: {
@@ -211,18 +216,22 @@ describe('command utils', function () {
     it('should return the steps', function (done) {
       commandStream.write(commands);
       commandStream.end();
-      responseStream.write(jobs);
+      responseStream.write({
+        body: jobs
+      });
       responseStream.end();
 
       resultStream
         .errors(done.fail)
         .each(function (x) {
-          var obj = _(jobs.objects)
-            .pluck('step_results')
-            .map(_.values)
-            .flatten().value();
+          var result = fp.flow(
+            fp.lensProp('objects'),
+            fp.map(fp.lensProp('step_results')),
+            fp.map(obj.values),
+            fp.unwrap
+          )(jobs);
 
-          expect(x).toEqual(obj);
+          expect(x).toEqual(result);
           done();
         });
     });

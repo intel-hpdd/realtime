@@ -44,6 +44,7 @@ module.exports = function healthRoutes () {
           limit: 0
         }
       })
+        .pluck('body')
         .pluck('objects')
         .flatten()
         .pluck('severity')

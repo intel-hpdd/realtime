@@ -6,7 +6,9 @@ var start = require('../../../../index');
 var waitForRequests = require('../../../../api-request').waitForRequests;
 
 describe('wildcard route', function () {
-  var socket, stubDaddy, alertFixtures, alertRequest, shutdown, emitMessage, onceMessage;
+  var socket, stubDaddy,
+    alertFixtures, alertRequest,
+    shutdown, emitMessage, onceMessage;
 
   beforeEach(function () {
     alertFixtures = getAlertFixtures();
@@ -52,7 +54,7 @@ describe('wildcard route', function () {
       .mockState();
 
     if (result.status !== 200)
-      throw new Error(result.data);
+      throw new Error(JSON.stringify(result.data, null, 2));
   });
 
   afterEach(function () {
@@ -180,6 +182,105 @@ describe('wildcard route', function () {
         });
         done();
       });
+    });
+  });
+
+  it('should long poll the host endpoint', function (done) {
+    stubDaddy.inlineService.mock({
+      request: {
+        method: 'GET',
+        url: '/api/host/',
+        data: {},
+        headers: {
+          'if-none-match': '0'
+        }
+      },
+      response: {
+        status: 200,
+        headers: {
+          ETag: 1441818174.97
+        },
+        data: {
+          objects: []
+        }
+      },
+      dependencies: [],
+      expires: 0
+    });
+
+    emitMessage({ path: '/host' });
+    onceMessage(function onData (resp) {
+      expect(resp).toEqual({
+        objects: []
+      });
+      done();
+    });
+  });
+
+  it('should re-poll with a 304', function (done) {
+    stubDaddy.inlineService.mock({
+      request: {
+        method: 'GET',
+        url: '/api/host/',
+        data: {},
+        headers: {
+          'if-none-match': '1441818174.97'
+        }
+      },
+      response: {
+        status: 304,
+        headers: {},
+        data: {
+          objects: []
+        }
+      },
+      dependencies: [],
+      expires: 1
+    });
+
+    stubDaddy.inlineService.mock({
+      request: {
+        method: 'GET',
+        url: '/api/host/',
+        data: {},
+        headers: {
+          'if-none-match': '1441818174.97'
+        }
+      },
+      response: {
+        status: 200,
+        headers: {
+          ETag: 1441818174.99
+        },
+        data: {
+          objects: [
+            {
+              foo: 'bar'
+            }
+          ]
+        }
+      },
+      dependencies: [],
+      expires: 1
+    });
+
+    emitMessage({
+      path: '/host',
+      options: {
+        headers: {
+          'If-None-Match': 1441818174.97
+        }
+      }
+    });
+    onceMessage(function onData (resp) {
+      expect(resp).toEqual({
+        objects: [
+          {
+            foo: 'bar'
+          }
+        ]
+      });
+      done();
     });
   });
 });

@@ -26,7 +26,7 @@ var λ = require('highland');
 var fp = require('@intel-js/fp');
 var obj = require('@intel-js/obj');
 
-var objectsLens = fp.lensProp('objects');
+var objectsLens = fp.pathLens(['body', 'objects']);
 
 exports.getCommands = function getCommand (ids) {
   var objects;

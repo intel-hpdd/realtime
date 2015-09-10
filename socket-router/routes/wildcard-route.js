@@ -22,7 +22,7 @@
 'use strict';
 
 var λ = require('highland');
-var _ = require('@intel-js/lodash-mixins');
+var obj = require('@intel-js/obj');
 var through = require('@intel-js/through');
 var apiRequest = require('../../api-request');
 var socketRouter = require('../index');
@@ -30,19 +30,62 @@ var pushSerializeError = require('../../serialize-error/push-serialize-error');
 
 module.exports = function wildcardRoute () {
   socketRouter.all('/(.*)', function genericHandler (req, resp, next) {
-    var options = _.extend({}, req.data, { method: req.verb.toUpperCase() });
-    var request = _.partial(apiRequest, req.matches[0], options);
-
+    var options = obj.merge({}, req.data, { method: req.verb.toUpperCase() });
+    var requestToPath = apiRequest(req.matches[0]);
+    var request = requestToPath.bind(null, options);
     var stream;
 
     if (resp.ack) {
       stream = request();
 
-      stream.errors(pushSerializeError)
+      stream
+        .pluck('body')
+        .errors(pushSerializeError)
         .each(resp.ack.bind(resp.ack));
+    } else if (req.matches[1] === 'host' || req.matches[1] === 'lnet_configuration') {
+      var ifNoneMatch = 0;
+      stream = λ(function generator (push, next) {
+        var withHeader = obj.merge({}, {
+          headers: {
+            'If-None-Match': ifNoneMatch
+          }
+        }, options);
+
+        var r = requestToPath(withHeader);
+
+        var stream = this;
+        stream._destructors.push(r.abort);
+
+        r
+        .filter(function (x) {
+          if (x.statusCode !== 304) {
+            ifNoneMatch = x.headers.etag;
+            return true;
+          }
+
+          next();
+        })
+        .pluck('body')
+        .errors(pushSerializeError)
+        .each(function pushData (x) {
+          push(null, x);
+          next();
+        })
+        .done(function removeAbort () {
+          var idx = stream._destructors.indexOf(r.abort);
+
+          if (idx !== -1)
+            stream._destructors.splice(idx, 1);
+        });
+      });
+
+      stream
+        .through(through.unchangedFilter)
+        .each(resp.socket.emit.bind(resp.socket, req.messageName));
     } else {
       stream = λ(function generator (push, next) {
         request()
+          .pluck('body')
           .errors(pushSerializeError)
           .each(function pushData (x) {
             push(null, x);

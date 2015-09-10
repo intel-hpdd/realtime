@@ -33,7 +33,7 @@ module.exports = function testHostRoute () {
   socketRouter.post('/test_host', function getStatus (req, resp, next) {
     var removeUndefined = fp.filter(fp.flow(fp.eq(undefined), fp.not));
     var pullIds = fp.flow(
-      fp.lensProp('objects'),
+      fp.pathLens(['body', 'objects']),
       fp.map(fp.pathLens(['command', 'id'])),
       removeUndefined
     );
