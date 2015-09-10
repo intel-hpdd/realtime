@@ -24,8 +24,9 @@
 var conf = require('../conf');
 var bufferString = require('@intel-js/through').bufferString;
 var createReadStream = require('fs').createReadStream;
-var reverseSrcMap = require('@intel-js/srcmap-reverse');
+var srcmapReverse = require('@intel-js/srcmap-reverse');
 var λ = require('highland');
+var fp = require('@intel-js/fp');
 
 module.exports = function reverser (s) {
   var sourceMapStream = λ(createReadStream(conf.get('SOURCE_MAP_PATH')));
@@ -33,7 +34,5 @@ module.exports = function reverser (s) {
   return λ([sourceMapStream, s])
     .flatMap(bufferString)
     .collect()
-    .map(function overReverseSrcMap (arr) {
-      return reverseSrcMap(arr[0])(arr[1]);
-    });
+    .map(fp.invoke(srcmapReverse));
 };

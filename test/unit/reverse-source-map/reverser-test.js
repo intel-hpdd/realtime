@@ -5,7 +5,7 @@ var λ = require('highland');
 var stream = require('stream');
 
 describe('reverser', function () {
-  var through, fs, conf, reverseSrcMap, reverser, srcMapReverseFile, srcMapReverseInstance, s, srcMapPath,
+  var through, fs, conf, reverser, srcmapReverseFile, srcmapReverse, s, srcMapPath,
     trace, srcMapStream;
 
   beforeEach(function () {
@@ -15,9 +15,9 @@ describe('reverser', function () {
       })
     };
 
-    srcMapReverseFile = '{version: "3"}';
+    srcmapReverseFile = '{version: "3"}';
     var passThrough = new stream.PassThrough();
-    passThrough.write(srcMapReverseFile);
+    passThrough.write(srcmapReverseFile);
     passThrough.end();
     fs = {
       createReadStream: jasmine.createSpy('createReadStream').and.returnValue(passThrough)
@@ -31,14 +31,13 @@ describe('reverser', function () {
       get: jasmine.createSpy('get').and.returnValue(srcMapPath)
     };
 
-    srcMapReverseInstance = jasmine.createSpy('reverseSrcMapInstance');
-    reverseSrcMap = jasmine.createSpy('reverseSrcMap').and.returnValue(srcMapReverseInstance);
+    srcmapReverse = jasmine.createSpy('srcmapReverse');
 
     reverser = proxyquire('../../../reverse-source-map/reverser', {
       fs: fs,
       '../conf': conf,
       '@intel-js/through': through,
-      '@intel-js/srcmap-reverse': reverseSrcMap
+      '@intel-js/srcmap-reverse': srcmapReverse
     });
 
     srcMapStream = s.through(reverser);
@@ -60,14 +59,7 @@ describe('reverser', function () {
 
   it('should invoke reverseSrcMap', function (done) {
     srcMapStream.each(function () {
-      expect(reverseSrcMap).toHaveBeenCalledOnceWith(srcMapReverseFile);
-      done();
-    });
-  });
-
-  it('should invoke the instance of reverse source map', function (done) {
-    srcMapStream.each(function () {
-      expect(srcMapReverseInstance).toHaveBeenCalledOnceWith(trace);
+      expect(srcmapReverse).toHaveBeenCalledOnceWith(srcmapReverseFile, trace);
       done();
     });
   });
