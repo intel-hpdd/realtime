@@ -23,7 +23,7 @@
 
 
 var emit = require('events').EventEmitter.prototype.emit;
-var _ = require('@intel-js/lodash-mixins');
+var clone = require('clone');
 
 module.exports = function eventWildcard (socket, next) {
   if (socket.onevent !== onEvent)
@@ -41,7 +41,7 @@ function onEvent (packet) {
 
   emit.apply(this, args);
 
-  var wildcardArgs = _.cloneDeep(args);
+  var wildcardArgs = clone(args);
   var eventName = wildcardArgs.splice(0, 1, '*');
 
   wildcardArgs[1] = wildcardArgs[1] || {};

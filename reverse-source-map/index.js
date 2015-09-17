@@ -21,9 +21,8 @@
 
 'use strict';
 
-
 var λ = require('highland');
-var _ = require('@intel-js/lodash-mixins');
+var fp = require('@intel-js/fp');
 var exec = require('child_process').exec;
 var format = require('util').format;
 var bufferString = require('@intel-js/through').bufferString;
@@ -32,8 +31,8 @@ var logger = require('./../logger');
 module.exports = function reverseSourceMap (trace) {
   var lines = trace.split('\n');
 
-  var logError = _.partialRight(logger.error.bind(logger), 'Reversing source map');
-  var logErrorOnce = _.once(logError);
+  var logError = fp.curry(2, logger.error.bind(logger))(fp.__, 'Reversing source map');
+  var logErrorOnce = fp.once(logError);
 
   return λ(lines)
     .map(function (line) {

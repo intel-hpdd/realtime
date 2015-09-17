@@ -21,19 +21,19 @@
   "author": "IML Team",
   "license": "MIT",
   "dependencies": {
-    "@intel-js/fp": "1.0.7",
+    "@intel-js/fp": "1.0.10",
     "@intel-js/obj": "1.0.4",
+    "@intel-js/req": "1.0.5",
+    "@intel-js/router": "3.0.3",
+    "@intel-js/srcmap-reverse": "1.1.1",
+    "@intel-js/through": "1.0.7",
     "bunyan": "1.5.1",
+    "clone": "1.0.2",
     "highland": "2.5.1",
     "json-mask": "0.3.5",
     "jsonschema": "1.0.2",
-    "@intel-js/lodash-mixins": "1.0.2",
     "nconf": "0.7.2",
-    "@intel-js/req": "1.0.5",
-    "@intel-js/router": "3.0.3",
-    "socket.io": "1.3.6",
-    "@intel-js/srcmap-reverse": "1.1.1",
-    "@intel-js/through": "1.0.7"
+    "socket.io": "1.3.6"
   },
   "devDependencies": {
     "@intel-js/stub-daddy": "1.0.3",
@@ -46,6 +46,12 @@
     "proxyquire": "1.7.2",
     "rewire": "2.3.4"
   },
-  "whitelist": ["@intel-js/stub-daddy", "jasmine", "jasmine-n-matchers", "krusty-jasmine-reporter", "proxyquire",
-    "rewire"]
+  "whitelist": [
+    "@intel-js/stub-daddy",
+    "jasmine",
+    "jasmine-n-matchers",
+    "krusty-jasmine-reporter",
+    "proxyquire",
+    "rewire"
+  ]
 }

@@ -40,7 +40,7 @@ describe('health route', function () {
       .mockState();
 
     if (result.status !== 200)
-      throw new Error(result.data);
+      throw new Error(JSON.stringify(result.data, null, 2));
   });
 
   afterEach(function () {
