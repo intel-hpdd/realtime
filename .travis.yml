@@ -3,7 +3,7 @@ node_js:
 - 0.12
 - 0.1
 before_install:
-- npm i -g npm@latest
+- npm i -g npm@2.14.5
 - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
 env:
   secure: YsGsrQlU6hktPQ2jJHsZG1ai8LawL0SEBnAR3fEQsNkFn80l6WcxKgHtX7cXz6k6JftYydE5GjtUuwbUbBM+/w9akXN9Nw2/8bSsqKVoInH08aEo2pECBFmphI4fDmjB2JhXltBOWUWM5rjQKGv3FWD/08WkrAyrkVSQlSmWvzOKvOn4exaybk5w/kQ3X6s9+WKtTAvwmFxws+VPSycR2Owvz+IPVyNrEkhfsrdkgm/PmKp96Gs2k6HF1mGRtrLOGK9Vl9MgKD013TJtu5zjp0h/NI4WvaIh/yuc/z7k429nib5TQPS+nCdxSzJXfTgC7LRKHFMTEP/Q2hBp38IFVAZdxkhPOGdD2mIMRZ0b/aJ+3M35AO2LIN6gFZDc9lIsCytn6DvtGvMpc4wSeM8sStQhBl5jhptw5R+YlHjsXeA6qKkqatuX4zN/AbriUSmzQSB1l3rp8x2jn7ptEHYn8/GrOmSIENXOK25eb+Lr6WdP44E7t8BtLjpblqPWizi/IpYyqW7Mn7oXD5dalOAFNcrXiWMqi6SU6YgDaqqsG6MyzcPFCJQhT4jOJOP2gcZpdLxzKuvre/P7XKMIKgE8ShtqM/yNwmRBkEi1R+bFx01hV2tFPijMszQGYSIJIBKcR59AAWH3ITOpA2lWzUSMvJEXxBP5uWdyLLCuyOijkwM=
