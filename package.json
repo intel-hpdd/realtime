@@ -1,6 +1,6 @@
 {
   "name": "@intel-js/realtime",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
     "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
