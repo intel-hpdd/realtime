@@ -28,7 +28,7 @@ var serializeError = require('./serialize-error');
 var eventWildcard = require('./event-wildcard');
 var conf = require('./conf');
 var logger = require('./logger');
-var _ = require('@intel-js/lodash-mixins');
+var obj = require('@intel-js/obj');
 
 // Don't limit to pool to 5 in node 0.10.x
 var https = require('https');
@@ -75,11 +75,17 @@ module.exports = function start () {
       var parsedUrl = url.parse(data.path);
       var qsObj =  { qs: qs.parse(parsedUrl.query) };
 
-      _.merge(options, qsObj);
-
       socketRouter.go(parsedUrl.pathname,
-        { verb: method, data: options, messageName: data.eventName, endName: 'end' + id },
-        { socket: socket, ack: ack }
+        {
+          verb: method,
+          data: obj.merge({}, options, qsObj),
+          messageName: data.eventName,
+          endName: 'end' + id
+        },
+        {
+          socket: socket,
+          ack: ack
+        }
       );
     } catch (error) {
       error.statusCode = 400;

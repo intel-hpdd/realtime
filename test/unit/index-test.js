@@ -134,7 +134,9 @@ describe('realtime index test', function () {
               start();
               expect(socketRouter.go).toHaveBeenCalledOnceWith(data.path, {
                   verb: data.method,
-                  data: data.options,
+                  data: {
+                    qs: {}
+                  },
                   messageName: 'message1',
                   endName: 'end1'
                 },

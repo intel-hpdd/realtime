@@ -21,7 +21,7 @@
 
 'use strict';
 
-var _ = require('@intel-js/lodash-mixins');
+var obj = require('@intel-js/obj');
 
 var regexp = /csrftoken=([^;|$]+)/;
 
@@ -39,7 +39,9 @@ module.exports = function addCredentials (req, resp, next) {
 
   headers['User-Agent'] = requestHeaders['user-agent'];
 
-  req.data = _.merge({ headers: headers }, req.data);
+  req.data = obj.merge({}, {
+    headers: headers
+  }, req.data);
 
   next(req, resp);
 };

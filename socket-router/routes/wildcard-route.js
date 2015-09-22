@@ -23,8 +23,10 @@
 
 var λ = require('highland');
 var obj = require('@intel-js/obj');
+var fp = require('@intel-js/fp');
 var through = require('@intel-js/through');
 var apiRequest = require('../../api-request');
+var pollingRequest = require('../../polling-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');
 
@@ -35,6 +37,11 @@ module.exports = function wildcardRoute () {
     var request = requestToPath.bind(null, options);
     var stream;
 
+    var matchedPath = req.matches[1].replace(/\/$/, '');
+
+    var toPoll = ['host', 'lnet_configuration', 'alert'];
+    var paths = fp.zipObject(toPoll, toPoll);
+
     if (resp.ack) {
       stream = request();
 
@@ -42,44 +49,12 @@ module.exports = function wildcardRoute () {
         .pluck('body')
         .errors(pushSerializeError)
         .each(resp.ack.bind(resp.ack));
-    } else if (req.matches[1] === 'host' || req.matches[1] === 'lnet_configuration') {
-      var ifNoneMatch = 0;
-      stream = λ(function generator (push, next) {
-        var withHeader = obj.merge({}, {
-          headers: {
-            'If-None-Match': ifNoneMatch
-          }
-        }, options);
-
-        var r = requestToPath(withHeader);
-
-        var stream = this;
-        stream._destructors.push(r.abort);
-
-        r
-        .filter(function (x) {
-          if (x.statusCode !== 304) {
-            ifNoneMatch = x.headers.etag;
-            return true;
-          }
-
-          next();
-        })
-        .pluck('body')
-        .errors(pushSerializeError)
-        .each(function pushData (x) {
-          push(null, x);
-          next();
-        })
-        .done(function removeAbort () {
-          var idx = stream._destructors.indexOf(r.abort);
-
-          if (idx !== -1)
-            stream._destructors.splice(idx, 1);
-        });
-      });
+    } else if (matchedPath in paths) {
+      stream = pollingRequest(req.matches[0], options);
 
       stream
+        .pluck('body')
+        .errors(pushSerializeError)
         .through(through.unchangedFilter)
         .each(resp.socket.emit.bind(resp.socket, req.messageName));
     } else {

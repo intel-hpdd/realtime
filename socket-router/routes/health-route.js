@@ -21,9 +21,9 @@
 
 'use strict';
 
-var λ = require('highland');
+var fp = require('@intel-js/fp');
 var through = require('@intel-js/through');
-var apiRequest = require('../../api-request');
+var pollingRequest = require('../../polling-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');
 
@@ -35,51 +35,49 @@ exports.STATES = STATES = {
 };
 
 module.exports = function healthRoutes () {
-  socketRouter.get('/health', function getHealth (req, resp, next) {
-    var stream = λ(function generator (push, next) {
-      var alertStream = apiRequest('alert/', {
-        qs: {
-          active: true,
-          severity__in: [STATES.WARN, STATES.ERROR],
-          limit: 0
-        }
-      })
-        .pluck('body')
-        .pluck('objects')
-        .flatten()
-        .pluck('severity')
-        .compact();
-
-      // Calculates the health of the endpoint.
-      var health = alertStream
-        .uniq()
-        .otherwise([STATES.GOOD])
-        .through(through.sortBy(function compare (a, b) {
-          var states = [STATES.GOOD, STATES.WARN, STATES.ERROR];
-
-          return states.indexOf(a) - states.indexOf(b);
-        }))
-        .last();
-
-      // Counts all items in the stream.
-      var count = alertStream
-        .observe()
-        .reduce(0, λ.add(1));
-
-      λ([health, count])
-        .sequence()
-        .through(through.zipObject(['health', 'count']))
-        .errors(pushSerializeError)
-        .each(function pushAndTurn (x) {
-          push(null, x);
-          next();
-        });
+  socketRouter.get('/health', function healthRoute (req, resp, next) {
+    var stream = pollingRequest('/alert', {
+      qs: {
+        active: true,
+        severity__in: [STATES.WARN, STATES.ERROR],
+        limit: 0
+      }
     });
 
-    stream
-      .ratelimit(1, 1000)
+    var getHealth = fp.flow(
+      unique,
+      fp.invokeMethod('sort', [compare]),
+      fp.tail
+    );
+
+    var buildOutput = fp.flow(
+      fp.pathLens(['body', 'objects']),
+      fp.map(fp.lensProp('severity')),
+      fp.filter(fp.identity),
+      fp.arrayWrap,
+      fp.mapFn([getHealth, fp.lensProp('length')]),
+      fp.zipObject(['health', 'count'])
+    );
+
+    fp.map(buildOutput, stream)
+      .errors(pushSerializeError)
       .through(through.unchangedFilter)
       .each(resp.socket.emit.bind(resp.socket, req.messageName));
+
+    function unique (xs) {
+      return xs.reduce(function reducer (a, b) {
+        if (a.indexOf(b) < 0)
+          a.push(b);
+
+        return a;
+      }, [STATES.GOOD]);
+    }
+
+    function compare (a, b) {
+      var states = [STATES.GOOD, STATES.WARN, STATES.ERROR];
+
+      return states.indexOf(a) - states.indexOf(b);
+    }
 
     next(req, resp, stream);
   });

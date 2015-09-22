@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('@intel-js/lodash-mixins');
+var fp = require('@intel-js/fp');
 var rewire = require('rewire');
 var serializeError = rewire('../../../serialize-error');
 
@@ -9,7 +9,7 @@ describe('error handler', function () {
 
   beforeEach(function () {
     errorSerializer = jasmine.createSpy('errorSerializer')
-      .and.callFake(_.identity);
+      .and.callFake(fp.identity);
     revert = serializeError.__set__('errorSerializer', errorSerializer);
 
     error = new Error('foo');

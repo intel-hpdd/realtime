@@ -19,46 +19,50 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
+
 'use strict';
 
-var fp = require('@intel-js/fp');
-var apiRequest = require('../../api-request');
-var socketRouter = require('../index');
-var pushSerializeError = require('../../serialize-error/push-serialize-error');
-var reverseSourceMap = require('../../reverse-source-map');
-var logger = require('../../logger');
+var λ = require('highland');
+var obj = require('@intel-js/obj');
+var apiRequest = require('./api-request');
 
-module.exports = function srcmapReverseRoute () {
-  socketRouter.post('/srcmap-reverse', function srcmapReverseHandler (req, resp, next) {
-    var reversedStream = reverseSourceMap(req.data.stack);
+module.exports = function pollingRequest (path, options) {
+  var ifNoneMatch = 0;
 
-    reversedStream
-      .observe()
-      .map(function recordToApi (stack) {
-        var headers = req.data.headers;
-        delete req.data.headers;
+  return λ(function generator (push, next) {
+    var withHeader = obj.merge({}, {
+      headers: {
+        'If-None-Match': ifNoneMatch
+      }
+    }, options);
 
-        req.data.stack = stack;
+    var r = apiRequest(path, withHeader);
 
-        return {
-          method: 'POST',
-          json: req.data,
-          headers: headers
-        };
+    var stream = this;
+    stream._destructors.push(r.abort);
+
+    r
+      .filter(function remove304s (x) {
+        if (x.statusCode !== 304) {
+          ifNoneMatch = x.headers.etag;
+          return true;
+        }
+
+        next();
       })
-      .flatMap(apiRequest('/client_error'))
-      .stopOnError(function (err) {
-        logger.error(err);
+      .errors(function pushErr (err) {
+        push(err);
+        next();
       })
-      .each(fp.noop);
-
-    reversedStream
-      .map(function setData (stack) {
-        return { data: stack };
+      .each(function pushData (x) {
+        push(null, x);
+        next();
       })
-      .stopOnError(pushSerializeError)
-      .each(resp.ack.bind(resp));
+      .done(function removeAbort () {
+        var idx = stream._destructors.indexOf(r.abort);
 
-    next(req, resp, reversedStream);
+        if (idx !== -1)
+          stream._destructors.splice(idx, 1);
+      });
   });
 };
