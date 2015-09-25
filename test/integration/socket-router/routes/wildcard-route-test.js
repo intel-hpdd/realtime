@@ -189,7 +189,7 @@ describe('wildcard route', function () {
     stubDaddy.inlineService.mock({
       request: {
         method: 'GET',
-        url: '/api/host/',
+        url: '/api/host/1/',
         data: {},
         headers: {
           'if-none-match': '0'
@@ -208,7 +208,7 @@ describe('wildcard route', function () {
       expires: 0
     });
 
-    emitMessage({ path: '/host' });
+    emitMessage({ path: '/host/1/' });
     onceMessage(function onData (resp) {
       expect(resp).toEqual({
         objects: []

@@ -181,6 +181,34 @@ describe('health route', function () {
     });
   });
 
+  it('should send a change in count', function (done) {
+    var yellowHealth1 = utils.clone(alertFixtures.yellowHealth);
+    yellowHealth1.response.data.objects.push(yellowHealth1.response.data.objects[0]);
+    yellowHealth1.expires = 1;
+    stubDaddy.inlineService
+      .mock(yellowHealth1);
+
+    var yellowHealth2 = utils.clone(alertFixtures.yellowHealth);
+    stubDaddy.inlineService
+      .mock(yellowHealth2);
+
+    var messages = [];
+
+    emitMessage();
+
+    onMessage(function (data) {
+      messages.push(data);
+
+      if (messages.length === 2) {
+        expect(messages).toEqual([
+          { health: 'WARNING', count: 2 },
+          { health: 'WARNING', count: 1 }
+        ]);
+        done();
+      }
+    });
+  });
+
   it('should send error', function (done) {
     var redHealth = utils.clone(alertFixtures.redHealth);
 

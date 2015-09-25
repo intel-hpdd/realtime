@@ -31,13 +31,11 @@ var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');
 
 module.exports = function wildcardRoute () {
-  socketRouter.all('/(.*)', function genericHandler (req, resp, next) {
+  socketRouter.all('/:endpoint/:rest*', function genericHandler (req, resp, next) {
     var options = obj.merge({}, req.data, { method: req.verb.toUpperCase() });
     var requestToPath = apiRequest(req.matches[0]);
     var request = requestToPath.bind(null, options);
     var stream;
-
-    var matchedPath = req.matches[1].replace(/\/$/, '');
 
     var toPoll = ['host', 'lnet_configuration', 'alert'];
     var paths = fp.zipObject(toPoll, toPoll);
@@ -49,7 +47,7 @@ module.exports = function wildcardRoute () {
         .pluck('body')
         .errors(pushSerializeError)
         .each(resp.ack.bind(resp.ack));
-    } else if (matchedPath in paths) {
+    } else if (req.matches[1] in paths) {
       stream = pollingRequest(req.matches[0], options);
 
       stream
