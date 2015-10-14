@@ -42,8 +42,8 @@ module.exports = function testHostRoute () {
       apiRequest('/test_host', req.data)
         .map(pullIds)
         .filter(fp.lensProp('length'))
-        .flatMap(commandUtils.waitForCommands)
-        .through(commandUtils.getSteps)
+        .flatMap(commandUtils.waitForCommands(req.data.headers))
+        .through(commandUtils.getSteps(req.data.headers))
         .errors(pushSerializeError)
         .pull(function pullResponse (err, x) {
           if (err)

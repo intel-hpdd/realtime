@@ -42,13 +42,18 @@ describe('command utils', function () {
         }
       ];
 
-      result = commandUtils.getCommands(['1', '2']);
+      result = commandUtils.getCommands({
+        Cookie: 'sessionid=123'
+      },  ['1', '2']);
     });
 
     it('should call apiRequest', function () {
       result.each(fp.noop);
 
       expect(apiRequest).toHaveBeenCalledOnceWith('/command', {
+        headers: {
+          Cookie: 'sessionid=123'
+        },
         qs: {
           id__in: ['1', '2'],
           limit: 0
@@ -119,7 +124,9 @@ describe('command utils', function () {
         setTimeout: timeout
       });
 
-      waiter = commandUtils.waitForCommands(['1', '2']);
+      waiter = commandUtils.waitForCommands({
+        Cookie: 'sessionid=123'
+      }, ['1', '2']);
     });
 
     afterEach(function () {
@@ -143,8 +150,10 @@ describe('command utils', function () {
         waiter.pull(spy);
       });
 
-      it('should pass the ids to getCommands', function () {
-        expect(getCommands).toHaveBeenCalledOnceWith(['1', '2']);
+      it('should pass the headers and ids to getCommands', function () {
+        expect(getCommands).toHaveBeenCalledOnceWith({
+          Cookie: 'sessionid=123'
+        }, ['1', '2']);
       });
 
       it('should push the value downstream', function () {
@@ -195,7 +204,9 @@ describe('command utils', function () {
         .twoServers.response.data;
 
       commandStream = λ();
-      resultStream = commandUtils.getSteps(commandStream);
+      resultStream = commandUtils.getSteps({
+        Cookie: 'sessionid=123'
+      }, commandStream);
     });
 
     it('should call apiRequest with job ids', function () {
@@ -205,6 +216,9 @@ describe('command utils', function () {
       resultStream.each(fp.noop);
 
       expect(apiRequest).toHaveBeenCalledOnceWith('/job', {
+        headers: {
+          Cookie: 'sessionid=123'
+        },
         qs: {
           id__in: ['2', '3'],
           limit: 0

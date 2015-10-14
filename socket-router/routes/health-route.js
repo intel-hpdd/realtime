@@ -37,6 +37,7 @@ exports.STATES = STATES = {
 module.exports = function healthRoutes () {
   socketRouter.get('/health', function healthRoute (req, resp, next) {
     var stream = pollingRequest('/alert', {
+      headers: req.data.headers,
       qs: {
         active: true,
         severity__in: [STATES.WARN, STATES.ERROR],

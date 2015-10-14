@@ -28,7 +28,7 @@ var obj = require('@intel-js/obj');
 
 var objectsLens = fp.pathLens(['body', 'objects']);
 
-exports.getCommands = function getCommand (ids) {
+exports.getCommands = fp.curry(2, function getCommand (headers, ids) {
   var objects;
   var pickValues = fp.flow(obj.pick.bind(null, ['cancelled', 'complete', 'errored']), obj.values);
 
@@ -39,6 +39,7 @@ exports.getCommands = function getCommand (ids) {
   );
 
   return apiRequest('/command', {
+    headers: headers,
     qs: {
       id__in: ids,
       limit: 0
@@ -53,14 +54,13 @@ exports.getCommands = function getCommand (ids) {
     .map(function returnObjects () {
       return objects;
     });
-};
+});
 
-exports.waitForCommands = function waitForCommands (ids) {
+exports.waitForCommands = fp.curry(2, function waitForCommands (headers, ids) {
   var done;
 
-
   return λ(function generator (push, next) {
-    exports.getCommands(ids)
+    exports.getCommands(headers, ids)
       .pull(function pullResponse (err, x) {
         if (err) {
           push(err);
@@ -74,7 +74,7 @@ exports.waitForCommands = function waitForCommands (ids) {
         }
       });
   });
-};
+});
 
 var jobRegexp = /^\/api\/job\/(\d+)\/$/;
 
@@ -85,11 +85,12 @@ var getJobIds = fp.flow(
   fp.map(fp.lensProp('1'))
 );
 
-exports.getSteps = function getSteps (s) {
+exports.getSteps = fp.curry(2, function getSteps (headers, s) {
   return s
     .map(getJobIds)
     .flatMap(function getJobs (ids) {
       return apiRequest('/job', {
+        headers: headers,
         qs: {
           id__in: ids,
           limit: 0
@@ -101,4 +102,4 @@ exports.getSteps = function getSteps (s) {
     .map(fp.map(function getSteps (job) {
       return job.step_results[job.steps[0]];
     }));
-};
+});
