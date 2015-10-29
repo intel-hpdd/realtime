@@ -21,8 +21,8 @@
 
 'use strict';
 
-var fp = require('@intel-js/fp');
-var through = require('@intel-js/through');
+var fp = require('intel-fp');
+var through = require('intel-through');
 var pollingRequest = require('../../polling-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');

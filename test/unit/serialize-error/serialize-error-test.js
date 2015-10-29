@@ -1,6 +1,6 @@
 'use strict';
 
-var fp = require('@intel-js/fp');
+var fp = require('intel-fp');
 var rewire = require('rewire');
 var serializeError = rewire('../../../serialize-error');
 

@@ -22,10 +22,10 @@
 'use strict';
 
 var λ = require('highland');
-var fp = require('@intel-js/fp');
+var fp = require('intel-fp');
 var exec = require('child_process').exec;
 var format = require('util').format;
-var bufferString = require('@intel-js/through').bufferString;
+var bufferString = require('intel-through').bufferString;
 var logger = require('./../logger');
 
 module.exports = function reverseSourceMap (trace) {

@@ -23,8 +23,8 @@
 
 var apiRequest = require('../api-request');
 var λ = require('highland');
-var fp = require('@intel-js/fp');
-var obj = require('@intel-js/obj');
+var fp = require('intel-fp');
+var obj = require('intel-obj');
 
 var objectsLens = fp.pathLens(['body', 'objects']);
 

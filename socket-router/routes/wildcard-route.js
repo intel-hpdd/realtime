@@ -22,9 +22,9 @@
 'use strict';
 
 var λ = require('highland');
-var obj = require('@intel-js/obj');
-var fp = require('@intel-js/fp');
-var through = require('@intel-js/through');
+var obj = require('intel-obj');
+var fp = require('intel-fp');
+var through = require('intel-through');
 var apiRequest = require('../../api-request');
 var pollingRequest = require('../../polling-request');
 var socketRouter = require('../index');

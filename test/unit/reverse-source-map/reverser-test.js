@@ -36,8 +36,8 @@ describe('reverser', function () {
     reverser = proxyquire('../../../reverse-source-map/reverser', {
       fs: fs,
       '../conf': conf,
-      '@intel-js/through': through,
-      '@intel-js/srcmap-reverse': srcmapReverse
+      'intel-through': through,
+      'intel-srcmap-reverse': srcmapReverse
     });
 
     srcMapStream = s.through(reverser);

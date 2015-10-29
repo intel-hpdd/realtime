@@ -23,9 +23,9 @@
 
 var conf = require('./conf');
 var url = require('url');
-var obj = require('@intel-js/obj');
-var fp = require('@intel-js/fp');
-var getReq = require('@intel-js/req');
+var obj = require('intel-obj');
+var fp = require('intel-fp');
+var getReq = require('intel-req');
 var format = require('util').format;
 
 var serverHttpUrl = url.parse(conf.get('SERVER_HTTP_URL'));

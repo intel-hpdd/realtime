@@ -21,7 +21,7 @@
 
 'use strict';
 
-var obj = require('@intel-js/obj');
+var obj = require('intel-obj');
 
 var regexp = /csrftoken=([^;|$]+)/;
 

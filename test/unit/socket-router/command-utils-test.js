@@ -4,8 +4,8 @@ var rewire = require('rewire');
 var commandUtils = rewire('../../../socket-router/command-utils');
 var fixtures = require('../../integration/fixtures');
 var λ = require('highland');
-var obj = require('@intel-js/obj');
-var fp = require('@intel-js/fp');
+var obj = require('intel-obj');
+var fp = require('intel-fp');
 
 describe('command utils', function () {
   var revoke, apiRequest, responseStream;

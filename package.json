@@ -1,5 +1,5 @@
 {
-  "name": "@intel-js/realtime",
+  "name": "intel-realtime",
   "version": "3.0.6",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
@@ -16,17 +16,20 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/intel-js/realtime.git"
+    "url": "https://github.intel.com/IML/realtime.git"
+  },
+  "publishConfig": {
+    "registry": "https://ubit-artifactory-or.intel.com/artifactory/api/npm/iml-npm-local"
   },
   "author": "IML Team",
   "license": "MIT",
   "dependencies": {
-    "@intel-js/fp": "1.0.10",
-    "@intel-js/obj": "1.0.4",
-    "@intel-js/req": "1.0.5",
-    "@intel-js/router": "3.0.3",
-    "@intel-js/srcmap-reverse": "1.1.1",
-    "@intel-js/through": "1.0.7",
+    "intel-fp": "1.0.13",
+    "intel-obj": "1.0.4",
+    "intel-req": "1.0.5",
+    "intel-router": "3.0.3",
+    "intel-srcmap-reverse": "1.1.1",
+    "intel-through": "1.0.7",
     "bunyan": "1.5.1",
     "clone": "1.0.2",
     "highland": "2.5.1",
@@ -36,22 +39,24 @@
     "socket.io": "1.3.7"
   },
   "devDependencies": {
-    "@intel-js/stub-daddy": "1.0.5",
+    "intel-stub-daddy": "1.0.6",
     "jasmine": "2.3.2",
-    "jasmine-n-matchers": "2.0.2",
+    "intel-jasmine-n-matchers": "2.1.0",
     "jscs": "2.1.1",
     "jshint": "2.8.0",
     "krusty-jasmine-reporter": "1.0.0",
     "pre-commit": "1.1.1",
     "proxyquire": "1.7.2",
-    "rewire": "2.3.4"
+    "rewire": "2.3.4",
+    "socket.io-client": "1.3.7"
   },
   "whitelist": [
-    "@intel-js/stub-daddy",
+    "intel-stub-daddy",
     "jasmine",
-    "jasmine-n-matchers",
+    "intel-jasmine-n-matchers",
     "krusty-jasmine-reporter",
     "proxyquire",
-    "rewire"
+    "rewire",
+    "socket.io-client"
   ]
 }

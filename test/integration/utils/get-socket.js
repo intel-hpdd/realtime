@@ -1,5 +1,5 @@
 'use strict';
-var client = require('../../../node_modules/socket.io/node_modules/socket.io-client');
+var client = require('socket.io-client');
 var conf = require('../../../conf');
 var format = require('util').format;
 

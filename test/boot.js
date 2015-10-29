@@ -1,6 +1,6 @@
 'use strict';
 
-require('jasmine-n-matchers');
+require('intel-jasmine-n-matchers');
 
 var conf = require('../conf');
 
@@ -10,7 +10,7 @@ if (conf.get('RUNNER') === 'CI') {
   var junitReporter = new krustyJasmineReporter.KrustyJasmineJUnitReporter({
     specTimer: new jasmine.Timer(),
     JUnitReportSavePath: process.env.SAVE_PATH || './',
-    JUnitReportFilePrefix: process.env.FILE_PREFIX || 'realtime-results',
+    JUnitReportFilePrefix: process.env.FILE_PREFIX || 'realtime-results-' +  process.version,
     JUnitReportSuiteName: 'Realtime Reports',
     JUnitReportPackageName: 'Realtime Reports'
   });

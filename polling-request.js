@@ -23,7 +23,7 @@
 'use strict';
 
 var λ = require('highland');
-var obj = require('@intel-js/obj');
+var obj = require('intel-obj');
 var apiRequest = require('./api-request');
 
 module.exports = function pollingRequest (path, options) {
