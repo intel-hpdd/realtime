@@ -8,14 +8,23 @@ var obj = require('intel-obj');
 var fp = require('intel-fp');
 
 describe('command utils', function () {
-  var revoke, apiRequest, responseStream;
+  var revoke, apiRequest, responseStream,
+    pollingRequest, pollStream;
 
   beforeEach(function () {
     responseStream = λ();
-    apiRequest = jasmine.createSpy('apiRequest').and.returnValue(responseStream);
+    apiRequest = jasmine.createSpy('apiRequest')
+      .and.returnValue(responseStream);
+
+    pollStream = λ();
+    spyOn(pollStream, 'destroy')
+      .and.callThrough();
+    pollingRequest = jasmine.createSpy('pollingRequest')
+      .and.returnValue(pollStream);
 
     revoke = commandUtils.__set__({
-      apiRequest: apiRequest
+      apiRequest: apiRequest,
+      pollingRequest: pollingRequest
     });
   });
 
@@ -23,12 +32,12 @@ describe('command utils', function () {
     revoke();
   });
 
-  describe('get commands', function () {
-    var result, commandData;
+  describe('wait for commands', function () {
+    var waiter, commandData;
 
     beforeEach(function () {
-      commandData = [
-        {
+      commandData = {
+        body: {
           objects: [
             {
               id: 1,
@@ -40,102 +49,16 @@ describe('command utils', function () {
             }
           ]
         }
-      ];
-
-      result = commandUtils.getCommands({
-        Cookie: 'sessionid=123'
-      },  ['1', '2']);
-    });
-
-    it('should call apiRequest', function () {
-      result.each(fp.noop);
-
-      expect(apiRequest).toHaveBeenCalledOnceWith('/command', {
-        headers: {
-          Cookie: 'sessionid=123'
-        },
-        qs: {
-          id__in: ['1', '2'],
-          limit: 0
-        }
-      });
-    });
-
-    it('should send the original data', function () {
-      result
-        .each(function (data) {
-          expect(data).toEqual(commandData[0].objects);
-        });
-
-      responseStream.write({
-        body: commandData[0]
-      });
-      responseStream.end();
-    });
-
-    it('should catch an error in the response', function (done) {
-      result
-        .errors(function onError (err) {
-          expect(err).toEqual(error);
-          done();
-        })
-        .each(done.fail);
-
-      var error = new Error('im an error');
-
-      responseStream.write(new StreamError(error));
-      responseStream.end();
-    });
-
-    it('should not return on unfinished commands', function () {
-      var incompleteData = obj.clone(commandData);
-      incompleteData[0].objects[0].complete = false;
-
-      responseStream.write({
-        body: incompleteData[0]
-      });
-      responseStream.end();
-
-      result
-        .otherwise(λ(['nope']))
-        .each(function (x) {
-          expect(x).toEqual('nope');
-        });
-    });
-  });
-
-  describe('wait for commands', function () {
-    var waiter, getCommands, commandStream, revoke2, timeout;
-
-    beforeEach(function () {
-      commandStream = λ();
-
-      getCommands = jasmine
-        .createSpy('getCommands')
-        .and.returnValue(commandStream);
-
-      revoke = commandUtils.__set__('exports', {
-        getCommands: getCommands
-      });
-
-      timeout = jasmine.createSpy('setTimeout');
-
-      revoke2 = commandUtils.__set__('global', {
-        setTimeout: timeout
-      });
+      };
 
       waiter = commandUtils.waitForCommands({
         Cookie: 'sessionid=123'
       }, ['1', '2']);
     });
 
-    afterEach(function () {
-      revoke();
-      revoke2();
-    });
-
     it('should be a function', function () {
-      expect(commandUtils.waitForCommands).toEqual(jasmine.any(Function));
+      expect(commandUtils.waitForCommands)
+        .toEqual(jasmine.any(Function));
     });
 
     it('should return a stream', function () {
@@ -150,44 +73,61 @@ describe('command utils', function () {
         waiter.pull(spy);
       });
 
-      it('should pass the headers and ids to getCommands', function () {
-        expect(getCommands).toHaveBeenCalledOnceWith({
-          Cookie: 'sessionid=123'
-        }, ['1', '2']);
+      it('should pass the headers and ids to pollingRequest', function () {
+        expect(pollingRequest)
+          .toHaveBeenCalledOnceWith('/command', {
+            headers: {
+              Cookie: 'sessionid=123'
+            },
+            qs: {
+              id__in: [ '1', '2' ],
+              limit: 0
+            }
+          });
       });
 
       it('should push the value downstream', function () {
-        commandStream.write({ foo: 'bar' });
+        pollStream.write(commandData);
 
-        expect(spy).toHaveBeenCalledOnceWith(null, { foo: 'bar' });
+        expect(spy)
+          .toHaveBeenCalledOnceWith(null, commandData.body.objects);
       });
 
-      it('should push nil downstream', function () {
-        commandStream.write({ foo: 'bar' });
-        waiter.pull(spy);
+      it('should push nil downstream', function (done) {
+        pollStream.write(commandData);
+        waiter
+          .errors(done.fail)
+          .pull(spy);
 
-        expect(spy).toHaveBeenCalledOnceWith(null, λ.nil);
+        process.nextTick(function () {
+          expect(spy).toHaveBeenCalledOnceWith(null, λ.nil);
+          done();
+        });
+      });
+
+      it('should destroy on data', function (done) {
+        pollStream.write(commandData);
+
+        process.nextTick(function () {
+          expect(pollStream.destroy).toHaveBeenCalledOnce();
+          done();
+        });
       });
 
       it('should push an error downstream', function () {
         var err = new Error('boom!');
-
-        commandStream.write(new StreamError(err));
+        pollStream.write(new StreamError(err));
 
         expect(spy).toHaveBeenCalledOnceWith(err, undefined);
       });
 
-      it('should call next on Error', function () {
-        var err = new Error('boom!');
-        commandStream.write(new StreamError(err));
+      it('should not return on unfinished commands', function () {
+        var incompleteData = obj.clone(commandData);
+        incompleteData.body.objects[0].complete = false;
 
-        expect(timeout).toHaveBeenCalledOnceWith(jasmine.any(Function), 1000);
-      });
+        pollStream.write(incompleteData);
 
-      it('should call timeout on nil', function () {
-        commandStream.end();
-
-        expect(timeout).toHaveBeenCalledOnceWith(jasmine.any(Function), 1000);
+        expect(spy).not.toHaveBeenCalled();
       });
     });
   });

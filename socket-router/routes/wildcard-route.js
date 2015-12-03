@@ -37,7 +37,7 @@ module.exports = function wildcardRoute () {
     var request = requestToPath.bind(null, options);
     var stream;
 
-    var toPoll = ['host', 'lnet_configuration', 'alert'];
+    var toPoll = ['host', 'lnet_configuration', 'alert', 'command'];
     var paths = fp.zipObject(toPoll, toPoll);
 
     if (resp.ack) {

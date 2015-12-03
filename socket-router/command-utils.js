@@ -22,15 +22,17 @@
 'use strict';
 
 var apiRequest = require('../api-request');
-var λ = require('highland');
+var pollingRequest = require('../polling-request');
 var fp = require('intel-fp');
 var obj = require('intel-obj');
 
 var objectsLens = fp.pathLens(['body', 'objects']);
 
-exports.getCommands = fp.curry(2, function getCommand (headers, ids) {
-  var objects;
-  var pickValues = fp.flow(obj.pick.bind(null, ['cancelled', 'complete', 'errored']), obj.values);
+exports.waitForCommands = fp.curry(2, function waitForCommands (headers, ids) {
+  var pickValues = fp.flow(
+    obj.pick.bind(null, ['cancelled', 'complete', 'errored']),
+    obj.values
+  );
 
   var commandsFinished = fp.flow(
     fp.map(pickValues),
@@ -38,42 +40,20 @@ exports.getCommands = fp.curry(2, function getCommand (headers, ids) {
     fp.every(fp.identity)
   );
 
-  return apiRequest('/command', {
+  var s = pollingRequest('/command', {
     headers: headers,
     qs: {
       id__in: ids,
       limit: 0
     }
-  })
-    .map(objectsLens)
-    .tap(function setObjects (x) {
-      objects = x;
-    })
-    .map(commandsFinished)
-    .filter(fp.identity)
-    .map(function returnObjects () {
-      return objects;
-    });
-});
-
-exports.waitForCommands = fp.curry(2, function waitForCommands (headers, ids) {
-  var done;
-
-  return λ(function generator (push, next) {
-    exports.getCommands(headers, ids)
-      .pull(function pullResponse (err, x) {
-        if (err) {
-          push(err);
-          global.setTimeout(next, 1000);
-        } else if (x === λ.nil && !done) {
-          global.setTimeout(next, 1000);
-        } else {
-          done = true;
-          push(null, x);
-          push(null, λ.nil);
-        }
-      });
   });
+
+  return s
+    .map(objectsLens)
+    .filter(commandsFinished)
+    .tap(function destroyOnCompletion () {
+      process.nextTick(s.destroy.bind(s));
+    });
 });
 
 var jobRegexp = /^\/api\/job\/(\d+)\/$/;
