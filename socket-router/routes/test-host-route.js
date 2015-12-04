@@ -27,7 +27,7 @@ var apiRequest = require('../../api-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');
 var commandUtils = require('../command-utils');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 
 module.exports = function testHostRoute () {
   socketRouter.post('/test_host', function getStatus (req, resp, next) {

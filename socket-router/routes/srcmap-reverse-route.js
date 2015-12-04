@@ -21,7 +21,7 @@
 
 'use strict';
 
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 var apiRequest = require('../../api-request');
 var socketRouter = require('../index');
 var pushSerializeError = require('../../serialize-error/push-serialize-error');

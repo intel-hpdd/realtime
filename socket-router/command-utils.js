@@ -23,7 +23,7 @@
 
 var apiRequest = require('../api-request');
 var pollingRequest = require('../polling-request');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 var obj = require('intel-obj');
 
 var objectsLens = fp.pathLens(['body', 'objects']);

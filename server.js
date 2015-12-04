@@ -24,7 +24,7 @@
 var conf = require('./conf');
 var start = require('./index');
 var logger = require('./logger');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 
 var tryLogging = fp.curry(2, function tryLogging (level, msg) {
   try {

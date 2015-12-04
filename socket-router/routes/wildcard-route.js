@@ -23,7 +23,7 @@
 
 var λ = require('highland');
 var obj = require('intel-obj');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 var through = require('intel-through');
 var apiRequest = require('../../api-request');
 var pollingRequest = require('../../polling-request');

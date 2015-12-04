@@ -22,7 +22,7 @@
 'use strict';
 
 var routes = require('./routes');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 
 module.exports = fp.once(function addRoutes () {
   routes.testHostRoute();

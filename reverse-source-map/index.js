@@ -22,7 +22,7 @@
 'use strict';
 
 var λ = require('highland');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 var exec = require('child_process').exec;
 var format = require('util').format;
 var bufferString = require('intel-through').bufferString;

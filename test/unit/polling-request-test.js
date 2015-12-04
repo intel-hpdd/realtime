@@ -2,7 +2,7 @@
 
 var proxyquire = require('proxyquire').noPreserveCache().noCallThru();
 var λ = require('highland');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 
 describe('polling request', function () {
   var pollingRequest, apiRequest, s;

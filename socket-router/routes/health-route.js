@@ -21,7 +21,7 @@
 
 'use strict';
 
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 var through = require('intel-through');
 var pollingRequest = require('../../polling-request');
 var socketRouter = require('../index');

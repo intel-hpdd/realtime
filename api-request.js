@@ -24,7 +24,7 @@
 var conf = require('./conf');
 var url = require('url');
 var obj = require('intel-obj');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 var getReq = require('intel-req');
 var format = require('util').format;
 

@@ -26,7 +26,7 @@ var bufferString = require('intel-through').bufferString;
 var createReadStream = require('fs').createReadStream;
 var srcmapReverse = require('intel-srcmap-reverse');
 var λ = require('highland');
-var fp = require('intel-fp');
+var fp = require('intel-fp/dist/fp');
 
 module.exports = function reverser (s) {
   var sourceMapStream = λ(createReadStream(conf.get('SOURCE_MAP_PATH')));
