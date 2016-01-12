@@ -4,6 +4,7 @@ var utils = require('../../utils');
 var getAlertFixtures = require('../../fixtures/alert');
 var start = require('../../../../index');
 var waitForRequests = require('../../../../api-request').waitForRequests;
+var fp = require('intel-fp/dist/fp');
 
 describe('wildcard route', function () {
   var socket, stubDaddy,
@@ -28,12 +29,11 @@ describe('wildcard route', function () {
     };
   });
 
-  beforeEach(function (done) {
+  beforeEach(function () {
     stubDaddy = utils.getStubDaddy();
 
     stubDaddy.webService
-      .startService()
-      .done(done, done.fail);
+      .startService();
   });
 
   beforeEach(function () {
@@ -45,23 +45,21 @@ describe('wildcard route', function () {
 
   afterEach(function (done) {
     stubDaddy.webService
-      .stopService()
-      .done(done, done.fail);
+      .stopService(done.fail, done);
   });
 
   afterEach(function () {
-    var result = stubDaddy.inlineService
+    stubDaddy.inlineService
       .mockState();
-
-    if (result.status !== 200)
-      throw new Error(JSON.stringify(result.data, null, 2));
   });
 
   afterEach(function () {
     shutdown();
   });
 
-  afterEach(waitForRequests);
+  afterEach(function (done) {
+    waitForRequests(done);
+  });
 
   afterEach(function (done) {
     socket.on('disconnect', done);
@@ -135,7 +133,9 @@ describe('wildcard route', function () {
   });
 
   describe('handling errors', function () {
+    var spy;
     beforeEach(function () {
+      spy = jasmine.createSpy('spy');
       stubDaddy.inlineService.mock({
         request: {
           method: 'GET',
@@ -144,7 +144,7 @@ describe('wildcard route', function () {
           headers: {}
         },
         response: {
-          status: 500,
+          statusCode: 500,
           headers: {},
           data: {
             err: { cause: 'boom!' }
@@ -155,9 +155,13 @@ describe('wildcard route', function () {
       });
     });
 
-    it('should ack an error', function (done) {
-      emitMessage({ path: '/throw-error' }, function ack (resp) {
-        expect(resp).toEqual({
+    describe('acking the error', function () {
+      beforeEach(function (done) {
+        emitMessage({path: '/throw-error'}, fp.flow(spy, fp.always([]), fp.invoke(done)));
+      });
+
+      it('should receive a 500', function () {
+        expect(spy).toHaveBeenCalledWith({
           error: {
             message: '{"err":{"cause":"boom!"}} From GET request to /api/throw-error/',
             name: 'Error',
@@ -165,14 +169,17 @@ describe('wildcard route', function () {
             statusCode: 500
           }
         });
-        done();
       });
     });
 
-    it('should send an error through events', function (done) {
-      emitMessage({ path: '/throw-error' });
-      onceMessage(function onData (resp) {
-        expect(resp).toEqual({
+    describe('sending an error through events', function () {
+      beforeEach(function (done) {
+        emitMessage({ path: '/throw-error' });
+        onceMessage(fp.flow(spy, fp.always([]), fp.invoke(done)));
+      });
+
+      it('should receive a 500', function () {
+        expect(spy).toHaveBeenCalledOnceWith({
           error: {
             message: '{"err":{"cause":"boom!"}} From GET request to /api/throw-error/',
             name: 'Error',
@@ -180,7 +187,6 @@ describe('wildcard route', function () {
             statusCode: 500
           }
         });
-        done();
       });
     });
   });
@@ -191,12 +197,10 @@ describe('wildcard route', function () {
         method: 'GET',
         url: '/api/host/1/',
         data: {},
-        headers: {
-          'if-none-match': '0'
-        }
+        headers: {}
       },
       response: {
-        status: 200,
+        statusCode: 200,
         headers: {
           ETag: 1441818174.97
         },
@@ -223,12 +227,10 @@ describe('wildcard route', function () {
         method: 'GET',
         url: '/api/host/',
         data: {},
-        headers: {
-          'if-none-match': '1441818174.97'
-        }
+        headers: {}
       },
       response: {
-        status: 304,
+        statusCode: 304,
         headers: {},
         data: {
           objects: []
@@ -243,12 +245,10 @@ describe('wildcard route', function () {
         method: 'GET',
         url: '/api/host/',
         data: {},
-        headers: {
-          'if-none-match': '1441818174.97'
-        }
+        headers: {}
       },
       response: {
-        status: 200,
+        statusCode: 200,
         headers: {
           ETag: 1441818174.99
         },
@@ -264,13 +264,29 @@ describe('wildcard route', function () {
       expires: 1
     });
 
+    stubDaddy.inlineService.mock({
+      request: {
+        method: 'GET',
+        url: '/api/host/',
+        data: {},
+        headers: {
+          'if-none-match': 1441818174.99
+        }
+      },
+      response: {
+        statusCode: 200,
+        headers: {},
+        data: {
+          objects: []
+        }
+      },
+      dependencies: [],
+      expires: -1
+    });
+
     emitMessage({
       path: '/host',
-      options: {
-        headers: {
-          'If-None-Match': 1441818174.97
-        }
-      }
+      options: {}
     });
     onceMessage(function onData (resp) {
       expect(resp).toEqual({

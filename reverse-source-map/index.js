@@ -30,7 +30,6 @@ var logger = require('./../logger');
 
 module.exports = function reverseSourceMap (trace) {
   var lines = trace.split('\n');
-
   var logError = fp.curry(2, logger.error.bind(logger))(fp.__, 'Reversing source map');
   var logErrorOnce = fp.once(logError);
 

@@ -15,12 +15,11 @@ describe('test host route', function () {
     jobFixtures = fixtures.job();
   });
 
-  beforeEach(function (done) {
+  beforeEach(function () {
     stubDaddy = utils.getStubDaddy();
 
     stubDaddy.webService
-      .startService()
-      .done(done, done.fail);
+      .startService();
   });
 
   beforeEach(function () {
@@ -30,23 +29,21 @@ describe('test host route', function () {
 
   afterEach(function (done) {
     stubDaddy.webService
-      .stopService()
-      .done(done, done.fail);
+      .stopService(done.fail, done);
   });
 
   afterEach(function () {
-    var result = stubDaddy.inlineService
+    stubDaddy.inlineService
       .mockState();
-
-    if (result.status !== 200)
-      throw new Error(result.data);
   });
 
   afterEach(function () {
     shutdown();
   });
 
-  afterEach(waitForRequests);
+  afterEach(function (done) {
+    waitForRequests(done);
+  });
 
   afterEach(function (done) {
     socket.on('disconnect', done);

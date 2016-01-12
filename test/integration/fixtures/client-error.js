@@ -30,7 +30,7 @@ Chrome/39.0.2171.95 Safari/537.36'
         }
       },
       response: {
-        status: 201,
+        statusCode: 201,
         headers: {},
         data: {}
       },

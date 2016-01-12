@@ -21,7 +21,7 @@ module.exports = function () {
         headers: {}
       },
       response: {
-        status: 202,
+        statusCode: 202,
         headers: {},
         data: {
           objects: [

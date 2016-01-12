@@ -8,12 +8,11 @@ var waitForRequests = require('../../../../api-request').waitForRequests;
 describe('source map reverse route', function () {
   var ack, socket, shutdown, stubDaddy;
 
-  beforeEach(function (done) {
+  beforeEach(function () {
     stubDaddy = utils.getStubDaddy();
 
     stubDaddy.webService
-      .startService()
-      .done(done, done.fail);
+      .startService();
   });
 
   beforeEach(function () {
@@ -21,42 +20,42 @@ describe('source map reverse route', function () {
       .mock(clientErrorFixtures().reversedTrace);
   });
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     shutdown = start();
     socket = utils.getSocket();
 
     ack = jasmine.createSpy('ack');
-    socket.emit('message1', clientErrorFixtures().originalTrace, ack);
+    socket.emit('message1', clientErrorFixtures().originalTrace, function (x) {
+      ack(x);
+      done();
+    });
   });
 
   beforeEach(function (done) {
     var timer = setInterval(function () {
-      if (stubDaddy.inlineService.registeredMocks().data[0].remainingCalls === 0) {
+      if (stubDaddy.inlineService.registeredMocks().data.length === 0) {
         clearInterval(timer);
         done();
       }
-    }, 1000);
+    }, 100);
   });
 
   afterEach(function (done) {
     stubDaddy.webService
-      .stopService()
-      .done(done, done.fail);
+      .stopService(done.fail, done);
   });
 
   afterEach(function () {
-    var result = stubDaddy.inlineService
-      .mockState();
-
-    if (result.status !== 200)
-      throw new Error(JSON.stringify(result.data, null, 2));
+    stubDaddy.inlineService.mockState();
   });
 
   afterEach(function () {
     shutdown();
   });
 
-  afterEach(waitForRequests);
+  afterEach(function (done) {
+    waitForRequests(done);
+  });
 
   afterEach(function (done) {
     socket.on('disconnect', done);

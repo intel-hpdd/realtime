@@ -10,7 +10,7 @@ module.exports = function () {
         headers: {}
       },
       response: {
-        status: 200,
+        statusCode: 200,
         headers: {},
         data: {
           meta: {

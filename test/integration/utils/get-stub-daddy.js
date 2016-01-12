@@ -5,8 +5,7 @@ var conf = require('../../../conf');
 var url = require('url');
 
 module.exports = function invokeStubDaddy () {
-  var stubDaddy = getStubDaddy();
-  stubDaddy.config.port = url.parse(conf.get('SERVER_HTTP_URL')).port;
+  var stubDaddy = getStubDaddy({port: url.parse(conf.get('SERVER_HTTP_URL')).port});
 
   return stubDaddy;
 };

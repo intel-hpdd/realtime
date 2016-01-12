@@ -4,6 +4,7 @@ var utils = require('../../utils');
 var getAlertFixtures = require('../../fixtures/alert');
 var start = require('../../../../index');
 var waitForRequests = require('../../../../api-request').waitForRequests;
+var obj = require('intel-obj');
 
 describe('health route', function () {
   var socket, stubDaddy, alertFixtures, shutdown, messageName, emitMessage, onceMessage, onMessage;
@@ -13,12 +14,11 @@ describe('health route', function () {
     alertFixtures = getAlertFixtures();
   });
 
-  beforeEach(function (done) {
+  beforeEach(function () {
     stubDaddy = utils.getStubDaddy();
 
     stubDaddy.webService
-      .startService()
-      .done(done, done.fail);
+      .startService();
   });
 
   beforeEach(function () {
@@ -31,23 +31,21 @@ describe('health route', function () {
 
   afterEach(function (done) {
     stubDaddy.webService
-      .stopService()
-      .done(done, done.fail);
+      .stopService(done.fail, done);
   });
 
   afterEach(function () {
-    var result = stubDaddy.inlineService
+    stubDaddy.inlineService
       .mockState();
-
-    if (result.status !== 200)
-      throw new Error(JSON.stringify(result.data, null, 2));
   });
 
   afterEach(function () {
     shutdown();
   });
 
-  afterEach(waitForRequests);
+  afterEach(function (done) {
+    waitForRequests(done);
+  });
 
   afterEach(function (done) {
     socket.on('disconnect', done);
@@ -182,8 +180,8 @@ describe('health route', function () {
   });
 
   it('should send a change in count', function (done) {
-    var yellowHealth1 = utils.clone(alertFixtures.yellowHealth);
-    yellowHealth1.response.data.objects.push(yellowHealth1.response.data.objects[0]);
+    var yellowHealth1 = obj.clone(alertFixtures.yellowHealth);
+    yellowHealth1.response.data.objects.push(obj.clone(yellowHealth1.response.data.objects[0]));
     yellowHealth1.expires = 1;
     stubDaddy.inlineService
       .mock(yellowHealth1);
@@ -209,28 +207,33 @@ describe('health route', function () {
     });
   });
 
-  it('should send error', function (done) {
-    var redHealth = utils.clone(alertFixtures.redHealth);
+  describe('handling error', function () {
+    var redHealth;
 
-    redHealth.response.status = 500;
-    redHealth.response.data = { err: 'boom!' };
+    beforeEach(function () {
+      redHealth = utils.clone(alertFixtures.redHealth);
+      redHealth.response.statusCode = 500;
+      redHealth.response.data = { err: 'boom!' };
 
-    stubDaddy.inlineService
-      .mock(redHealth);
+      stubDaddy.inlineService
+        .mock(redHealth);
 
-    emitMessage();
+      emitMessage();
+    });
 
-    onceMessage(function (data) {
-      expect(data).toEqual({
-        error: {
-          name: 'Error',
-          message: '{"err":"boom!"} From GET request to ' +
-          '/api/alert/?active=true&severity__in=WARNING&severity__in=ERROR&limit=0',
-          stack: jasmine.any(String),
-          statusCode: 500
-        }
+    it('should send error', function (done) {
+      onceMessage(function (data) {
+        expect(data).toEqual({
+          error: {
+            name: 'Error',
+            message: '{"err":"boom!"} From GET request to ' +
+            '/api/alert/?active=true&severity__in=WARNING&severity__in=ERROR&limit=0',
+            stack: jasmine.any(String),
+            statusCode: 500
+          }
+        });
+        done();
       });
-      done();
     });
   });
 });
