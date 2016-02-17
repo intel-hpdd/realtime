@@ -1,7 +1,7 @@
 //
 // INTEL CONFIDENTIAL
 //
-// Copyright 2013-2015 Intel Corporation All Rights Reserved.
+// Copyright 2013-2016 Intel Corporation All Rights Reserved.
 //
 // The source code contained or described herein and all documents related
 // to the source code ("Material") are owned by Intel Corporation or its
@@ -24,18 +24,16 @@
 var logger = require('../../logger');
 
 module.exports = function end (req, resp, stream, next) {
-  var log = logger.child({ path: req.matches[0] });
+  resp.socket.once('disconnect', destroyStream);
+  resp.socket.once(req.endName, destroyStream);
 
-  resp.socket.once('disconnect', destroySocket);
-  resp.socket.once(req.endName, destroySocket);
-
-  function destroySocket () {
+  function destroyStream () {
     if (!stream || stream._nil_seen || stream.ended)
       return;
 
     stream.destroy();
     stream = null;
-    log.debug(req, 'stream ended');
+    logger.info({ sockReq: req, sock: resp.socket }, 'stream ended');
   }
 
   next(req, resp);

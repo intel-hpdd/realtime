@@ -4,19 +4,11 @@ var rewire = require('rewire');
 var end = rewire('../../../../socket-router/middleware/end');
 
 describe('end spec', function () {
-  var logger, child, next, req, resp, revert, stream, onDestroy, debug;
+  var logger, next, req, resp, revert, stream, onDestroy;
 
   beforeEach(function () {
-    child = {
-      info: jasmine.createSpy('info')
-    };
-
-    debug = jasmine.createSpy('debug');
-
     logger = {
-      child: jasmine.createSpy('child').and.returnValue({
-        debug: debug
-      })
+      info: jasmine.createSpy('info')
     };
 
     revert = end.__set__('logger', logger);
@@ -44,12 +36,6 @@ describe('end spec', function () {
     revert();
   });
 
-  it('should create a log child', function () {
-    expect(logger.child).toHaveBeenCalledOnceWith({
-      path: 'foo'
-    });
-  });
-
   it('should call next with the request and response', function () {
     expect(next).toHaveBeenCalledOnceWith(req, resp);
   });
@@ -75,11 +61,5 @@ describe('end spec', function () {
     onDestroy();
 
     expect(stream.destroy).toHaveBeenCalledOnce();
-  });
-
-  it('should not call debug twice', function () {
-    onDestroy();
-
-    expect(debug).toHaveBeenCalledOnceWith(req, 'stream ended');
   });
 });

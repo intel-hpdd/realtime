@@ -1,7 +1,7 @@
 //
 // INTEL CONFIDENTIAL
 //
-// Copyright 2013-2015 Intel Corporation All Rights Reserved.
+// Copyright 2013-2016 Intel Corporation All Rights Reserved.
 //
 // The source code contained or described herein and all documents related
 // to the source code ("Material") are owned by Intel Corporation or its
@@ -46,7 +46,9 @@ module.exports = function start () {
   var isMessage = /message(\d+)/;
 
   io.on('connection', function (socket) {
-    logger.debug('socket connected');
+    var child = logger.child({ sock: socket });
+
+    child.info('socket connected');
 
     socket.on('*', function onData (data, ack) {
       var matches = isMessage.exec(data.eventName);
@@ -58,13 +60,14 @@ module.exports = function start () {
     });
 
     socket.on('error', function onError (err) {
-      logger.error({ err: err }, 'socket error');
+      child.error({ err: err }, 'socket error');
     });
   });
 
   function handleRequest (data, socket, ack, id) {
     try {
       var errors = requestValidator(data);
+      var child = logger.child({ sock: socket });
 
       if (errors.length)
         throw new Error(errors);
@@ -75,16 +78,42 @@ module.exports = function start () {
       var parsedUrl = url.parse(data.path);
       var qsObj =  { qs: qs.parse(parsedUrl.query) };
 
+      var sockReq = {
+        verb: method,
+        data: obj.merge({}, options, qsObj),
+        messageName: data.eventName,
+        endName: 'end' + id
+      };
+
+      var oldEmit = socket.emit;
+
+      socket.emit = function emit () {
+        child.info({
+          sockReq: sockReq,
+          body: arguments[1],
+          type: arguments[0]
+        }, 'emitting');
+
+        return oldEmit.apply(socket, arguments);
+      };
+
+      var newAck;
+      if (ack)
+        newAck = function newAck () {
+          child.info({
+            sockReq: sockReq,
+            body: arguments[0]
+          }, 'acking');
+
+          return ack.apply(null, arguments);
+        };
+
+
       socketRouter.go(parsedUrl.pathname,
-        {
-          verb: method,
-          data: obj.merge({}, options, qsObj),
-          messageName: data.eventName,
-          endName: 'end' + id
-        },
+        sockReq,
         {
           socket: socket,
-          ack: ack
+          ack: newAck
         }
       );
     } catch (error) {

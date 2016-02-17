@@ -281,6 +281,7 @@ describe('wildcard route', function () {
         }
       },
       dependencies: [],
+      timeout: 10000,
       expires: -1
     });
 

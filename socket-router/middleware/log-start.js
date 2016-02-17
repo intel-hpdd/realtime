@@ -1,7 +1,7 @@
 //
 // INTEL CONFIDENTIAL
 //
-// Copyright 2013-2015 Intel Corporation All Rights Reserved.
+// Copyright 2013-2016 Intel Corporation All Rights Reserved.
 //
 // The source code contained or described herein and all documents related
 // to the source code ("Material") are owned by Intel Corporation or its
@@ -24,8 +24,7 @@
 var logger = require('../../logger');
 
 module.exports = function logStart (req, resp, next) {
-  logger.child({ path: req.matches[0] })
-    .debug(req, 'routing request');
+  logger.info({ sockReq: req, sock: resp.socket }, 'routing request');
 
   next(req, resp);
 };

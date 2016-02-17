@@ -1,7 +1,7 @@
 //
 // INTEL CONFIDENTIAL
 //
-// Copyright 2013-2015 Intel Corporation All Rights Reserved.
+// Copyright 2013-2016 Intel Corporation All Rights Reserved.
 //
 // The source code contained or described herein and all documents related
 // to the source code ("Material") are owned by Intel Corporation or its
@@ -29,9 +29,36 @@ var level = (conf.get('NODE_ENV') === 'production' ? 'info' : 'debug');
 
 module.exports = bunyan.createLogger({
   name: 'realtime',
-  serializers: bunyan.stdSerializers,
+  serializers: {
+    err: bunyan.stdSerializers.err,
+    sock: socketSerializer,
+    sockReq: reqSerializer
+  },
   streams: [{
     level: level,
     path: path.join(conf.get('LOG_PATH'), conf.get('LOG_FILE'))
   }]
 });
+
+function socketSerializer (sock) {
+  if (!sock)
+    return false;
+
+  return {
+    id: sock.id
+  };
+}
+
+var message = /message(\d+)/;
+
+function reqSerializer (req) {
+  if (!req)
+    return false;
+
+  return {
+    path: (req.matches && req.matches[0]) || null,
+    verb: req.verb,
+    id: message.exec(req.messageName)[1],
+    data: req.data
+  };
+}

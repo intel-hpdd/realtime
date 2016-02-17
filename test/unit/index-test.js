@@ -29,9 +29,11 @@ describe('realtime index test', function () {
       createIo = jasmine.createSpy('createIo').and.returnValue(io);
 
       logger = {
-        debug: jasmine.createSpy('logger.debug'),
-        error: jasmine.createSpy('logger.error')
+        info: jasmine.createSpy('debug'),
+        error: jasmine.createSpy('error')
       };
+
+      logger.child = jasmine.createSpy('child').and.returnValue(logger);
 
       socket = {
         on: jasmine.createSpy('socket.on'),
@@ -102,11 +104,6 @@ describe('realtime index test', function () {
       });
 
       describe('connection event', function () {
-        it('should log that the socket was connected', function () {
-          start();
-          expect(logger.debug).toHaveBeenCalledOnceWith('socket connected');
-        });
-
         it('should register the socket wildcard event', function () {
           start();
           expect(socket.on).toHaveBeenCalledOnceWith('*', jasmine.any(Function));
@@ -132,7 +129,8 @@ describe('realtime index test', function () {
 
             it('should call socketRouter with the appropriate data', function () {
               start();
-              expect(socketRouter.go).toHaveBeenCalledOnceWith(data.path, {
+              expect(socketRouter.go).toHaveBeenCalledOnceWith(data.path,
+                {
                   verb: data.method,
                   data: {
                     qs: {}
@@ -142,8 +140,9 @@ describe('realtime index test', function () {
                 },
                 {
                   socket: socket,
-                  ack: ack
-                });
+                  ack: jasmine.any(Function)
+                }
+              );
             });
           });
 
