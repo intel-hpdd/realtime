@@ -24,7 +24,7 @@
 var logger = require('../../logger');
 
 module.exports = function logStart (req, resp, next) {
-  logger.info({ sockReq: req, sock: resp.socket }, 'routing request');
+  logger.info({ sock: resp.socket }, 'routing request');
 
   next(req, resp);
 };

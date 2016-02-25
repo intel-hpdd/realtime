@@ -27,7 +27,6 @@ var obj = require('intel-obj');
 var fp = require('intel-fp/dist/fp');
 var getReq = require('intel-req');
 var format = require('util').format;
-var logger = require('./logger');
 
 var serverHttpUrl = url.parse(conf.get('SERVER_HTTP_URL'));
 var hostOptions = {
@@ -49,18 +48,7 @@ module.exports = fp.curry(2, function apiRequest (path, options) {
   var opts = obj.merge({}, options, hostOptions);
   opts.path = apiFormat(path);
 
-  logger.info(opts, 'making request');
-
-  var s = req.bufferRequest(opts);
-
-  var s2 = s.tap(function (resp) {
-    logger.info(resp, 'received response');
-  });
-
-  s2.destroy = s.destroy.bind(s);
-  s2.abort = s.abort;
-
-  return s2;
+  return req.bufferRequest(opts);
 });
 
 module.exports.waitForRequests = req.waitForRequests;

@@ -67,7 +67,6 @@ module.exports = function start () {
   function handleRequest (data, socket, ack, id) {
     try {
       var errors = requestValidator(data);
-      var child = logger.child({ sock: socket });
 
       if (errors.length)
         throw new Error(errors);
@@ -78,42 +77,16 @@ module.exports = function start () {
       var parsedUrl = url.parse(data.path);
       var qsObj =  { qs: qs.parse(parsedUrl.query) };
 
-      var sockReq = {
-        verb: method,
-        data: obj.merge({}, options, qsObj),
-        messageName: data.eventName,
-        endName: 'end' + id
-      };
-
-      var oldEmit = socket.emit;
-
-      socket.emit = function emit () {
-        child.info({
-          sockReq: sockReq,
-          body: arguments[1],
-          type: arguments[0]
-        }, 'emitting');
-
-        return oldEmit.apply(socket, arguments);
-      };
-
-      var newAck;
-      if (ack)
-        newAck = function newAck () {
-          child.info({
-            sockReq: sockReq,
-            body: arguments[0]
-          }, 'acking');
-
-          return ack.apply(null, arguments);
-        };
-
-
       socketRouter.go(parsedUrl.pathname,
-        sockReq,
+        {
+          verb: method,
+          data: obj.merge({}, options, qsObj),
+          messageName: data.eventName,
+          endName: 'end' + id
+        },
         {
           socket: socket,
-          ack: newAck
+          ack: ack
         }
       );
     } catch (error) {

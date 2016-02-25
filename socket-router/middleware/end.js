@@ -33,7 +33,7 @@ module.exports = function end (req, resp, stream, next) {
 
     stream.destroy();
     stream = null;
-    logger.info({ sockReq: req, sock: resp.socket }, 'stream ended');
+    logger.info({ sock: resp.socket }, 'stream ended');
   }
 
   next(req, resp);
