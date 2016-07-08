@@ -28,7 +28,7 @@ var fp = require('intel-fp/dist/fp');
 var getReq = require('intel-req');
 var format = require('util').format;
 
-var serverHttpUrl = url.parse(conf.get('SERVER_HTTP_URL'));
+var serverHttpUrl = url.parse(conf.SERVER_HTTP_URL);
 var hostOptions = {
   localhost: serverHttpUrl.href,
   host: serverHttpUrl.host,

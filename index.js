@@ -41,7 +41,7 @@ var url = require('url');
 module.exports = function start () {
   var io = createIo();
   io.use(eventWildcard);
-  io.attach(conf.get('REALTIME_PORT'));
+  io.attach(conf.REALTIME_PORT);
 
   var isMessage = /message(\d+)/;
 

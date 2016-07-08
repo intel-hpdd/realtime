@@ -35,7 +35,7 @@ var tryLogging = fp.curry(2, function tryLogging (level, msg) {
 });
 
 
-if (conf.get('RUNNER') === 'supervisor') {
+if (conf.RUNNER === 'supervisor') {
   process.on('SIGINT', cleanShutdown('SIGINT (Ctrl-C)'));
   process.on('SIGTERM', cleanShutdown('SIGTERM'));
 }
