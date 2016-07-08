@@ -22,22 +22,20 @@
 'use strict';
 
 var conf = require('./conf');
-var bunyan = require('bunyan');
+var logger = require('intel-logger');
 var path = require('path');
 
-var level = (conf.NODE_ENV === 'production' ? 'info' : 'debug');
+var level = (conf.NODE_ENV === 'production' ? logger.LEVELS.ERROR : logger.LEVELS.INFO);
 
-module.exports = bunyan.createLogger({
+module.exports = logger.default({
   name: 'realtime',
+  path: path.join(conf.LOG_PATH, conf.LOG_FILE),
+  level: level,
   serializers: {
-    err: bunyan.stdSerializers.err,
+    err: logger.serializers.err,
     sock: socketSerializer,
     sockReq: reqSerializer
-  },
-  streams: [{
-    level: level,
-    path: path.join(conf.LOG_PATH, conf.LOG_FILE)
-  }]
+  }
 });
 
 function socketSerializer (sock) {

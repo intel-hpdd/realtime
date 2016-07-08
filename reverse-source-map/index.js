@@ -38,7 +38,7 @@ module.exports = function reverseSourceMap (trace) {
       return λ(function generator (push) {
         var reverse = exec(format('node %s/reverse-source-map-line.js', __dirname), function (err, x) {
           if (err) {
-            logErrorOnce(err);
+            logErrorOnce({ err: err });
             push(null, line + '\n');
           } else {
             push(null, x);
