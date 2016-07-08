@@ -4,7 +4,7 @@ require('intel-jasmine-n-matchers');
 
 var conf = require('../conf');
 
-if (conf.get('RUNNER') === 'CI') {
+if (conf.RUNNER === 'CI') {
   var krustyJasmineReporter = require('krusty-jasmine-reporter');
 
   var junitReporter = new krustyJasmineReporter.KrustyJasmineJUnitReporter({

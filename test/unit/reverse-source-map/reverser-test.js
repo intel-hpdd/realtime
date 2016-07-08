@@ -28,7 +28,7 @@ describe('reverser', function () {
 
     srcMapPath = 'path/to/source/map.js';
     conf = {
-      get: jasmine.createSpy('get').and.returnValue(srcMapPath)
+      SOURCE_MAP_PATH: srcMapPath
     };
 
     srcmapReverse = jasmine.createSpy('srcmapReverse');

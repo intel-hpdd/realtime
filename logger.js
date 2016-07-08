@@ -25,7 +25,7 @@ var conf = require('./conf');
 var bunyan = require('bunyan');
 var path = require('path');
 
-var level = (conf.get('NODE_ENV') === 'production' ? 'info' : 'debug');
+var level = (conf.NODE_ENV === 'production' ? 'info' : 'debug');
 
 module.exports = bunyan.createLogger({
   name: 'realtime',
@@ -36,7 +36,7 @@ module.exports = bunyan.createLogger({
   },
   streams: [{
     level: level,
-    path: path.join(conf.get('LOG_PATH'), conf.get('LOG_FILE'))
+    path: path.join(conf.LOG_PATH, conf.LOG_FILE)
   }]
 });
 

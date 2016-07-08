@@ -4,19 +4,13 @@ var rewire = require('rewire');
 var start = rewire('../../index');
 
 describe('realtime index test', function () {
-  var createIo, io, conf, confData, revert, logger, socket, data, ack, requestValidator, socketRouter,
+  var createIo, io, conf, revert, logger, socket, data, ack, requestValidator, socketRouter,
     serializeError, eventWildcard;
 
   describe('setup events', function () {
     beforeEach(function () {
-      confData = {
-        REALTIME_PORT: 8888
-      };
-
       conf = {
-        get: jasmine.createSpy('conf.get').and.callFake(function (key) {
-          return confData[key];
-        })
+        REALTIME_PORT: 8888
       };
 
       io = {
@@ -87,7 +81,7 @@ describe('realtime index test', function () {
 
     it('should call io.attach with the realtime port', function () {
       start();
-      expect(io.attach).toHaveBeenCalledOnceWith(confData.REALTIME_PORT);
+      expect(io.attach).toHaveBeenCalledOnceWith(conf.REALTIME_PORT);
     });
 
     it('should register a connection event handler on io', function () {

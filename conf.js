@@ -21,22 +21,20 @@
 
 'use strict';
 
-var nconf = require('nconf');
+var obj = require('intel-obj');
+var confJson = require('./conf.json');
+var defaults = {
+  LOG_FILE: 'realtime.log',
+  NODE_ENV: process.env.NODE_ENV
+};
 
-var conf = nconf
-  .env()
-  .argv()
-  .file(__dirname + '/conf.json')
-  .defaults({
-    LOG_FILE: 'realtime.log',
-    NODE_ENV: 'development'
+var conf = obj.merge({}, defaults, confJson);
+if (conf.NODE_ENV === 'test')
+  conf = obj.merge({}, conf, {
+    SERVER_HTTP_URL: 'https://localhost:9200/',
+    SOURCE_MAP_PATH: __dirname + '/test/integration/fixtures/built-fd5ce21b.js.map',
+    REALTIME_PORT: 9201,
+    LOG_PATH: __dirname
   });
-
-if (conf.get('NODE_ENV') === 'test') {
-  conf.set('SERVER_HTTP_URL', 'https://localhost:9200/');
-  conf.set('SOURCE_MAP_PATH', __dirname + '/test/integration/fixtures/built-fd5ce21b.js.map');
-  conf.set('REALTIME_PORT', 9201);
-  conf.set('LOG_PATH', __dirname);
-}
 
 module.exports = conf;

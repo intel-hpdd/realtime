@@ -4,7 +4,7 @@ var conf = require('../../../conf');
 var format = require('util').format;
 
 module.exports = function invokeSocket () {
-  return client(format('http://localhost:%s', conf.get('REALTIME_PORT')), {
+  return client(format('http://localhost:%s', conf.REALTIME_PORT), {
     forceNew: true
   });
 };

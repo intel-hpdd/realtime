@@ -29,7 +29,7 @@ var λ = require('highland');
 var fp = require('intel-fp/dist/fp');
 
 module.exports = function reverser (s) {
-  var sourceMapStream = λ(createReadStream(conf.get('SOURCE_MAP_PATH')));
+  var sourceMapStream = λ(createReadStream(conf.SOURCE_MAP_PATH));
 
   return λ([sourceMapStream, s])
     .flatMap(bufferString)
