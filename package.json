@@ -1,6 +1,6 @@
 {
   "name": "intel-realtime",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
     "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
@@ -26,12 +26,11 @@
   "dependencies": {
     "intel-fp": "3.2.1",
     "intel-logger": "1.0.0",
-    "intel-obj": "3.0.0",
+    "intel-obj": "5.0.2",
     "intel-req": "1.0.9",
     "intel-router": "3.0.4",
     "intel-srcmap-reverse": "1.1.2",
     "intel-through": "1.0.8",
-    "intel-obj": "5.0.2",
     "clone": "1.0.2",
     "highland": "2.7.3",
     "json-mask": "0.3.5",
