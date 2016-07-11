@@ -22,10 +22,14 @@
 'use strict';
 
 var obj = require('intel-obj');
-var confJson = require('./conf.json');
+var confJson = {};
+
+if (process.env.NODE_ENV !== 'test')
+  confJson = require('./conf.json');
+
 var defaults = {
   LOG_FILE: 'realtime.log',
-  NODE_ENV: process.env.NODE_ENV
+  NODE_ENV: process.env.NODE_ENV || 'development'
 };
 
 var conf = obj.merge({}, defaults, confJson);

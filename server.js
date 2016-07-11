@@ -42,14 +42,14 @@ if (conf.RUNNER === 'supervisor') {
 
 function cleanShutdown (signal) {
   return function cleanShutdownInner () {
-    tryLogging('info', ['Caught ' + signal + ', shutting down cleanly.']);
+    tryLogging('info', [{}, 'Caught ' + signal + ', shutting down cleanly.']);
     // Exit with 0 to keep supervisor happy.
     process.exit(0);
   };
 }
 
 process.on('uncaughtException', function (err) {
-  tryLogging('error', [err, 'unhandledException']);
+  tryLogging('error', [{ err: err }, 'unhandledException']);
   process.exit(1);
 });
 

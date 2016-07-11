@@ -48,7 +48,7 @@ module.exports = function srcmapReverseRoute () {
       })
       .flatMap(apiRequest('/client_error'))
       .stopOnError(function (err) {
-        logger.error(err);
+        logger.error({ err: err });
       })
       .each(fp.noop);
 

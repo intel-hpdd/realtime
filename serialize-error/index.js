@@ -21,8 +21,7 @@
 
 'use strict';
 
-var errorSerializer = require('bunyan').stdSerializers.err;
-
+var errorSerializer = require('intel-logger').serializers.err;
 /**
  * Returns a normalized error
  * object for consumption
