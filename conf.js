@@ -29,7 +29,8 @@ if (process.env.NODE_ENV !== 'test')
 
 var defaults = {
   LOG_FILE: 'realtime.log',
-  NODE_ENV: process.env.NODE_ENV || 'development'
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  RUNNER: process.env.RUNNER || 'supervisor'
 };
 
 var conf = obj.merge({}, defaults, confJson);
