@@ -41,7 +41,7 @@ module.exports = function reverseSourceMap (trace) {
             logErrorOnce({ err: err });
             push(null, line + '\n');
           } else {
-            push(null, x);
+            push(null, x + '\n');
           }
 
           push(null, λ.nil);

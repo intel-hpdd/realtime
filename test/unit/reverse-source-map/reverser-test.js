@@ -37,7 +37,9 @@ describe('reverser', function () {
       fs: fs,
       '../conf': conf,
       'intel-through': through,
-      'intel-srcmap-reverse': srcmapReverse
+      'intel-srcmap-reverse': {
+        default: srcmapReverse
+      }
     });
 
     srcMapStream = s.through(reverser);
