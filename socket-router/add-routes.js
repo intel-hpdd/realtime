@@ -28,6 +28,7 @@ module.exports = fp.once(function addRoutes () {
   routes.testHostRoute();
   routes.srcmapReverseRoute();
   routes.healthRoute();
+  routes.sessionRoute();
   //These should always be last.
   routes.wildcardRoute();
 });
