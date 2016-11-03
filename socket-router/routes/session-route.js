@@ -28,10 +28,33 @@ var pushSerializeError = require('../../serialize-error/push-serialize-error');
 
 module.exports = function sessionRoute () {
   socketRouter.post('/session', function postSessionRoute (req, resp, next) {
+    var stream;
+
+    stream = processSession(getRequest(req), resp);
+    next(req, resp, stream);
+  });
+
+  socketRouter.delete('/session', function deleteSessionRoute (req, resp, next) {
+    var stream;
+
+    stream = processSession(getRequest(req), resp);
+    next(req, resp, stream);
+  });
+
+  socketRouter.get('/session', function getSessionRoute (req, resp, next) {
     var request = getRequest(req);
     var stream;
 
     stream = request()
+      .pluck('body')
+      .errors(pushSerializeError)
+      .each(resp.ack.bind(resp.ack));
+
+    next(req, resp, stream);
+  });
+
+  function processSession (request, resp) {
+    return request()
       .map(function getSession (x) {
         var sessionData = x.headers['set-cookie'][0];
         var newSession = sessionData.split('; ')
@@ -53,20 +76,7 @@ module.exports = function sessionRoute () {
       })
       .errors(pushSerializeError)
       .each(resp.ack.bind(resp.ack));
-
-    next(req, resp, stream);
-  });
-
-  socketRouter.get('/session', function getSessionRoute (req, resp, next) {
-    var request = getRequest(req);
-    var stream;
-
-    stream = request()
-      .errors(pushSerializeError)
-      .each(resp.ack.bind(resp.ack));
-
-    next(req, resp, stream);
-  });
+  }
 
   function getRequest (req) {
     var options = obj.merge({}, req.data, { method: req.verb.toUpperCase() });

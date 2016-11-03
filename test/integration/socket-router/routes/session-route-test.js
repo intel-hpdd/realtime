@@ -82,10 +82,9 @@ describe('session route', function () {
     });
 
     describe('get session', function () {
-      var bodySpy, setCookieSpy;
+      var bodySpy;
       beforeEach(function (done) {
         bodySpy = jasmine.createSpy('bodySpy');
-        setCookieSpy = jasmine.createSpy('setCookieSpy');
         stubDaddy.inlineService
           .mock(sessionFixtures.getSession);
 
@@ -95,8 +94,7 @@ describe('session route', function () {
             method: 'get'
           }
         }, function ack (data) {
-          bodySpy(data.body);
-          setCookieSpy(data.headers['set-cookie']);
+          bodySpy(data);
           done();
         });
       });
@@ -129,13 +127,6 @@ describe('session route', function () {
             username: 'admin'
           }
         });
-      });
-
-      it('should set the cookies', function () {
-        expect(setCookieSpy).toHaveBeenCalledOnceWith([
-          'csrftoken=V7ZKtwh29dlG4t1jkqJjIrMj6wH4kF1A; expires=Tue, 31-Oct-2017 17:48:31 GMT; Max-Age=31449600; Path=/',
-          'sessionid=de13d302bd5f97345f9f4cf393a6a759; expires=Tue, 15-Nov-2016 17:48:31 GMT; Max-Age=1209600; Path=/'
-        ]);
       });
     });
   });
