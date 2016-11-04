@@ -77,7 +77,8 @@ describe('session route', () => {
 
     it('should post the session and return the set-cookie header', () => {
       expect(postSpy).toHaveBeenCalledOnceWith(
-        'sessionid=63e4f9bcd405614ca94aaf6c46f8ff64; expires=Tue, 15-Nov-2016 14:39:41 GMT; Max-Age=1209600; Path=/'
+        'sessionid=63e4f9bcd405614ca94aaf6c46f8ff64; expires=Tue, \
+15-Nov-2016 14:39:41 GMT; Max-Age=1209600; Path=/'
       );
     });
   });

@@ -6,11 +6,9 @@
     "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
     "integration": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/integration/**/*-test.js",
     "unit": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/unit/**/*-test.js",
-    "eslint": "eslint ./",
-    "jscs": "jscs ."
+    "eslint": "eslint ./"
   },
   "pre-commit": [
-    "jscs",
     "eslint",
     "test"
   ],
@@ -42,7 +40,6 @@
     "intel-jasmine-n-matchers": "2.1.1",
     "intel-stub-daddy": "2.0.2",
     "jasmine": "2.4.1",
-    "jscs": "2.11.0",
     "krusty-jasmine-reporter": "1.0.0",
     "pre-commit": "1.1.3",
     "proxyquire": "1.7.4",

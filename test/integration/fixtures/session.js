@@ -38,7 +38,8 @@ module.exports = function () {
       response: {
         statusCode: 204,
         headers: {
-          'set-cookie': 'sessionid=1487791a56bd72d1b00fe4e3588cac66; expires=Fri, 18-Nov-2016 18:10:58 GMT; Max-Age=1209600; Path=/'
+          'set-cookie': 'sessionid=1487791a56bd72d1b00fe4e3588cac66; expires=Fri, 18-Nov-2016 18:10:58 GMT; \
+Max-Age=1209600; Path=/'
         },
         data: {}
       },
