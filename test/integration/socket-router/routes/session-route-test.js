@@ -5,22 +5,22 @@ var getSessionFixtures = require('../../fixtures/session');
 var start = require('../../../../index');
 var waitForRequests = require('../../../../api-request').waitForRequests;
 
-describe('session route', function () {
+describe('session route', () => {
   var socket, sessionFixtures, stubDaddy, shutdown, messageName;
 
-  beforeEach(function () {
+  beforeEach(() => {
     messageName = 'message1';
     sessionFixtures = getSessionFixtures();
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     stubDaddy = utils.getStubDaddy();
 
     stubDaddy.webService
       .startService();
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     shutdown = start();
     socket = utils.getSocket();
   });
@@ -30,12 +30,12 @@ describe('session route', function () {
       .stopService(done.fail, done);
   });
 
-  afterEach(function () {
+  afterEach(() => {
     stubDaddy.inlineService
       .mockState();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     shutdown();
   });
 
@@ -48,7 +48,7 @@ describe('session route', function () {
     socket.close();
   });
 
-  describe('post session', function () {
+  describe('post session', () => {
     var postSpy;
     beforeEach(function (done) {
       postSpy = jasmine.createSpy('postSpy');
@@ -65,7 +65,7 @@ describe('session route', function () {
             password: 'abc123'
           },
           headers: {
-            cookie: 'cookie: io=-IN8P0JaX0yivaedAAAB; csrftoken=V7ZKtwh29dlG4t1jkqJjIrMj6wH4kF1A; sessionid=99ba2e792a\
+            cookie: 'io=-IN8P0JaX0yivaedAAAB; csrftoken=V7ZKtwh29dlG4t1jkqJjIrMj6wH4kF1A; sessionid=99ba2e792a\
 915d0648a714b526d00736'
           }
         }
@@ -75,10 +75,38 @@ describe('session route', function () {
       });
     });
 
-    it('should post the session and return the set-cookie header', function () {
+    it('should post the session and return the set-cookie header', () => {
       expect(postSpy).toHaveBeenCalledOnceWith(
         'sessionid=63e4f9bcd405614ca94aaf6c46f8ff64; expires=Tue, 15-Nov-2016 14:39:41 GMT; Max-Age=1209600; Path=/'
       );
+    });
+  });
+
+  describe('delete session', () => {
+    var deleteSpy;
+    beforeEach(function (done) {
+      deleteSpy = jasmine.createSpy('deleteSpy');
+
+      stubDaddy.inlineService
+        .mock(sessionFixtures.delete);
+
+      socket.emit(messageName, {
+        path: '/session',
+        options: {
+          method: 'delete',
+          headers: {
+            cookie: 'csrftoken=yJisbQFz9IhO9bRQ9ZLXpIf5mZboQXv3; sessionid=d8f0c4fa6febfa5b95be4a43ad72d7c2'
+          }
+        }
+      }, function ack (data) {
+        deleteSpy(data);
+        done();
+      });
+
+    });
+
+    it('should post the session and return the set-cookie header', () => {
+      expect(deleteSpy).toHaveBeenCalledOnceWith('sessionid=1487791a56bd72d1b00fe4e3588cac66; expires=Fri, 18-Nov-2016 18:10:58 GMT; Max-Age=1209600; Path=/');
     });
   });
 });

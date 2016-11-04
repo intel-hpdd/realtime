@@ -29,32 +29,22 @@ const fp = require ('intel-fp/dist/fp');
 
 module.exports = function sessionRoute () {
   socketRouter.post('/session', function postSessionRoute (req, resp, next) {
-    var stream;
-    var data = obj.merge(
-      {},
-      req.data, {
-        method: req.verb.toUpperCase()
-      }
-    );
-
-    stream = processSession(
+    var stream = processSession(
       apiRequest(
         '/session',
-        data
+        req.data
       ),
       resp
     );
+
     next(req, resp, stream);
   });
 
   socketRouter.delete('/session', function deleteSessionRoute (req, resp, next) {
-    var stream;
-
-    stream = processSession(
+    var stream = processSession(
       apiRequest(
-        '/session', {
-          method: 'delete'
-        }
+        '/session',
+        req.data
       ),
       resp
     );
