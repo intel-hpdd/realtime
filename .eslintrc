@@ -27,7 +27,7 @@
     "it": false,
     "expect": false
   },
-   "env": {
+  "env": {
     "es6": true,
     "node": true
   },
