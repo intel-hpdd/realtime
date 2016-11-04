@@ -45,17 +45,16 @@ module.exports = function sessionRoute () {
   function processSession (request, resp) {
     const regexp = /sessionid=([^;|$]+)/;
     const headers = resp.socket.request.headers;
-    let newSession;
 
     return request()
      .map(x => x.headers['set-cookie'])
      .map(fp.find(x => x.match(regexp)))
-     .tap(x => newSession = x)
-     .map(x => x.split('; ')[0])
-     .tap(x =>
-       headers.cookie = headers.cookie.replace(regexp, () => `${x}`))
-     .map(() => newSession)
-     .tap(x => console.log('sending back', x))
+     .tap(
+       fp.flow(
+         x => x.split('; ')[0],
+         x => headers.cookie = headers.cookie.replace(regexp, () => `${x}`)
+       )
+     )
      .errors(pushSerializeError)
      .each(resp.ack.bind(resp.ack));
   }

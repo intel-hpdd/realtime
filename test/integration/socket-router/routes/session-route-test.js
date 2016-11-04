@@ -80,54 +80,5 @@ describe('session route', function () {
         'sessionid=63e4f9bcd405614ca94aaf6c46f8ff64; expires=Tue, 15-Nov-2016 14:39:41 GMT; Max-Age=1209600; Path=/'
       );
     });
-
-    describe('get session', function () {
-      var bodySpy;
-      beforeEach(function (done) {
-        bodySpy = jasmine.createSpy('bodySpy');
-        stubDaddy.inlineService
-          .mock(sessionFixtures.getSession);
-
-        socket.emit(messageName, {
-          path: '/session',
-          options: {
-            method: 'get'
-          }
-        }, function ack (data) {
-          bodySpy(data);
-          done();
-        });
-      });
-
-      it('should return the body', function () {
-        expect(bodySpy).toHaveBeenCalledOnceWith({
-          read_enabled: true,
-          resource_uri: '/api/session/',
-          user: {
-            accepted_eula: true,
-            alert_subscriptions: [],
-            email: 'admin@debug.co.eh',
-            eula_state: 'pass',
-            first_name: '',
-            full_name: '',
-            groups: [{
-              id: '1',
-              name: 'superusers',
-              resource_uri: '/api/group/1/'
-            }],
-            gui_config: {},
-            id: '1',
-            is_superuser: true,
-            last_name: '',
-            new_password1: null,
-            new_password2: null,
-            password1: null,
-            password2: null,
-            resource_uri: '/api/user/1/',
-            username: 'admin'
-          }
-        });
-      });
-    });
   });
 });
