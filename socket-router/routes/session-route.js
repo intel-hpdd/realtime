@@ -21,10 +21,11 @@
 
 'use strict';
 
-var socketRouter = require('../index');
-var obj = require('intel-obj');
-var apiRequest = require('../../api-request');
-var pushSerializeError = require('../../serialize-error/push-serialize-error');
+const socketRouter = require('../index');
+const obj = require('intel-obj');
+const apiRequest = require('../../api-request');
+const pushSerializeError = require('../../serialize-error/push-serialize-error');
+const fp = require ('intel-fp/dist/fp');
 
 module.exports = function sessionRoute () {
   socketRouter.post('/session', function postSessionRoute (req, resp, next) {
@@ -41,45 +42,28 @@ module.exports = function sessionRoute () {
     next(req, resp, stream);
   });
 
-  socketRouter.get('/session', function getSessionRoute (req, resp, next) {
-    var request = getRequest(req);
-    var stream;
-
-    stream = request()
-      .pluck('body')
-      .errors(pushSerializeError)
-      .each(resp.ack.bind(resp.ack));
-
-    next(req, resp, stream);
-  });
-
   function processSession (request, resp) {
+    const regexp = /sessionid=([^;|$]+)/;
+    const headers = resp.socket.request.headers;
+    let newSession;
+
     return request()
-      .map(function getSession (x) {
-        var sessionData = x.headers['set-cookie'][0];
-        var newSession = sessionData.split('; ')
-          .filter(function filterBySessionId (x) {
-            if (x.indexOf('sessionid') > -1)
-              return x;
-          })
-          .pop();
-
-        var cookie = resp.socket.request.headers.cookie || 'sessionid';
-        var transformedSession = cookie.split('; ')
-          .map(function transformCookie (item) {
-            return (item.indexOf('sessionid') > -1) ? newSession : item;
-          });
-
-        resp.socket.request.headers.cookie = transformedSession.join('; ');
-
-        return sessionData;
-      })
-      .errors(pushSerializeError)
-      .each(resp.ack.bind(resp.ack));
+     .map(x => x.headers['set-cookie'])
+     .map(fp.find(x => x.match(regexp)))
+     .tap(x => newSession = x)
+     .map(x => x.split('; ')[0])
+     .tap(x =>
+       headers.cookie = headers.cookie.replace(regexp, () => `${x}`))
+     .map(() => newSession)
+     .tap(x => console.log('sending back', x))
+     .errors(pushSerializeError)
+     .each(resp.ack.bind(resp.ack));
   }
 
   function getRequest (req) {
-    var options = obj.merge({}, req.data, { method: req.verb.toUpperCase() });
+    var options = obj.merge({}, req.data, {
+      method: req.verb.toUpperCase()
+    });
     var requestToPath = apiRequest(req.matches[0]);
     return requestToPath.bind(null, options);
   }
