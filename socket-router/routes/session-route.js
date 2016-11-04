@@ -28,8 +28,8 @@ const pushSerializeError = require('../../serialize-error/push-serialize-error')
 const fp = require ('intel-fp/dist/fp');
 
 module.exports = function sessionRoute () {
-  socketRouter.post('/session', function postSessionRoute (req, resp, next) {
-    var stream = processSession(
+  const sessionRoute = (req, resp, next) => {
+    const stream = processSession(
       apiRequest(
         '/session',
         req.data
@@ -38,19 +38,10 @@ module.exports = function sessionRoute () {
     );
 
     next(req, resp, stream);
-  });
+  };
 
-  socketRouter.delete('/session', function deleteSessionRoute (req, resp, next) {
-    var stream = processSession(
-      apiRequest(
-        '/session',
-        req.data
-      ),
-      resp
-    );
-
-    next(req, resp, stream);
-  });
+  socketRouter.post('/session', sessionRoute);
+  socketRouter.delete('/session', sessionRoute);
 
   function processSession (request, resp) {
     const regexp = /sessionid=([^;|$]+)/;
