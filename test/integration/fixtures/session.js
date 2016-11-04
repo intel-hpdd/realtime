@@ -11,7 +11,7 @@ module.exports = function () {
           password: 'abc123'
         },
         headers: {
-          cookie: 'cookie: io=-IN8P0JaX0yivaedAAAB; csrftoken=V7ZKtwh29dlG4t1jkqJjIrMj6wH4kF1A; sessionid=99ba2e792a91\
+          cookie: 'io=-IN8P0JaX0yivaedAAAB; csrftoken=V7ZKtwh29dlG4t1jkqJjIrMj6wH4kF1A; sessionid=99ba2e792a91\
 5d0648a714b526d00736'
         }
       },
@@ -24,53 +24,23 @@ module.exports = function () {
         data: {}
       },
       dependencies: [],
-      expires: 1
+      expires: 0
     },
-    getSession: {
+    delete: {
       request: {
-        method: 'GET',
+        method: 'DELETE',
         url: '/api/session',
         data: {},
-        headers: {}
+        headers: {
+          cookie: 'csrftoken=yJisbQFz9IhO9bRQ9ZLXpIf5mZboQXv3; sessionid=d8f0c4fa6febfa5b95be4a43ad72d7c2'
+        }
       },
       response: {
-        statusCode: 200,
+        statusCode: 204,
         headers: {
-          'set-cookie': [
-            'csrftoken=V7ZKtwh29dlG4t1jkqJjIrMj6wH4kF1A; expires=Tue, 31-Oct-2017 17:48:31 GMT; Max-Age=31449600; \
-Path=/',
-            'sessionid=de13d302bd5f97345f9f4cf393a6a759; expires=Tue, 15-Nov-2016 17:48:31 GMT; Max-Age=1209600; Path=/'
-          ]
+          'set-cookie': 'sessionid=1487791a56bd72d1b00fe4e3588cac66; expires=Fri, 18-Nov-2016 18:10:58 GMT; Max-Age=1209600; Path=/'
         },
-        data: {
-          read_enabled: true,
-          resource_uri: '/api/session/',
-          user: {
-            accepted_eula: true,
-            alert_subscriptions: [],
-            email: 'admin@debug.co.eh',
-            eula_state: 'pass',
-            first_name: '',
-            full_name: '',
-            groups: [
-              {
-                id: '1',
-                name: 'superusers',
-                resource_uri: '/api/group/1/'
-              }
-            ],
-            gui_config: {},
-            id: '1',
-            is_superuser: true,
-            last_name: '',
-            new_password1: null,
-            new_password2: null,
-            password1: null,
-            password2: null,
-            resource_uri: '/api/user/1/',
-            username: 'admin'
-          }
-        }
+        data: {}
       },
       dependencies: [],
       expires: 0
