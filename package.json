@@ -30,7 +30,7 @@
     "intel-logger": "1.0.0",
     "intel-obj": "5.0.2",
     "intel-req": "1.0.9",
-    "intel-router": "3.0.4",
+    "intel-router": "5.0.0",
     "intel-srcmap-reverse": "2.0.0",
     "intel-through": "1.0.8",
     "json-mask": "0.3.5",
@@ -38,7 +38,7 @@
     "socket.io": "1.4.8"
   },
   "devDependencies": {
-    "eslint": "2.7.0",
+    "eslint": "3.9.1",
     "intel-jasmine-n-matchers": "2.1.1",
     "intel-stub-daddy": "2.0.2",
     "jasmine": "2.4.1",
