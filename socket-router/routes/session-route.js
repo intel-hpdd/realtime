@@ -30,15 +30,35 @@ const fp = require ('intel-fp/dist/fp');
 module.exports = function sessionRoute () {
   socketRouter.post('/session', function postSessionRoute (req, resp, next) {
     var stream;
+    var data = obj.merge(
+      {},
+      req.data, {
+        method: req.verb.toUpperCase()
+      }
+    );
 
-    stream = processSession(getRequest(req), resp);
+    stream = processSession(
+      apiRequest(
+        '/session',
+        data
+      ),
+      resp
+    );
     next(req, resp, stream);
   });
 
   socketRouter.delete('/session', function deleteSessionRoute (req, resp, next) {
     var stream;
 
-    stream = processSession(getRequest(req), resp);
+    stream = processSession(
+      apiRequest(
+        '/session', {
+          method: 'delete'
+        }
+      ),
+      resp
+    );
+
     next(req, resp, stream);
   });
 
@@ -46,7 +66,7 @@ module.exports = function sessionRoute () {
     const regexp = /sessionid=([^;|$]+)/;
     const headers = resp.socket.request.headers;
 
-    return request()
+    return request
      .map(x => x.headers['set-cookie'])
      .map(fp.find(x => x.match(regexp)))
      .tap(
@@ -57,13 +77,5 @@ module.exports = function sessionRoute () {
      )
      .errors(pushSerializeError)
      .each(resp.ack.bind(resp.ack));
-  }
-
-  function getRequest (req) {
-    var options = obj.merge({}, req.data, {
-      method: req.verb.toUpperCase()
-    });
-    var requestToPath = apiRequest(req.matches[0]);
-    return requestToPath.bind(null, options);
   }
 };
