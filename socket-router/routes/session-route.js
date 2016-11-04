@@ -21,15 +21,42 @@
 
 'use strict';
 
-const getRouter = require('intel-router').default;
-const logStart = require('./middleware/log-start');
-const addCredentials = require('./middleware/add-credentials');
-const end = require('./middleware/end');
+const socketRouter = require('../index');
+const obj = require('intel-obj');
+const apiRequest = require('../../api-request');
+const pushSerializeError = require('../../serialize-error/push-serialize-error');
+const fp = require ('intel-fp/dist/fp');
 
-module.exports = getRouter()
-  .addStart(logStart)
-  .addStart(addCredentials)
-  .addEnd(end);
+module.exports = function sessionRoute () {
+  const sessionRoute = (req, resp, next) => {
+    const stream = processSession(
+      apiRequest(
+        '/session',
+        req.data
+      ),
+      resp
+    );
 
-var addRoutes = require('./add-routes');
-addRoutes();
+    next(req, resp, stream);
+  };
+
+  const processSession = (request, resp) => {
+    const regexp = /sessionid=([^;|$]+)/;
+    const headers = resp.socket.request.headers;
+
+    return request
+     .map(x => x.headers['set-cookie'])
+     .map(fp.find(x => x.match(regexp)))
+     .tap(
+       fp.flow(
+         x => x.split('; ')[0],
+         x => headers.cookie = headers.cookie.replace(regexp, () => `${x}`)
+       )
+     )
+     .errors(pushSerializeError)
+     .each(resp.ack.bind(resp.ack));
+  };
+
+  socketRouter.post('/session', sessionRoute);
+  socketRouter.delete('/session', sessionRoute);
+};
