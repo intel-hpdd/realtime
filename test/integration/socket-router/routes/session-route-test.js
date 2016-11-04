@@ -22,10 +22,13 @@ describe('session route', () => {
 
   beforeEach(() => {
     shutdown = start();
-    socket = utils.getSocket();
+    socket = utils.getSocket({
+      cookie: 'io=-IN8P0JaX0yivaedAAAB; csrftoken=V7ZKtwh29dlG4t1jkqJjIrMj6wH4kF1A; sessionid=99ba2e792a\
+915d0648a714b526d00736'
+    });
   });
 
-  afterEach(function (done) {
+  afterEach((done) => {
     stubDaddy.webService
       .stopService(done.fail, done);
   });
@@ -39,18 +42,18 @@ describe('session route', () => {
     shutdown();
   });
 
-  afterEach(function (done) {
+  afterEach((done) => {
     waitForRequests(done);
   });
 
-  afterEach(function (done) {
+  afterEach((done) => {
     socket.on('disconnect', done);
     socket.close();
   });
 
   describe('post session', () => {
     var postSpy;
-    beforeEach(function (done) {
+    beforeEach((done) => {
       postSpy = jasmine.createSpy('postSpy');
 
       stubDaddy.inlineService
@@ -69,7 +72,7 @@ describe('session route', () => {
 915d0648a714b526d00736'
           }
         }
-      }, function ack (data) {
+      }, (data) => {
         postSpy(data);
         done();
       });
@@ -85,7 +88,7 @@ describe('session route', () => {
 
   describe('delete session', () => {
     var deleteSpy;
-    beforeEach(function (done) {
+    beforeEach((done) => {
       deleteSpy = jasmine.createSpy('deleteSpy');
 
       stubDaddy.inlineService
@@ -99,7 +102,7 @@ describe('session route', () => {
             cookie: 'csrftoken=yJisbQFz9IhO9bRQ9ZLXpIf5mZboQXv3; sessionid=d8f0c4fa6febfa5b95be4a43ad72d7c2'
           }
         }
-      }, function ack (data) {
+      }, (data) => {
         deleteSpy(data);
         done();
       });

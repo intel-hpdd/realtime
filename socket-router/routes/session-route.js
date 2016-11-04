@@ -40,10 +40,7 @@ module.exports = function sessionRoute () {
     next(req, resp, stream);
   };
 
-  socketRouter.post('/session', sessionRoute);
-  socketRouter.delete('/session', sessionRoute);
-
-  function processSession (request, resp) {
+  const processSession = (request, resp) => {
     const regexp = /sessionid=([^;|$]+)/;
     const headers = resp.socket.request.headers;
 
@@ -58,5 +55,8 @@ module.exports = function sessionRoute () {
      )
      .errors(pushSerializeError)
      .each(resp.ack.bind(resp.ack));
-  }
+  };
+
+  socketRouter.post('/session', sessionRoute);
+  socketRouter.delete('/session', sessionRoute);
 };
