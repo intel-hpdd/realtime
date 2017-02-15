@@ -1,5 +1,5 @@
 {
-  "name": "intel-realtime",
+  "name": "@iml/realtime",
   "version": "5.1.0",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
@@ -22,7 +22,6 @@
   "author": "IML Team",
   "license": "MIT",
   "dependencies": {
-    "clone": "2.1.0",
     "highland": "2.7.3",
     "intel-fp": "3.2.1",
     "intel-logger": "1.0.0",
