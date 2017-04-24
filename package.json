@@ -27,18 +27,18 @@
     "intel-router": "5.0.1",
     "intel-through": "1.0.8",
     "json-mask": "0.3.8",
-    "jsonschema": "1.1.1",
-    "socket.io": "1.7.2"
+    "jsonschema": "^1.2.0",
+    "socket.io": "^2.0.3"
   },
   "devDependencies": {
-    "eslint": "3.14.1",
     "@iml/jasmine-n-matchers": "2.1.1",
     "@iml/stub-daddy": "2.0.5",
-    "jasmine": "2.5.3",
+    "eslint": "^4.5.0",
+    "jasmine": "^2.7.0",
     "krusty-jasmine-reporter": "1.0.0",
     "pre-commit": "1.2.2",
-    "proxyquire": "1.7.11",
+    "proxyquire": "^1.8.0",
     "rewire": "2.5.2",
-    "socket.io-client": "1.7.2"
+    "socket.io-client": "^2.0.3"
   }
 }
