@@ -1,7 +1,7 @@
 {
-  "name": "@iml/realtime",
+  "name": "@mfl/realtime",
   "version": "5.1.0",
-  "description": "Realtime communications layer between IML GUI and API",
+  "description": "Realtime communications layer between MFL GUI and API",
   "scripts": {
     "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
     "integration": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/integration/**/*-test.js",
@@ -14,30 +14,30 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.intel.com/IML/realtime.git"
+    "url": "https://github.intel.com/MFL/realtime.git"
   },
   "publishConfig": {
-    "registry": "https://ubit-artifactory-or.intel.com/artifactory/api/npm/iml-npm-local"
+    "access": "public"
   },
-  "author": "IML Team",
+  "author": "MFL Team",
   "license": "MIT",
   "dependencies": {
     "highland": "2.7.3",
-    "intel-fp": "3.2.1",
-    "intel-logger": "1.0.0",
-    "intel-obj": "5.0.2",
-    "intel-req": "1.0.9",
-    "intel-router": "5.0.0",
-    "intel-srcmap-reverse": "2.0.0",
-    "intel-through": "1.0.8",
+    "@mfl/fp": "3.2.1",
+    "@mfl/logger": "1.0.0",
+    "@mfl/obj": "5.0.2",
+    "@mfl/req": "1.0.9",
+    "@mfl/router": "5.0.0",
+    "@mfl/srcmap-reverse": "2.0.0",
+    "@mfl/through": "1.0.8",
     "json-mask": "0.3.8",
     "jsonschema": "1.1.1",
     "socket.io": "1.7.2"
   },
   "devDependencies": {
     "eslint": "3.14.1",
-    "intel-jasmine-n-matchers": "2.1.1",
-    "intel-stub-daddy": "2.0.2",
+    "@mfl/jasmine-n-matchers": "2.1.1",
+    "@mfl/stub-daddy": "2.0.2",
     "jasmine": "2.5.3",
     "krusty-jasmine-reporter": "1.0.0",
     "pre-commit": "1.2.2",
