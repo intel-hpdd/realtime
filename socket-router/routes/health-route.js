@@ -27,13 +27,14 @@ import socketRouter from '../index';
 import pushSerializeError from '../../serialize-error/push-serialize-error';
 
 var STATES;
-exports.STATES = STATES = {
+
+export const STATES = STATES = {
   ERROR: 'ERROR',
   WARN: 'WARNING',
   GOOD: 'GOOD'
 };
 
-module.exports = function healthRoutes() {
+export default function healthRoutes() {
   socketRouter.get('/health', function healthRoute(req, resp, next) {
     var stream = pollingRequest('/alert', {
       headers: req.data.headers,

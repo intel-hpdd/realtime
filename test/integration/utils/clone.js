@@ -1,3 +1,3 @@
-module.exports = function clone (val) {
+export default function clone (val) {
   return JSON.parse(JSON.stringify(val));
 };

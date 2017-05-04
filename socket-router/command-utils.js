@@ -27,7 +27,7 @@ import * as obj from '@mfl/obj';
 
 let objectsLens = fp.pathLens(['body', 'objects']);
 
-exports.waitForCommands = fp.curry(2, function waitForCommands(headers, ids) {
+export const waitForCommands = fp.curry(2, function waitForCommands(headers, ids) {
   let pickValues = fp.flow(
     obj.pick.bind(null, ['cancelled', 'complete', 'errored']),
     obj.values
@@ -64,7 +64,7 @@ let getJobIds = fp.flow(
   fp.map(fp.lensProp('1'))
 );
 
-exports.getSteps = fp.curry(2, function getSteps(headers, s) {
+export const getSteps = fp.curry(2, function getSteps(headers, s) {
   return s
     .map(getJobIds)
     .flatMap(function getJobs(ids) {

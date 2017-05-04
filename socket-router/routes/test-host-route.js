@@ -28,7 +28,7 @@ import pushSerializeError from '../../serialize-error/push-serialize-error';
 import commandUtils from '../command-utils';
 import * as fp from '@mfl/fp';
 
-module.exports = function testHostRoute() {
+export default function testHostRoute() {
   socketRouter.post('/test_host', function getStatus(req, resp, next) {
     const removeUndefined = fp.filter(fp.flow(fp.eq(undefined), fp.not));
     const pullIds = fp.flow(

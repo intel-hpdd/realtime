@@ -19,7 +19,7 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-module.exports = {
+export default {
   testHostRoute: require('./test-host-route'),
   healthRoute: require('./health-route'),
   srcmapReverseRoute: require('./srcmap-reverse-route'),

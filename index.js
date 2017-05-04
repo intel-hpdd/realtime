@@ -38,7 +38,7 @@ https.globalAgent.maxSockets = http.globalAgent.maxSockets = Infinity;
 import qs from 'querystring';
 import url from 'url';
 
-module.exports = function start() {
+export default function start() {
   let io = createIo();
   io.use(eventWildcard);
   io.attach(conf.REALTIME_PORT);

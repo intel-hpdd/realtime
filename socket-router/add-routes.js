@@ -23,7 +23,7 @@ import routes from './routes';
 
 import * as fp from '@mfl/fp';
 
-module.exports = fp.once(function addRoutes() {
+export default fp.once(function addRoutes() {
   routes.testHostRoute();
   routes.srcmapReverseRoute();
   routes.healthRoute();

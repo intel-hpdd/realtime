@@ -27,7 +27,7 @@ import pushSerializeError from '../../serialize-error/push-serialize-error';
 import reverseSourceMap from '../../reverse-source-map';
 import logger from '../../logger';
 
-module.exports = function srcmapReverseRoute() {
+export default function srcmapReverseRoute() {
   socketRouter.post('/srcmap-reverse', function srcmapReverseHandler(
     req,
     resp,

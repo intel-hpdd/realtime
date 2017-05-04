@@ -23,7 +23,7 @@ import * as obj from '@mfl/obj';
 
 let regexp = /csrftoken=([^;|$]+)/;
 
-module.exports = function addCredentials(req, resp, next) {
+export default function addCredentials(req, resp, next) {
   let headers = {};
   let requestHeaders = resp.socket.request.headers;
 

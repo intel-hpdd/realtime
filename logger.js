@@ -28,7 +28,7 @@ let level = conf.NODE_ENV === 'production'
   ? logger.LEVELS.ERROR
   : logger.LEVELS.INFO;
 
-module.exports = logger.default({
+export default logger.default({
   name: 'realtime',
   path: path.join(conf.LOG_PATH, conf.LOG_FILE),
   level: level,

@@ -24,7 +24,7 @@ import λ from 'highland';
 import * as obj from '@mfl/obj';
 import apiRequest from './api-request';
 
-module.exports = function pollingRequest(path, options) {
+export default function pollingRequest(path, options) {
   var ifNoneMatch = 0;
 
   return λ(function generator(push, next) {

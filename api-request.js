@@ -39,7 +39,7 @@ const apiFormat = format.bind(format, '/api%s');
 
 const req = getReq();
 
-module.exports = fp.curry(2, function apiRequest(path, options) {
+export default fp.curry(2, function apiRequest(path, options) {
   path = path.replace(/^\/*/, '/').replace(/\/*$/, '/');
 
   const opts = obj.merge({}, options, hostOptions);
@@ -48,4 +48,4 @@ module.exports = fp.curry(2, function apiRequest(path, options) {
   return req.bufferRequest(opts);
 });
 
-module.exports.waitForRequests = req.waitForRequests;
+export const waitForRequests = req.waitForRequests;

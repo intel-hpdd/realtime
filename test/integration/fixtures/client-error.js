@@ -1,7 +1,7 @@
 /*jslint maxlen: 500 */
 //jscs:disable maximumLineLength
 
-module.exports = function () {
+export default function () {
   return {
     reversedTrace: {
       request: {

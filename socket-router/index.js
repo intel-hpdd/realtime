@@ -25,7 +25,7 @@ import logStart from './middleware/log-start';
 import addCredentials from './middleware/add-credentials';
 import end from './middleware/end';
 
-module.exports = getRouter()
+export default getRouter()
   .addStart(logStart)
   .addStart(addCredentials)
   .addEnd(end);

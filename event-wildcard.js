@@ -22,7 +22,7 @@
 let emit = require('events').EventEmitter.prototype.emit;
 import * as obj from '@mfl/obj';
 
-module.exports = function eventWildcard(socket, next) {
+export default function eventWildcard(socket, next) {
   if (socket.onevent !== onEvent) socket.onevent = onEvent;
 
   return next();

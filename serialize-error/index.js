@@ -20,6 +20,7 @@
 // express and approved by Intel in writing.
 
 var errorSerializer = require('intel-logger').serializers.err;
+
 /**
  * Returns a normalized error
  * object for consumption
@@ -27,7 +28,7 @@ var errorSerializer = require('intel-logger').serializers.err;
  * @param {Error} error
  * @returns {Object}
  */
-module.exports = function serializeError (error) {
+export default function serializeError (error) {
   if (!error.statusCode)
     error.statusCode = 500;
 

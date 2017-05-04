@@ -29,7 +29,7 @@ import pollingRequest from '../../polling-request';
 import socketRouter from '../index';
 import pushSerializeError from '../../serialize-error/push-serialize-error';
 
-module.exports = function wildcardRoute() {
+export default function wildcardRoute() {
   socketRouter.all('/:endpoint/:rest*', function genericHandler(
     req,
     resp,

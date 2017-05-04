@@ -21,7 +21,7 @@
 
 import logger from '../../logger';
 
-module.exports = function end (req, resp, stream, next) {
+export default function end (req, resp, stream, next) {
   resp.socket.once('disconnect', destroyStream);
   resp.socket.once(req.endName, destroyStream);
 

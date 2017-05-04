@@ -26,7 +26,7 @@ import apiRequest from '../../api-request';
 import pushSerializeError from '../../serialize-error/push-serialize-error';
 import * as fp from '@mfl/fp';
 
-module.exports = function sessionRoute() {
+export default function sessionRoute() {
   const sessionRoute = (req, resp, next) => {
     const stream = processSession(apiRequest('/session', req.data), resp);
 

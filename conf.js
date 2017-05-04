@@ -41,4 +41,4 @@ if (conf.NODE_ENV === 'test')
     LOG_PATH: __dirname
   });
 
-module.exports = conf;
+export default conf;

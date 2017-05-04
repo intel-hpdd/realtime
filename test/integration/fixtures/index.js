@@ -19,7 +19,7 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-module.exports = {
+export default {
   alert: require('./alert'),
   clientError: require('./client-error'),
   command: require('./command'),
