@@ -1,31 +1,43 @@
 {
+  "parser": "babel-eslint",
+  "plugins": [
+    "flowtype",
+    "import",
+    "prettier"
+  ],
   "rules": {
-    "quotes": [
-      2,
-      "single"
+    "flowtype/define-flow-type": 1,
+    "flowtype/use-flow-type": 1,
+    "flowtype/space-after-type-colon": [
+      0,
+      "never"
     ],
+    "import/no-commonjs": 2,
+    "import/no-amd": 2,
+    "import/export": 2,
+    "no-var": 2,
     "linebreak-style": [
       2,
       "unix"
     ],
-    "semi": [
+    "curly": [
       2,
-      "always"
+      "multi",
+      "consistent"
     ],
-    "indent": [
-      2,
-      2
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "all",
+        "ignoreReadBeforeAssign": false
+      }
     ],
-    "no-console": 0
-  },
-  "globals": {
-    "describe": false,
-    "beforeEach": false,
-    "afterEach": false,
-    "jasmine": false,
-    "spyOn": false,
-    "it": false,
-    "expect": false
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true
+      }
+    ]
   },
   "env": {
     "es6": true,
@@ -33,6 +45,11 @@
   },
   "parserOptions": {
     "ecmaVersion": 6,
+    "sourceType": "module",
     "experimentalObjectRestSpread": true
-  }
+  },
+  "extends": [
+    "eslint:recommended",
+    "prettier"
+  ]
 }

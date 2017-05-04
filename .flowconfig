@@ -1,0 +1,11 @@
+[ignore]
+
+[include]
+
+[libs]
+node_modules/@mfl/flow-highland/flow-typed
+node_modules/@mfl/flow-jasmine/flow-typed
+
+[options]
+esproposal.class_instance_fields=enable
+experimental.strict_type_args=true
