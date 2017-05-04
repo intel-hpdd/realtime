@@ -19,8 +19,6 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-'use strict';
-
 var serializeError = require('./index');
 
 module.exports = function pushSerializeError (err, push) {

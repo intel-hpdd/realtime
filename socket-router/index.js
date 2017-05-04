@@ -19,8 +19,6 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-'use strict';
-
 const getRouter = require('intel-router').default;
 const logStart = require('./middleware/log-start');
 const addCredentials = require('./middleware/add-credentials');

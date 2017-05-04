@@ -1,5 +1,3 @@
-'use strict';
-
 var requestValidator = require('../../request-validator');
 
 describe('request channel validator', function () {

@@ -19,8 +19,6 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-'use strict';
-
 var apiRequest = require('../api-request');
 var pollingRequest = require('../polling-request');
 var fp = require('intel-fp/dist/fp');

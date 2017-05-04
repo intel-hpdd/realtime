@@ -1,5 +1,3 @@
-'use strict';
-
 var reverseSourceMap = require('../../../reverse-source-map');
 var clientError = require('../../integration/fixtures/client-error');
 

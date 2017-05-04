@@ -1,5 +1,3 @@
-'use strict';
-
 var rewire = require('rewire');
 var logStart = rewire('../../../../socket-router/middleware/log-start');
 

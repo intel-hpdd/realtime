@@ -19,8 +19,6 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-'use strict';
-
 const socketRouter = require('../index');
 const obj = require('intel-obj');
 const apiRequest = require('../../api-request');

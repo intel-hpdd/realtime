@@ -1,5 +1,3 @@
-'use strict';
-
 var utils = require('../../utils');
 var getSessionFixtures = require('../../fixtures/session');
 var start = require('../../../../index');

@@ -1,5 +1,3 @@
-'use strict';
-
 var rewire = require('rewire');
 var end = rewire('../../../../socket-router/middleware/end');
 

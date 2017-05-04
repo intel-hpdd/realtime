@@ -1,5 +1,3 @@
-'use strict';
-
 /*jslint maxlen: 500 */
 //jscs:disable maximumLineLength
 

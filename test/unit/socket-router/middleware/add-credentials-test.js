@@ -1,5 +1,3 @@
-'use strict';
-
 var addCredentials = require('../../../../socket-router/middleware/add-credentials');
 
 describe('add credentials', function () {

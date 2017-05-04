@@ -1,5 +1,3 @@
-'use strict';
-
 var utils = require('../../utils');
 var start = require('../../../../index');
 var clientErrorFixtures = require('../../fixtures/client-error');

@@ -19,8 +19,6 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-'use strict';
-
 var fp = require('intel-fp/dist/fp');
 var through = require('intel-through');
 var pollingRequest = require('../../polling-request');

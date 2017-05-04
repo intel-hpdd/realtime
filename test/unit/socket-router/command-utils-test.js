@@ -1,5 +1,3 @@
-'use strict';
-
 var rewire = require('rewire');
 var commandUtils = rewire('../../../socket-router/command-utils');
 var fixtures = require('../../integration/fixtures');

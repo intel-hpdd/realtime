@@ -1,5 +1,3 @@
-'use strict';
-
 var getStubDaddy = require('intel-stub-daddy');
 var conf = require('../../../conf');
 var url = require('url');

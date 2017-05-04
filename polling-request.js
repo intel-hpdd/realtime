@@ -20,8 +20,6 @@
 // express and approved by Intel in writing.
 
 
-'use strict';
-
 var λ = require('highland');
 var obj = require('intel-obj');
 var apiRequest = require('./api-request');

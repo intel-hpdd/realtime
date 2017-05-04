@@ -1,5 +1,3 @@
-'use strict';
-
 var rewire = require('rewire');
 var pushSerializeError = rewire('../../../serialize-error/push-serialize-error');
 
