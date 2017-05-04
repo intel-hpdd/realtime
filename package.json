@@ -21,6 +21,17 @@
   "publishConfig": {
     "access": "public"
   },
+  "jest": {
+    "resetMocks": true,
+    "resetModules": true,
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test"
+    ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@mfl)/"
+    ]
+  },
   "author": "MFL Team",
   "license": "MIT",
   "dependencies": {
