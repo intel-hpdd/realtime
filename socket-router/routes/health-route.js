@@ -28,15 +28,15 @@ import pushSerializeError from '../../serialize-error/push-serialize-error';
 
 var STATES;
 
-export const STATES = STATES = {
+export const STATES = (STATES = {
   ERROR: 'ERROR',
   WARN: 'WARNING',
   GOOD: 'GOOD'
-};
+});
 
 export default function healthRoutes() {
   socketRouter.get('/health', function healthRoute(req, resp, next) {
-    var stream = pollingRequest('/alert', {
+    const stream = pollingRequest('/alert', {
       headers: req.data.headers,
       qs: {
         active: true,
@@ -45,13 +45,13 @@ export default function healthRoutes() {
       }
     });
 
-    var getHealth = fp.flow(
+    const getHealth = fp.flow(
       unique,
       fp.invokeMethod('sort', [compare]),
       fp.tail
     );
 
-    var buildOutput = fp.flow(
+    const buildOutput = fp.flow(
       fp.pathLens(['body', 'objects']),
       fp.map(fp.lensProp('severity')),
       fp.filter(fp.identity),
@@ -78,11 +78,11 @@ export default function healthRoutes() {
     }
 
     function compare(a, b) {
-      var states = [STATES.GOOD, STATES.WARN, STATES.ERROR];
+      const states = [STATES.GOOD, STATES.WARN, STATES.ERROR];
 
       return states.indexOf(a) - states.indexOf(b);
     }
 
     next(req, resp, stream);
   });
-};
+}

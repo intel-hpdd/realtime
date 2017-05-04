@@ -21,9 +21,9 @@
 
 import { Validator } from 'jsonschema';
 
-var validator = new Validator();
+const validator = new Validator();
 
-var schema = {
+const schema = {
   id: '/RequestData',
   type: 'object',
   required: true,
@@ -36,15 +36,17 @@ var schema = {
       type: 'object',
       properties: {
         method: {
-          enum: [ 'get', 'post', 'put', 'patch', 'delete' ]
+          enum: ['get', 'post', 'put', 'patch', 'delete']
         }
       }
     }
   }
 };
 
-export default function getErrorList (data) {
-  return validator.validate(data, schema).errors.reduce(function joinErrors (message, error) {
-    return (message + error.stack + '\n');
-  }, '');
-};
+export default function getErrorList(data) {
+  return validator
+    .validate(data, schema)
+    .errors.reduce(function joinErrors(message, error) {
+      return message + error.stack + '\n';
+    }, '');
+}

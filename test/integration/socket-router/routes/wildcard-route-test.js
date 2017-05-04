@@ -5,7 +5,7 @@ import { waitForRequests } from '../../../../api-request';
 import * as fp from '@mfl/fp';
 
 describe('wildcard route', function() {
-  var socket,
+  let socket,
     stubDaddy,
     alertFixtures,
     alertRequest,
@@ -131,7 +131,7 @@ describe('wildcard route', function() {
   });
 
   describe('handling errors', function() {
-    var spy;
+    let spy;
     beforeEach(function() {
       spy = jasmine.createSpy('spy');
       stubDaddy.inlineService.mock({

@@ -35,13 +35,13 @@ export default function wildcardRoute() {
     resp,
     next
   ) {
-    var options = obj.merge({}, req.data, { method: req.verb.toUpperCase() });
-    var requestToPath = apiRequest(req.matches[0]);
-    var request = requestToPath.bind(null, options);
-    var stream;
+    const options = obj.merge({}, req.data, { method: req.verb.toUpperCase() });
+    const requestToPath = apiRequest(req.matches[0]);
+    const request = requestToPath.bind(null, options);
+    let stream;
 
-    var toPoll = ['host', 'lnet_configuration', 'alert', 'command'];
-    var paths = fp.zipObject(toPoll, toPoll);
+    const toPoll = ['host', 'lnet_configuration', 'alert', 'command'];
+    const paths = fp.zipObject(toPoll, toPoll);
 
     if (resp.ack) {
       stream = request();
@@ -77,4 +77,4 @@ export default function wildcardRoute() {
 
     next(req, resp, stream);
   });
-};
+}

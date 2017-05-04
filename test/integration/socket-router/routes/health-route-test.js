@@ -155,14 +155,14 @@ describe('health route', function() {
   });
 
   it('should send two responses', function(done) {
-    let greenHealth = utils.clone(alertFixtures.greenHealth);
+    const greenHealth = utils.clone(alertFixtures.greenHealth);
     greenHealth.expires = 1;
 
     stubDaddy.inlineService.mock(greenHealth);
 
     stubDaddy.inlineService.mock(alertFixtures.yellowHealth);
 
-    let messages = [];
+    const messages = [];
 
     emitMessage();
 
@@ -180,17 +180,17 @@ describe('health route', function() {
   });
 
   it('should send a change in count', function(done) {
-    let yellowHealth1 = obj.clone(alertFixtures.yellowHealth);
+    const yellowHealth1 = obj.clone(alertFixtures.yellowHealth);
     yellowHealth1.response.data.objects.push(
       obj.clone(yellowHealth1.response.data.objects[0])
     );
     yellowHealth1.expires = 1;
     stubDaddy.inlineService.mock(yellowHealth1);
 
-    let yellowHealth2 = utils.clone(alertFixtures.yellowHealth);
+    const yellowHealth2 = utils.clone(alertFixtures.yellowHealth);
     stubDaddy.inlineService.mock(yellowHealth2);
 
-    let messages = [];
+    const messages = [];
 
     emitMessage();
 

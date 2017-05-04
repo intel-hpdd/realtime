@@ -25,21 +25,24 @@ import pollingRequest from '../polling-request';
 import * as fp from '@mfl/fp';
 import * as obj from '@mfl/obj';
 
-let objectsLens = fp.pathLens(['body', 'objects']);
+const objectsLens = fp.pathLens(['body', 'objects']);
 
-export const waitForCommands = fp.curry(2, function waitForCommands(headers, ids) {
-  let pickValues = fp.flow(
+export const waitForCommands = fp.curry(2, function waitForCommands(
+  headers,
+  ids
+) {
+  const pickValues = fp.flow(
     obj.pick.bind(null, ['cancelled', 'complete', 'errored']),
     obj.values
   );
 
-  let commandsFinished = fp.flow(
+  const commandsFinished = fp.flow(
     fp.map(pickValues),
     fp.map(fp.some(fp.identity)),
     fp.every(fp.identity)
   );
 
-  let s = pollingRequest('/command', {
+  const s = pollingRequest('/command', {
     headers: headers,
     qs: {
       id__in: ids,
@@ -55,9 +58,9 @@ export const waitForCommands = fp.curry(2, function waitForCommands(headers, ids
     });
 });
 
-let jobRegexp = /^\/api\/job\/(\d+)\/$/;
+const jobRegexp = /^\/api\/job\/(\d+)\/$/;
 
-let getJobIds = fp.flow(
+const getJobIds = fp.flow(
   fp.map(fp.lensProp('jobs')),
   fp.unwrap,
   fp.map(fp.invokeMethod('match', [jobRegexp])),

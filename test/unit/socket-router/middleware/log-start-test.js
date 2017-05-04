@@ -1,10 +1,10 @@
 import rewire from 'rewire';
-var logStart = rewire('../../../../socket-router/middleware/log-start');
+const logStart = rewire('../../../../socket-router/middleware/log-start');
 
-describe('log start', function () {
-  var logger, revert, next, req, resp;
+describe('log start', function() {
+  let logger, revert, next, req, resp;
 
-  beforeEach(function () {
+  beforeEach(function() {
     logger = {
       info: jasmine.createSpy('info')
     };
@@ -20,11 +20,11 @@ describe('log start', function () {
     logStart(req, resp, next);
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should call next with the request and response', function () {
+  it('should call next with the request and response', function() {
     expect(next).toHaveBeenCalledOnceWith(req, resp);
   });
 });

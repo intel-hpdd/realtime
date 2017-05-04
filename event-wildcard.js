@@ -19,25 +19,25 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-let emit = require('events').EventEmitter.prototype.emit;
+const emit = require('events').EventEmitter.prototype.emit;
 import * as obj from '@mfl/obj';
 
 export default function eventWildcard(socket, next) {
   if (socket.onevent !== onEvent) socket.onevent = onEvent;
 
   return next();
-};
+}
 
 function onEvent(packet) {
-  let args = packet.data || [];
+  const args = packet.data || [];
 
   if (packet.id != null) args.push(this.ack(packet.id));
 
   emit.apply(this, args);
 
-  let wildcardArgs = [...args];
+  const wildcardArgs = [...args];
 
-  let eventName = wildcardArgs.splice(0, 1, '*');
+  const eventName = wildcardArgs.splice(0, 1, '*');
 
   wildcardArgs[1] = obj.clone(wildcardArgs[1] || {});
 

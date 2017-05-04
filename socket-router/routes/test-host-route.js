@@ -61,4 +61,4 @@ export default function testHostRoute() {
 
     next(req, resp, stream);
   });
-};
+}

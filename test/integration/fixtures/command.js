@@ -1,4 +1,4 @@
-export default function () {
+export default function() {
   return {
     twoServers: {
       request: {
@@ -26,9 +26,7 @@ export default function () {
               dismissed: false,
               errored: false,
               id: '2',
-              jobs: [
-                '/api/job/2/'
-              ],
+              jobs: ['/api/job/2/'],
               logs: '',
               message: 'Testing Connection To Host lotus-34vm5.iml.intel.com',
               resource_uri: '/api/command/2/'
@@ -40,9 +38,7 @@ export default function () {
               dismissed: false,
               errored: false,
               id: '3',
-              jobs: [
-                '/api/job/3/'
-              ],
+              jobs: ['/api/job/3/'],
               logs: '',
               message: 'Testing Connection To Host lotus-34vm6.iml.intel.com',
               resource_uri: '/api/command/3/'
@@ -54,4 +50,4 @@ export default function () {
       expires: 0
     }
   };
-};
+}

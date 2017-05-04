@@ -39,19 +39,19 @@ import qs from 'querystring';
 import url from 'url';
 
 export default function start() {
-  let io = createIo();
+  const io = createIo();
   io.use(eventWildcard);
   io.attach(conf.REALTIME_PORT);
 
-  let isMessage = /message(\d+)/;
+  const isMessage = /message(\d+)/;
 
   io.on('connection', function(socket) {
-    let child = logger.child({ sock: socket });
+    const child = logger.child({ sock: socket });
 
     child.info('socket connected');
 
     socket.on('*', function onData(data, ack) {
-      let matches = isMessage.exec(data.eventName);
+      const matches = isMessage.exec(data.eventName);
 
       if (!matches) return;
 
@@ -65,15 +65,17 @@ export default function start() {
 
   function handleRequest(data, socket, ack, id) {
     try {
-      let errors = requestValidator(data);
+      const errors = requestValidator(data);
 
       if (errors.length) throw new Error(errors);
 
-      let options = data.options || {};
-      let method = typeof options.method !== 'string' ? 'get' : options.method;
+      const options = data.options || {};
+      const method = typeof options.method !== 'string'
+        ? 'get'
+        : options.method;
 
-      let parsedUrl = url.parse(data.path);
-      let qsObj = { qs: qs.parse(parsedUrl.query) };
+      const parsedUrl = url.parse(data.path);
+      const qsObj = { qs: qs.parse(parsedUrl.query) };
 
       socketRouter.go(
         parsedUrl.pathname,
@@ -90,7 +92,7 @@ export default function start() {
       );
     } catch (error) {
       error.statusCode = 400;
-      let err = serializeError(error);
+      const err = serializeError(error);
 
       if (ack) ack(err);
       else socket.emit(data.eventName, err);
@@ -100,4 +102,4 @@ export default function start() {
   return function shutdown() {
     io.close();
   };
-};
+}

@@ -21,6 +21,6 @@
 
 import serializeError from './index';
 
-export default function pushSerializeError (err, push) {
+export default function pushSerializeError(err, push) {
   push(null, serializeError(err));
-};
+}

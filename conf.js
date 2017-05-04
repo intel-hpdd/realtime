@@ -25,7 +25,7 @@ let confJson = {};
 
 if (process.env.NODE_ENV !== 'test') confJson = require('./conf.json');
 
-let defaults = {
+const defaults = {
   LOG_FILE: 'realtime.log',
   NODE_ENV: process.env.NODE_ENV || 'development',
   RUNNER: process.env.RUNNER

@@ -21,13 +21,12 @@
 
 import logger from '../../logger';
 
-export default function end (req, resp, stream, next) {
+export default function end(req, resp, stream, next) {
   resp.socket.once('disconnect', destroyStream);
   resp.socket.once(req.endName, destroyStream);
 
-  function destroyStream () {
-    if (!stream || stream._nil_seen || stream.ended)
-      return;
+  function destroyStream() {
+    if (!stream || stream._nil_seen || stream.ended) return;
 
     stream.destroy();
     stream = null;
@@ -35,4 +34,4 @@ export default function end (req, resp, stream, next) {
   }
 
   next(req, resp);
-};
+}

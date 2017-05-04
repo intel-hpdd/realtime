@@ -1,4 +1,4 @@
-export default function () {
+export default function() {
   return {
     twoServers: {
       request: {
@@ -23,9 +23,7 @@ export default function () {
               available_transitions: [],
               cancelled: false,
               class_name: 'TestHostConnectionJob',
-              commands: [
-                '/api/command/2/'
-              ],
+              commands: ['/api/command/2/'],
               created_at: '2015-01-09T14:18:57.519464+00:00',
               description: 'Test for host connectivity',
               errored: false,
@@ -86,9 +84,7 @@ export default function () {
                   valid: true
                 }
               },
-              steps: [
-                '/api/step/2/'
-              ],
+              steps: ['/api/step/2/'],
               wait_for: [],
               write_locks: []
             },
@@ -96,9 +92,7 @@ export default function () {
               available_transitions: [],
               cancelled: false,
               class_name: 'TestHostConnectionJob',
-              commands: [
-                '/api/command/3/'
-              ],
+              commands: ['/api/command/3/'],
               created_at: '2015-01-09T14:18:57.587166+00:00',
               description: 'Test for host connectivity',
               errored: false,
@@ -159,9 +153,7 @@ export default function () {
                   valid: true
                 }
               },
-              steps: [
-                '/api/step/3/'
-              ],
+              steps: ['/api/step/3/'],
               wait_for: [],
               write_locks: []
             }
@@ -172,4 +164,4 @@ export default function () {
       expires: 0
     }
   };
-};
+}

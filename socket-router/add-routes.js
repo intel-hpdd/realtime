@@ -25,7 +25,6 @@ import * as fp from '@mfl/fp';
 
 export default fp.once(function addRoutes() {
   routes.testHostRoute();
-  routes.srcmapReverseRoute();
   routes.healthRoute();
   routes.sessionRoute();
   //These should always be last.

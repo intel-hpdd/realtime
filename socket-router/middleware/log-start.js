@@ -21,8 +21,8 @@
 
 import logger from '../../logger';
 
-export default function logStart (req, resp, next) {
+export default function logStart(req, resp, next) {
   logger.info({ sock: resp.socket }, 'routing request');
 
   next(req, resp);
-};
+}

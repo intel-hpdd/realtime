@@ -1,10 +1,10 @@
 import rewire from 'rewire';
-var end = rewire('../../../../socket-router/middleware/end');
+const end = rewire('../../../../socket-router/middleware/end');
 
-describe('end spec', function () {
-  var logger, next, req, resp, revert, stream, onDestroy;
+describe('end spec', function() {
+  let logger, next, req, resp, revert, stream, onDestroy;
 
-  beforeEach(function () {
+  beforeEach(function() {
     logger = {
       info: jasmine.createSpy('info')
     };
@@ -30,15 +30,15 @@ describe('end spec', function () {
     onDestroy = resp.socket.once.calls.mostRecent().args[1];
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should call next with the request and response', function () {
+  it('should call next with the request and response', function() {
     expect(next).toHaveBeenCalledOnceWith(req, resp);
   });
 
-  it('should not call destroy if nil was seen', function () {
+  it('should not call destroy if nil was seen', function() {
     stream._nil_seen = true;
 
     onDestroy();
@@ -46,7 +46,7 @@ describe('end spec', function () {
     expect(stream.destroy).not.toHaveBeenCalled();
   });
 
-  it('should not call destroy if stream was ended', function () {
+  it('should not call destroy if stream was ended', function() {
     stream.ended = true;
 
     onDestroy();
@@ -54,7 +54,7 @@ describe('end spec', function () {
     expect(stream.destroy).not.toHaveBeenCalled();
   });
 
-  it('should not call destroy twice', function () {
+  it('should not call destroy twice', function() {
     onDestroy();
     onDestroy();
 

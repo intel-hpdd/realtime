@@ -1,13 +1,17 @@
 import rewire from 'rewire';
-var pushSerializeError = rewire('../../../serialize-error/push-serialize-error');
+const pushSerializeError = rewire(
+  '../../../serialize-error/push-serialize-error'
+);
 
-describe('push serialize error', function () {
-  var revert, err, push, serializeError, serializedError;
-  beforeEach(function () {
+describe('push serialize error', function() {
+  let revert, err, push, serializeError, serializedError;
+  beforeEach(function() {
     err = new Error('im an error');
     push = jasmine.createSpy('push');
     serializedError = { error: 'im an error' };
-    serializeError = jasmine.createSpy('serializeError').and.returnValue(serializedError);
+    serializeError = jasmine
+      .createSpy('serializeError')
+      .and.returnValue(serializedError);
 
     revert = pushSerializeError.__set__({
       serializeError: serializeError
@@ -16,15 +20,15 @@ describe('push serialize error', function () {
     pushSerializeError(err, push);
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should push', function () {
+  it('should push', function() {
     expect(push).toHaveBeenCalledOnceWith(null, serializedError);
   });
 
-  it('should invoke serializeError with the error', function () {
+  it('should invoke serializeError with the error', function() {
     expect(serializeError).toHaveBeenCalledOnceWith(err);
   });
 });

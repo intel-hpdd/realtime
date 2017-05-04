@@ -1,5 +1,5 @@
 import rewire from 'rewire';
-let commandUtils = rewire('../../../socket-router/command-utils');
+const commandUtils = rewire('../../../socket-router/command-utils');
 import fixtures from '../../integration/fixtures';
 import λ from 'highland';
 import * as obj from '@mfl/obj';
@@ -111,14 +111,14 @@ describe('command utils', function() {
       });
 
       it('should push an error downstream', function() {
-        let err = new Error('boom!');
+        const err = new Error('boom!');
         pollStream.write(new StreamError(err));
 
         expect(spy).toHaveBeenCalledOnceWith(err, undefined);
       });
 
       it('should not return on unfinished commands', function() {
-        let incompleteData = obj.clone(commandData);
+        const incompleteData = obj.clone(commandData);
         incompleteData.body.objects[0].complete = false;
 
         pollStream.write(incompleteData);
@@ -173,7 +173,7 @@ describe('command utils', function() {
       responseStream.end();
 
       resultStream.errors(done.fail).each(function(x) {
-        let result = fp.flow(
+        const result = fp.flow(
           fp.lensProp('objects'),
           fp.map(fp.lensProp('step_results')),
           fp.map(obj.values),
@@ -194,7 +194,7 @@ describe('command utils', function() {
     });
 
     it('should throw on error', function(done) {
-      let boom = new Error('boom!');
+      const boom = new Error('boom!');
       commandStream.write(new StreamError(boom));
 
       resultStream

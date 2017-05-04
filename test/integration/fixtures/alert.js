@@ -1,4 +1,4 @@
-export default function () {
+export default function() {
   return {
     greenHealth: {
       request: {
@@ -121,4 +121,4 @@ export default function () {
       expires: 0
     }
   };
-};
+}

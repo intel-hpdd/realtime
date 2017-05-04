@@ -21,16 +21,16 @@
 
 import * as obj from '@mfl/obj';
 
-let regexp = /csrftoken=([^;|$]+)/;
+const regexp = /csrftoken=([^;|$]+)/;
 
 export default function addCredentials(req, resp, next) {
-  let headers = {};
-  let requestHeaders = resp.socket.request.headers;
+  const headers = {};
+  const requestHeaders = resp.socket.request.headers;
 
   if (requestHeaders.cookie) {
     headers.Cookie = requestHeaders.cookie;
 
-    let csrfTokenMatch = requestHeaders.cookie.match(regexp);
+    const csrfTokenMatch = requestHeaders.cookie.match(regexp);
     if (csrfTokenMatch && csrfTokenMatch[1])
       headers['X-CSRFToken'] = csrfTokenMatch[1];
   }
@@ -46,4 +46,4 @@ export default function addCredentials(req, resp, next) {
   );
 
   next(req, resp);
-};
+}

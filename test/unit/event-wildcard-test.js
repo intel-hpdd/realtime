@@ -1,10 +1,10 @@
 import rewire from 'rewire';
-var eventWildcard = rewire('../../event-wildcard');
+const eventWildcard = rewire('../../event-wildcard');
 
-describe('event wildcard', function () {
-  var revert, emit, socket, acker, next;
+describe('event wildcard', function() {
+  let revert, emit, socket, acker, next;
 
-  beforeEach(function () {
+  beforeEach(function() {
     emit = {
       apply: jasmine.createSpy('apply')
     };
@@ -24,39 +24,41 @@ describe('event wildcard', function () {
     eventWildcard(socket, next);
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should call next', function () {
+  it('should call next', function() {
     expect(next).toHaveBeenCalledOnce();
   });
 
-  it('should override socket.onevent', function () {
+  it('should override socket.onevent', function() {
     expect(socket.onevent).toEqual(jasmine.any(Function));
   });
 
-  describe('socket.onevent', function () {
-    var packet;
+  describe('socket.onevent', function() {
+    let packet;
 
-    beforeEach(function () {
+    beforeEach(function() {
       packet = {};
-
     });
 
-    it('should default to empty data', function () {
+    it('should default to empty data', function() {
       socket.onevent(packet);
 
       expect(emit.apply).toHaveBeenCalledOnceWith(socket, []);
     });
 
-    it('should call wildcard with empty data', function () {
+    it('should call wildcard with empty data', function() {
       socket.onevent(packet);
 
-      expect(emit.apply).toHaveBeenCalledOnceWith(socket, ['*', { eventName: undefined }]);
+      expect(emit.apply).toHaveBeenCalledOnceWith(socket, [
+        '*',
+        { eventName: undefined }
+      ]);
     });
 
-    it('should push an ack if there is a packet.id', function () {
+    it('should push an ack if there is a packet.id', function() {
       packet.id = 2;
       packet.data = ['name', {}];
       socket.onevent(packet);
@@ -64,18 +66,21 @@ describe('event wildcard', function () {
       expect(socket.ack).toHaveBeenCalledOnceWith(packet.id);
     });
 
-    it('should emit the args', function () {
+    it('should emit the args', function() {
       packet.data = ['name', {}];
       socket.onevent(packet);
 
       expect(emit.apply).toHaveBeenCalledOnceWith(socket, ['name', {}]);
     });
 
-    it('should emit wildcard args', function () {
-      packet.data = ['name', {foo: 'bar'}];
+    it('should emit wildcard args', function() {
+      packet.data = ['name', { foo: 'bar' }];
       socket.onevent(packet);
 
-      expect(emit.apply).toHaveBeenCalledOnceWith(socket, ['*', {foo: 'bar', eventName: 'name'}]);
+      expect(emit.apply).toHaveBeenCalledOnceWith(socket, [
+        '*',
+        { foo: 'bar', eventName: 'name' }
+      ]);
     });
   });
 });

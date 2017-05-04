@@ -19,7 +19,7 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var errorSerializer = require('intel-logger').serializers.err;
+const errorSerializer = require('intel-logger').serializers.err;
 
 /**
  * Returns a normalized error
@@ -28,12 +28,11 @@ var errorSerializer = require('intel-logger').serializers.err;
  * @param {Error} error
  * @returns {Object}
  */
-export default function serializeError (error) {
-  if (!error.statusCode)
-    error.statusCode = 500;
+export default function serializeError(error) {
+  if (!error.statusCode) error.statusCode = 500;
 
-  var serialized = errorSerializer(error);
+  const serialized = errorSerializer(error);
   serialized.statusCode = error.statusCode;
 
   return { error: serialized };
-};
+}

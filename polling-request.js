@@ -25,10 +25,10 @@ import * as obj from '@mfl/obj';
 import apiRequest from './api-request';
 
 export default function pollingRequest(path, options) {
-  var ifNoneMatch = 0;
+  let ifNoneMatch = 0;
 
   return λ(function generator(push, next) {
-    var withHeader = obj.merge(
+    const withHeader = obj.merge(
       {},
       {
         headers: {
@@ -38,9 +38,9 @@ export default function pollingRequest(path, options) {
       options
     );
 
-    var r = apiRequest(path, withHeader);
+    const r = apiRequest(path, withHeader);
 
-    var stream = this;
+    const stream = this;
     stream._destructors.push(r.abort);
 
     r
@@ -61,9 +61,9 @@ export default function pollingRequest(path, options) {
         next();
       })
       .done(function removeAbort() {
-        var idx = stream._destructors.indexOf(r.abort);
+        const idx = stream._destructors.indexOf(r.abort);
 
         if (idx !== -1) stream._destructors.splice(idx, 1);
       });
   });
-};
+}

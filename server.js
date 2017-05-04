@@ -25,7 +25,7 @@ import start from './index';
 import logger from './logger';
 import * as fp from '@mfl/fp';
 
-let tryLogging = fp.curry(2, function tryLogging(level, msg) {
+const tryLogging = fp.curry(2, function tryLogging(level, msg) {
   try {
     logger[level].apply(logger, msg);
   } catch (e) {

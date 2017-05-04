@@ -1,4 +1,4 @@
-export default function () {
+export default function() {
   return {
     login: {
       request: {
@@ -16,8 +16,10 @@ export default function () {
       response: {
         statusCode: 201,
         headers: {
-          'set-cookie': ['sessionid=63e4f9bcd405614ca94aaf6c46f8ff64; expires=Tue, 15-Nov-2016 14:39:41 GMT; Max-Age=\
-1209600; Path=/']
+          'set-cookie': [
+            'sessionid=63e4f9bcd405614ca94aaf6c46f8ff64; expires=Tue, 15-Nov-2016 14:39:41 GMT; Max-Age=\
+1209600; Path=/'
+          ]
         },
         data: {}
       },
@@ -45,4 +47,4 @@ Max-Age=1209600; Path=/'
       expires: 0
     }
   };
-};
+}

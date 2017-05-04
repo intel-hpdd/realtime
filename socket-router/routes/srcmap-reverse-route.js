@@ -33,12 +33,12 @@ export default function srcmapReverseRoute() {
     resp,
     next
   ) {
-    let reversedStream = reverseSourceMap(req.data.stack);
+    const reversedStream = reverseSourceMap(req.data.stack);
 
     reversedStream
       .observe()
       .map(function recordToApi(stack) {
-        let headers = req.data.headers;
+        const headers = req.data.headers;
         delete req.data.headers;
 
         req.data.stack = stack;
@@ -64,4 +64,4 @@ export default function srcmapReverseRoute() {
 
     next(req, resp, reversedStream);
   });
-};
+}

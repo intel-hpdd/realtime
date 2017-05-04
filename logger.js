@@ -24,7 +24,7 @@ import conf from './conf';
 import logger from '@mfl/logger';
 import path from 'path';
 
-let level = conf.NODE_ENV === 'production'
+const level = conf.NODE_ENV === 'production'
   ? logger.LEVELS.ERROR
   : logger.LEVELS.INFO;
 
@@ -47,7 +47,7 @@ function socketSerializer(sock) {
   };
 }
 
-let message = /message(\d+)/;
+const message = /message(\d+)/;
 
 function reqSerializer(req) {
   if (!req) return false;

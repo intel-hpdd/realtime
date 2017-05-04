@@ -52,4 +52,4 @@ export default function sessionRoute() {
 
   socketRouter.post('/session', sessionRoute);
   socketRouter.delete('/session', sessionRoute);
-};
+}

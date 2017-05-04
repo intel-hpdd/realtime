@@ -3,64 +3,62 @@ import fixtures from '../../fixtures';
 import start from '../../../../index';
 import { waitForRequests } from '../../../../api-request';
 
-describe('test host route', function () {
-  var socket, shutdown, stubDaddy,
-    testHostFixtures, commandFixtures, jobFixtures;
+describe('test host route', function() {
+  let socket,
+    shutdown,
+    stubDaddy,
+    testHostFixtures,
+    commandFixtures,
+    jobFixtures;
 
-  beforeEach(function () {
+  beforeEach(function() {
     testHostFixtures = fixtures.testHost();
     commandFixtures = fixtures.command();
     jobFixtures = fixtures.job();
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     stubDaddy = utils.getStubDaddy();
 
-    stubDaddy.webService
-      .startService();
+    stubDaddy.webService.startService();
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     shutdown = start();
     socket = utils.getSocket();
   });
 
-  afterEach(function (done) {
-    stubDaddy.webService
-      .stopService(done.fail, done);
+  afterEach(function(done) {
+    stubDaddy.webService.stopService(done.fail, done);
   });
 
-  afterEach(function () {
-    stubDaddy.inlineService
-      .mockState();
+  afterEach(function() {
+    stubDaddy.inlineService.mockState();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     shutdown();
   });
 
-  afterEach(function (done) {
+  afterEach(function(done) {
     waitForRequests(done);
   });
 
-  afterEach(function (done) {
+  afterEach(function(done) {
     socket.on('disconnect', done);
     socket.close();
   });
 
-  describe('test two servers', function () {
-    beforeEach(function () {
-      stubDaddy.inlineService
-        .mock(testHostFixtures.twoServers);
+  describe('test two servers', function() {
+    beforeEach(function() {
+      stubDaddy.inlineService.mock(testHostFixtures.twoServers);
 
-      stubDaddy.inlineService
-        .mock(commandFixtures.twoServers);
+      stubDaddy.inlineService.mock(commandFixtures.twoServers);
 
-      stubDaddy.inlineService
-        .mock(jobFixtures.twoServers);
+      stubDaddy.inlineService.mock(jobFixtures.twoServers);
     });
 
-    it('should return the status', function (done) {
+    it('should return the status', function(done) {
       socket.emit('message1', {
         path: '/test_host',
         options: {
@@ -80,7 +78,7 @@ describe('test host route', function () {
         }
       });
 
-      socket.once('message1', function (data) {
+      socket.once('message1', function(data) {
         expect(data).toEqual([
           {
             address: 'lotus-34vm5.iml.intel.com',
@@ -115,7 +113,8 @@ describe('test host route', function () {
               { name: 'openssl', value: true }
             ],
             valid: true
-          }]);
+          }
+        ]);
         done();
       });
     });
