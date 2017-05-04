@@ -1,7 +1,7 @@
-var utils = require('../../utils');
-var start = require('../../../../index');
-var clientErrorFixtures = require('../../fixtures/client-error');
-var waitForRequests = require('../../../../api-request').waitForRequests;
+import utils from '../../utils';
+import start from '../../../../index';
+import clientErrorFixtures from '../../fixtures/client-error';
+import { waitForRequests } from '../../../../api-request';
 
 describe('source map reverse route', function () {
   var ack, socket, shutdown, stubDaddy;

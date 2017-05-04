@@ -1,4 +1,4 @@
-var rewire = require('rewire');
+import rewire from 'rewire';
 var logStart = rewire('../../../../socket-router/middleware/log-start');
 
 describe('log start', function () {

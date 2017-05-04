@@ -19,37 +19,35 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var λ = require('highland');
-var through = require('intel-through');
-var apiRequest = require('../../api-request');
-var socketRouter = require('../index');
-var pushSerializeError = require('../../serialize-error/push-serialize-error');
-var commandUtils = require('../command-utils');
-var fp = require('intel-fp/dist/fp');
+import λ from 'highland';
 
-module.exports = function testHostRoute () {
-  socketRouter.post('/test_host', function getStatus (req, resp, next) {
-    var removeUndefined = fp.filter(fp.flow(fp.eq(undefined), fp.not));
-    var pullIds = fp.flow(
+import through from '@mfl/through';
+import apiRequest from '../../api-request';
+import socketRouter from '../index';
+import pushSerializeError from '../../serialize-error/push-serialize-error';
+import commandUtils from '../command-utils';
+import * as fp from '@mfl/fp';
+
+module.exports = function testHostRoute() {
+  socketRouter.post('/test_host', function getStatus(req, resp, next) {
+    const removeUndefined = fp.filter(fp.flow(fp.eq(undefined), fp.not));
+    const pullIds = fp.flow(
       fp.pathLens(['body', 'objects']),
       fp.map(fp.pathLens(['command', 'id'])),
       removeUndefined
     );
 
-    var stream = λ(function generator (push, next) {
+    const stream = λ(function generator(push, next) {
       apiRequest('/test_host', req.data)
         .map(pullIds)
         .filter(fp.lensProp('length'))
         .flatMap(commandUtils.waitForCommands(req.data.headers))
         .through(commandUtils.getSteps(req.data.headers))
         .errors(pushSerializeError)
-        .pull(function pullResponse (err, x) {
-          if (err)
-            push(err);
-          else if (x === λ.nil)
-            push(null, null);
-          else
-            push(null, x);
+        .pull(function pullResponse(err, x) {
+          if (err) push(err);
+          else if (x === λ.nil) push(null, null);
+          else push(null, x);
 
           next();
         });

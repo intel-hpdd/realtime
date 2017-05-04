@@ -19,10 +19,11 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var routes = require('./routes');
-var fp = require('intel-fp/dist/fp');
+import routes from './routes';
 
-module.exports = fp.once(function addRoutes () {
+import * as fp from '@mfl/fp';
+
+module.exports = fp.once(function addRoutes() {
   routes.testHostRoute();
   routes.srcmapReverseRoute();
   routes.healthRoute();

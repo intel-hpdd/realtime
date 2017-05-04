@@ -1,9 +1,9 @@
-var getStubDaddy = require('intel-stub-daddy');
-var conf = require('../../../conf');
-var url = require('url');
+import getStubDaddy from '@mfl/stub-daddy';
+import conf from '../../../conf';
+import url from 'url';
 
-module.exports = function invokeStubDaddy () {
-  var stubDaddy = getStubDaddy({port: url.parse(conf.SERVER_HTTP_URL).port});
+module.exports = function invokeStubDaddy() {
+  let stubDaddy = getStubDaddy({ port: url.parse(conf.SERVER_HTTP_URL).port });
 
   return stubDaddy;
 };

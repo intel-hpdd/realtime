@@ -1,6 +1,6 @@
-var client = require('socket.io-client');
-var conf = require('../../../conf');
-var format = require('util').format;
+import client from 'socket.io-client';
+import conf from '../../../conf';
+import { format } from 'util';
 
 module.exports = function invokeSocket (extraHeaders) {
   return client(format('http://localhost:%s', conf.REALTIME_PORT), {

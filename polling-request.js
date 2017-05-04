@@ -19,20 +19,24 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
+import λ from 'highland';
 
-var λ = require('highland');
-var obj = require('intel-obj');
-var apiRequest = require('./api-request');
+import * as obj from '@mfl/obj';
+import apiRequest from './api-request';
 
-module.exports = function pollingRequest (path, options) {
+module.exports = function pollingRequest(path, options) {
   var ifNoneMatch = 0;
 
-  return λ(function generator (push, next) {
-    var withHeader = obj.merge({}, {
-      headers: {
-        'If-None-Match': ifNoneMatch
-      }
-    }, options);
+  return λ(function generator(push, next) {
+    var withHeader = obj.merge(
+      {},
+      {
+        headers: {
+          'If-None-Match': ifNoneMatch
+        }
+      },
+      options
+    );
 
     var r = apiRequest(path, withHeader);
 
@@ -40,7 +44,7 @@ module.exports = function pollingRequest (path, options) {
     stream._destructors.push(r.abort);
 
     r
-      .filter(function remove304s (x) {
+      .filter(function remove304s(x) {
         if (x.statusCode !== 304) {
           ifNoneMatch = x.headers.etag;
           return true;
@@ -48,19 +52,18 @@ module.exports = function pollingRequest (path, options) {
 
         next();
       })
-      .errors(function pushErr (err) {
+      .errors(function pushErr(err) {
         push(err);
         next();
       })
-      .each(function pushData (x) {
+      .each(function pushData(x) {
         push(null, x);
         next();
       })
-      .done(function removeAbort () {
+      .done(function removeAbort() {
         var idx = stream._destructors.indexOf(r.abort);
 
-        if (idx !== -1)
-          stream._destructors.splice(idx, 1);
+        if (idx !== -1) stream._destructors.splice(idx, 1);
       });
   });
 };

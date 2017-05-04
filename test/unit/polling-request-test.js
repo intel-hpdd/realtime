@@ -1,41 +1,40 @@
-var proxyquire = require('proxyquire').noPreserveCache().noCallThru();
-var λ = require('highland');
-var fp = require('intel-fp/dist/fp');
+const proxyquire = require('proxyquire').noPreserveCache().noCallThru();
+import λ from 'highland';
+import * as fp from '@mfl/fp';
 
-describe('polling request', function () {
-  var pollingRequest, apiRequest, s;
+describe('polling request', function() {
+  let pollingRequest, apiRequest, s;
 
-  beforeEach(function () {
-    apiRequest = jasmine.createSpy('apiRequest')
-      .and.callFake(function () {
-        s = λ();
-        s.abort = jasmine.createSpy('abort');
-        return s;
-      });
+  beforeEach(function() {
+    apiRequest = jasmine.createSpy('apiRequest').and.callFake(function() {
+      s = λ();
+      s.abort = jasmine.createSpy('abort');
+      return s;
+    });
 
     pollingRequest = proxyquire('../../polling-request', {
       './api-request': apiRequest
     });
   });
 
-  it('should be a function', function () {
+  it('should be a function', function() {
     expect(pollingRequest).toEqual(jasmine.any(Function));
   });
 
-  describe('invoking', function () {
-    var r;
+  describe('invoking', function() {
+    let r;
 
-    beforeEach(function () {
+    beforeEach(function() {
       r = pollingRequest('/foo', {
         bar: 'baz'
       });
     });
 
-    it('should return a stream', function () {
+    it('should return a stream', function() {
       expect(λ.isStream(r)).toBe(true);
     });
 
-    it('should make a request with the params', function () {
+    it('should make a request with the params', function() {
       r.each(fp.noop);
 
       expect(apiRequest).toHaveBeenCalledOnceWith('/foo', {
@@ -46,19 +45,16 @@ describe('polling request', function () {
       });
     });
 
-    it('should emit data', function (done) {
-      r
-        .stopOnError(done.fail)
-        .each(function (x) {
-          expect(x)
-            .toEqual({
-              statusCode: 200,
-              headers: {
-                etag: '232983902184901841'
-              }
-            });
-          done();
+    it('should emit data', function(done) {
+      r.stopOnError(done.fail).each(function(x) {
+        expect(x).toEqual({
+          statusCode: 200,
+          headers: {
+            etag: '232983902184901841'
+          }
         });
+        done();
+      });
 
       s.write({
         statusCode: 200,
@@ -69,9 +65,9 @@ describe('polling request', function () {
       s.end();
     });
 
-    it('should emit errors', function (done) {
+    it('should emit errors', function(done) {
       r
-        .stopOnError(function (err) {
+        .stopOnError(function(err) {
           expect(err.message).toEqual('boom!');
           done();
         })
@@ -84,7 +80,7 @@ describe('polling request', function () {
       s.end();
     });
 
-    it('should abort if stream is destroyed', function () {
+    it('should abort if stream is destroyed', function() {
       r.each(fp.noop);
 
       r.destroy();
@@ -92,7 +88,7 @@ describe('polling request', function () {
       expect(s.abort).toHaveBeenCalledOnce();
     });
 
-    it('should not abort if request has finished', function () {
+    it('should not abort if request has finished', function() {
       r.each(fp.noop);
       s.end();
       r.destroy();
@@ -100,11 +96,10 @@ describe('polling request', function () {
       expect(s.abort).not.toHaveBeenCalled();
     });
 
-    it('should filter out 304s', function () {
-      var spy = jasmine.createSpy('spy');
+    it('should filter out 304s', function() {
+      const spy = jasmine.createSpy('spy');
 
-      r
-        .each(spy);
+      r.each(spy);
 
       s.write({
         statusCode: 304,
@@ -117,9 +112,8 @@ describe('polling request', function () {
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should update if-none-match with last etag', function () {
-      r
-        .each(fp.noop);
+    it('should update if-none-match with last etag', function() {
+      r.each(fp.noop);
 
       s.write({
         statusCode: 200,

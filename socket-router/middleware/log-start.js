@@ -19,7 +19,7 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var logger = require('../../logger');
+import logger from '../../logger';
 
 module.exports = function logStart (req, resp, next) {
   logger.info({ sock: resp.socket }, 'routing request');

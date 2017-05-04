@@ -1,4 +1,4 @@
-var rewire = require('rewire');
+import rewire from 'rewire';
 var pushSerializeError = rewire('../../../serialize-error/push-serialize-error');
 
 describe('push serialize error', function () {

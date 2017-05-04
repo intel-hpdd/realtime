@@ -19,15 +19,16 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-const getRouter = require('intel-router').default;
-const logStart = require('./middleware/log-start');
-const addCredentials = require('./middleware/add-credentials');
-const end = require('./middleware/end');
+import getRouter from '@mfl/router';
+
+import logStart from './middleware/log-start';
+import addCredentials from './middleware/add-credentials';
+import end from './middleware/end';
 
 module.exports = getRouter()
   .addStart(logStart)
   .addStart(addCredentials)
   .addEnd(end);
 
-var addRoutes = require('./add-routes');
+import addRoutes from './add-routes';
 addRoutes();

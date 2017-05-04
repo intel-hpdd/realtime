@@ -1,6 +1,6 @@
 var proxyquire = require('proxyquire').noPreserveCache().noCallThru();
-var λ = require('highland');
-var stream = require('stream');
+import λ from 'highland';
+import stream from 'stream';
 
 describe('reverser', function () {
   var through, fs, conf, reverser, srcmapReverseFile, srcmapReverse, s, srcMapPath,

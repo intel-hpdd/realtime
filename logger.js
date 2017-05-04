@@ -19,11 +19,14 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var conf = require('./conf');
-var logger = require('intel-logger');
-var path = require('path');
+import conf from './conf';
 
-var level = (conf.NODE_ENV === 'production' ? logger.LEVELS.ERROR : logger.LEVELS.INFO);
+import logger from '@mfl/logger';
+import path from 'path';
+
+let level = conf.NODE_ENV === 'production'
+  ? logger.LEVELS.ERROR
+  : logger.LEVELS.INFO;
 
 module.exports = logger.default({
   name: 'realtime',
@@ -36,20 +39,18 @@ module.exports = logger.default({
   }
 });
 
-function socketSerializer (sock) {
-  if (!sock)
-    return false;
+function socketSerializer(sock) {
+  if (!sock) return false;
 
   return {
     id: sock.id
   };
 }
 
-var message = /message(\d+)/;
+let message = /message(\d+)/;
 
-function reqSerializer (req) {
-  if (!req)
-    return false;
+function reqSerializer(req) {
+  if (!req) return false;
 
   return {
     path: (req.matches && req.matches[0]) || null,

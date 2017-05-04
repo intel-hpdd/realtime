@@ -19,27 +19,31 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var obj = require('intel-obj');
+import * as obj from '@mfl/obj';
 
-var regexp = /csrftoken=([^;|$]+)/;
+let regexp = /csrftoken=([^;|$]+)/;
 
-module.exports = function addCredentials (req, resp, next) {
-  var headers = {};
-  var requestHeaders = resp.socket.request.headers;
+module.exports = function addCredentials(req, resp, next) {
+  let headers = {};
+  let requestHeaders = resp.socket.request.headers;
 
   if (requestHeaders.cookie) {
     headers.Cookie = requestHeaders.cookie;
 
-    var csrfTokenMatch = requestHeaders.cookie.match(regexp);
+    let csrfTokenMatch = requestHeaders.cookie.match(regexp);
     if (csrfTokenMatch && csrfTokenMatch[1])
       headers['X-CSRFToken'] = csrfTokenMatch[1];
   }
 
   headers['User-Agent'] = requestHeaders['user-agent'];
 
-  req.data = obj.merge({}, {
-    headers: headers
-  }, req.data);
+  req.data = obj.merge(
+    {},
+    {
+      headers: headers
+    },
+    req.data
+  );
 
   next(req, resp);
 };

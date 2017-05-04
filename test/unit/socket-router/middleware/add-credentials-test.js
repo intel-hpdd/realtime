@@ -1,4 +1,4 @@
-var addCredentials = require('../../../../socket-router/middleware/add-credentials');
+import addCredentials from '../../../../socket-router/middleware/add-credentials';
 
 describe('add credentials', function () {
   var next, req, resp;

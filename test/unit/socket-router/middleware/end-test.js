@@ -1,4 +1,4 @@
-var rewire = require('rewire');
+import rewire from 'rewire';
 var end = rewire('../../../../socket-router/middleware/end');
 
 describe('end spec', function () {

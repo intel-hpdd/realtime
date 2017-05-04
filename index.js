@@ -19,63 +19,64 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var createIo = require('socket.io');
-var socketRouter = require('./socket-router');
-var requestValidator = require('./request-validator');
-var serializeError = require('./serialize-error');
-var eventWildcard = require('./event-wildcard');
-var conf = require('./conf');
-var logger = require('./logger');
-var obj = require('intel-obj');
+import createIo from 'socket.io';
+
+import socketRouter from './socket-router';
+import requestValidator from './request-validator';
+import serializeError from './serialize-error';
+import eventWildcard from './event-wildcard';
+import conf from './conf';
+import logger from './logger';
+import * as obj from '@mfl/obj';
 
 // Don't limit to pool to 5 in node 0.10.x
-var https = require('https');
-var http = require('http');
+import https from 'https';
+
+import http from 'http';
 https.globalAgent.maxSockets = http.globalAgent.maxSockets = Infinity;
 
-var qs = require('querystring');
-var url = require('url');
+import qs from 'querystring';
+import url from 'url';
 
-module.exports = function start () {
-  var io = createIo();
+module.exports = function start() {
+  let io = createIo();
   io.use(eventWildcard);
   io.attach(conf.REALTIME_PORT);
 
-  var isMessage = /message(\d+)/;
+  let isMessage = /message(\d+)/;
 
-  io.on('connection', function (socket) {
-    var child = logger.child({ sock: socket });
+  io.on('connection', function(socket) {
+    let child = logger.child({ sock: socket });
 
     child.info('socket connected');
 
-    socket.on('*', function onData (data, ack) {
-      var matches = isMessage.exec(data.eventName);
+    socket.on('*', function onData(data, ack) {
+      let matches = isMessage.exec(data.eventName);
 
-      if (!matches)
-        return;
+      if (!matches) return;
 
       handleRequest(data, socket, ack, matches[1]);
     });
 
-    socket.on('error', function onError (err) {
+    socket.on('error', function onError(err) {
       child.error({ err: err }, 'socket error');
     });
   });
 
-  function handleRequest (data, socket, ack, id) {
+  function handleRequest(data, socket, ack, id) {
     try {
-      var errors = requestValidator(data);
+      let errors = requestValidator(data);
 
-      if (errors.length)
-        throw new Error(errors);
+      if (errors.length) throw new Error(errors);
 
-      var options = data.options || {};
-      var method = (typeof options.method !== 'string' ? 'get' : options.method);
+      let options = data.options || {};
+      let method = typeof options.method !== 'string' ? 'get' : options.method;
 
-      var parsedUrl = url.parse(data.path);
-      var qsObj =  { qs: qs.parse(parsedUrl.query) };
+      let parsedUrl = url.parse(data.path);
+      let qsObj = { qs: qs.parse(parsedUrl.query) };
 
-      socketRouter.go(parsedUrl.pathname,
+      socketRouter.go(
+        parsedUrl.pathname,
         {
           verb: method,
           data: obj.merge({}, options, qsObj),
@@ -89,16 +90,14 @@ module.exports = function start () {
       );
     } catch (error) {
       error.statusCode = 400;
-      var err = serializeError(error);
+      let err = serializeError(error);
 
-      if (ack)
-        ack(err);
-      else
-        socket.emit(data.eventName, err);
+      if (ack) ack(err);
+      else socket.emit(data.eventName, err);
     }
   }
 
-  return function shutdown () {
+  return function shutdown() {
     io.close();
   };
 };

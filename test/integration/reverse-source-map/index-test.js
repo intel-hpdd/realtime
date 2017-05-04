@@ -1,5 +1,5 @@
-var reverseSourceMap = require('../../../reverse-source-map');
-var clientError = require('../../integration/fixtures/client-error');
+import reverseSourceMap from '../../../reverse-source-map';
+import clientError from '../../integration/fixtures/client-error';
 
 describe('reverse source map', function () {
   it('should reverse a trace', function (done) {

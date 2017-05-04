@@ -1,7 +1,7 @@
-var utils = require('../../utils');
-var getSessionFixtures = require('../../fixtures/session');
-var start = require('../../../../index');
-var waitForRequests = require('../../../../api-request').waitForRequests;
+import utils from '../../utils';
+import getSessionFixtures from '../../fixtures/session';
+import start from '../../../../index';
+import { waitForRequests } from '../../../../api-request';
 
 describe('session route', () => {
   var socket, sessionFixtures, stubDaddy, shutdown, messageName;

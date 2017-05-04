@@ -19,21 +19,26 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var fp = require('intel-fp/dist/fp');
-var apiRequest = require('../../api-request');
-var socketRouter = require('../index');
-var pushSerializeError = require('../../serialize-error/push-serialize-error');
-var reverseSourceMap = require('../../reverse-source-map');
-var logger = require('../../logger');
+import * as fp from '@mfl/fp';
 
-module.exports = function srcmapReverseRoute () {
-  socketRouter.post('/srcmap-reverse', function srcmapReverseHandler (req, resp, next) {
-    var reversedStream = reverseSourceMap(req.data.stack);
+import apiRequest from '../../api-request';
+import socketRouter from '../index';
+import pushSerializeError from '../../serialize-error/push-serialize-error';
+import reverseSourceMap from '../../reverse-source-map';
+import logger from '../../logger';
+
+module.exports = function srcmapReverseRoute() {
+  socketRouter.post('/srcmap-reverse', function srcmapReverseHandler(
+    req,
+    resp,
+    next
+  ) {
+    let reversedStream = reverseSourceMap(req.data.stack);
 
     reversedStream
       .observe()
-      .map(function recordToApi (stack) {
-        var headers = req.data.headers;
+      .map(function recordToApi(stack) {
+        let headers = req.data.headers;
         delete req.data.headers;
 
         req.data.stack = stack;
@@ -45,13 +50,13 @@ module.exports = function srcmapReverseRoute () {
         };
       })
       .flatMap(apiRequest('/client_error'))
-      .stopOnError(function (err) {
+      .stopOnError(function(err) {
         logger.error({ err: err });
       })
       .each(fp.noop);
 
     reversedStream
-      .map(function setData (stack) {
+      .map(function setData(stack) {
         return { data: stack };
       })
       .stopOnError(pushSerializeError)

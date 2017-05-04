@@ -19,21 +19,16 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-const socketRouter = require('../index');
-const obj = require('intel-obj');
-const apiRequest = require('../../api-request');
-const pushSerializeError = require('../../serialize-error/push-serialize-error');
-const fp = require ('intel-fp/dist/fp');
+import socketRouter from '../index';
 
-module.exports = function sessionRoute () {
+import * as obj from '@mfl/obj';
+import apiRequest from '../../api-request';
+import pushSerializeError from '../../serialize-error/push-serialize-error';
+import * as fp from '@mfl/fp';
+
+module.exports = function sessionRoute() {
   const sessionRoute = (req, resp, next) => {
-    const stream = processSession(
-      apiRequest(
-        '/session',
-        req.data
-      ),
-      resp
-    );
+    const stream = processSession(apiRequest('/session', req.data), resp);
 
     next(req, resp, stream);
   };
@@ -43,16 +38,16 @@ module.exports = function sessionRoute () {
     const headers = resp.socket.request.headers;
 
     return request
-     .map(x => x.headers['set-cookie'])
-     .map(fp.find(x => x.match(regexp)))
-     .tap(
-       fp.flow(
-         x => x.split('; ')[0],
-         x => headers.cookie = headers.cookie.replace(regexp, () => `${x}`)
-       )
-     )
-     .errors(pushSerializeError)
-     .each(resp.ack.bind(resp.ack));
+      .map(x => x.headers['set-cookie'])
+      .map(fp.find(x => x.match(regexp)))
+      .tap(
+        fp.flow(
+          x => x.split('; ')[0],
+          x => (headers.cookie = headers.cookie.replace(regexp, () => `${x}`))
+        )
+      )
+      .errors(pushSerializeError)
+      .each(resp.ack.bind(resp.ack));
   };
 
   socketRouter.post('/session', sessionRoute);

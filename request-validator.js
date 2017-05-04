@@ -19,7 +19,8 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var Validator = require('jsonschema').Validator;
+import { Validator } from 'jsonschema';
+
 var validator = new Validator();
 
 var schema = {

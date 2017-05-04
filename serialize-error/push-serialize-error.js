@@ -19,7 +19,7 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var serializeError = require('./index');
+import serializeError from './index';
 
 module.exports = function pushSerializeError (err, push) {
   push(null, serializeError(err));

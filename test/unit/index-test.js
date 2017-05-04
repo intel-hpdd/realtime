@@ -1,4 +1,4 @@
-var rewire = require('rewire');
+import rewire from 'rewire';
 var start = rewire('../../index');
 
 describe('realtime index test', function () {

@@ -1,25 +1,31 @@
-var utils = require('../../utils');
-var getAlertFixtures = require('../../fixtures/alert');
-var start = require('../../../../index');
-var waitForRequests = require('../../../../api-request').waitForRequests;
-var obj = require('intel-obj');
+import utils from '../../utils';
+import getAlertFixtures from '../../fixtures/alert';
+import start from '../../../../index';
+import { waitForRequests } from '../../../../api-request';
+import * as obj from '@mfl/obj';
 
-describe('health route', function () {
-  var socket, stubDaddy, alertFixtures, shutdown, messageName, emitMessage, onceMessage, onMessage;
+describe('health route', function() {
+  let socket,
+    stubDaddy,
+    alertFixtures,
+    shutdown,
+    messageName,
+    emitMessage,
+    onceMessage,
+    onMessage;
 
-  beforeEach(function () {
+  beforeEach(function() {
     messageName = 'message1';
     alertFixtures = getAlertFixtures();
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     stubDaddy = utils.getStubDaddy();
 
-    stubDaddy.webService
-      .startService();
+    stubDaddy.webService.startService();
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     shutdown = start();
     socket = utils.getSocket();
     emitMessage = socket.emit.bind(socket, messageName, { path: '/health' });
@@ -27,144 +33,140 @@ describe('health route', function () {
     onMessage = socket.on.bind(socket, messageName);
   });
 
-  afterEach(function (done) {
-    stubDaddy.webService
-      .stopService(done.fail, done);
+  afterEach(function(done) {
+    stubDaddy.webService.stopService(done.fail, done);
   });
 
-  afterEach(function () {
-    stubDaddy.inlineService
-      .mockState();
+  afterEach(function() {
+    stubDaddy.inlineService.mockState();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     shutdown();
   });
 
-  afterEach(function (done) {
+  afterEach(function(done) {
     waitForRequests(done);
   });
 
-  afterEach(function (done) {
+  afterEach(function(done) {
     socket.on('disconnect', done);
     socket.close();
   });
 
-  describe('no alerts', function () {
-    beforeEach(function () {
-      stubDaddy.inlineService
-        .mock(alertFixtures.greenHealth);
+  describe('no alerts', function() {
+    beforeEach(function() {
+      stubDaddy.inlineService.mock(alertFixtures.greenHealth);
     });
 
-    it('should return good health', function (done) {
+    it('should return good health', function(done) {
       emitMessage();
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.health).toBe('GOOD');
         done();
       });
     });
 
-    it('should return a count of alerts', function (done) {
+    it('should return a count of alerts', function(done) {
       emitMessage();
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.count).toEqual(0);
         done();
       });
     });
   });
 
-  describe('warning alerts', function () {
-    beforeEach(function () {
-      stubDaddy.inlineService
-        .mock(alertFixtures.yellowHealth);
+  describe('warning alerts', function() {
+    beforeEach(function() {
+      stubDaddy.inlineService.mock(alertFixtures.yellowHealth);
     });
 
-    it('should return warning health', function (done) {
+    it('should return warning health', function(done) {
       emitMessage();
 
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.health).toBe('WARNING');
         done();
       });
     });
 
-    it('should return a count of alerts', function (done) {
+    it('should return a count of alerts', function(done) {
       emitMessage();
 
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.count).toEqual(1);
         done();
       });
     });
   });
 
-  describe('error alerts', function () {
-    beforeEach(function () {
-      stubDaddy.inlineService
-        .mock(alertFixtures.redHealth);
+  describe('error alerts', function() {
+    beforeEach(function() {
+      stubDaddy.inlineService.mock(alertFixtures.redHealth);
     });
 
-    it('should return error health', function (done) {
+    it('should return error health', function(done) {
       emitMessage();
 
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.health).toBe('ERROR');
         done();
       });
     });
 
-    it('should return a count of alerts', function (done) {
+    it('should return a count of alerts', function(done) {
       emitMessage();
 
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.count).toEqual(1);
         done();
       });
     });
   });
 
-  describe('warning + error alerts', function () {
-    beforeEach(function () {
-      alertFixtures.redHealth.response.data.objects.splice(1, 0, alertFixtures.yellowHealth.response.data.objects[0]);
+  describe('warning + error alerts', function() {
+    beforeEach(function() {
+      alertFixtures.redHealth.response.data.objects.splice(
+        1,
+        0,
+        alertFixtures.yellowHealth.response.data.objects[0]
+      );
 
-      stubDaddy.inlineService
-        .mock(alertFixtures.redHealth);
+      stubDaddy.inlineService.mock(alertFixtures.redHealth);
     });
 
-    it('should return error health', function (done) {
+    it('should return error health', function(done) {
       emitMessage();
 
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.health).toBe('ERROR');
         done();
       });
     });
 
-    it('should return a count of alerts', function (done) {
+    it('should return a count of alerts', function(done) {
       emitMessage();
 
-      onceMessage(function (data) {
+      onceMessage(function(data) {
         expect(data.count).toEqual(2);
         done();
       });
     });
   });
 
-  it('should send two responses', function (done) {
-    var greenHealth = utils.clone(alertFixtures.greenHealth);
+  it('should send two responses', function(done) {
+    let greenHealth = utils.clone(alertFixtures.greenHealth);
     greenHealth.expires = 1;
 
-    stubDaddy.inlineService
-      .mock(greenHealth);
+    stubDaddy.inlineService.mock(greenHealth);
 
-    stubDaddy.inlineService
-      .mock(alertFixtures.yellowHealth);
+    stubDaddy.inlineService.mock(alertFixtures.yellowHealth);
 
-    var messages = [];
+    let messages = [];
 
     emitMessage();
 
-    onMessage(function (data) {
+    onMessage(function(data) {
       messages.push(data);
 
       if (messages.length === 2) {
@@ -177,22 +179,22 @@ describe('health route', function () {
     });
   });
 
-  it('should send a change in count', function (done) {
-    var yellowHealth1 = obj.clone(alertFixtures.yellowHealth);
-    yellowHealth1.response.data.objects.push(obj.clone(yellowHealth1.response.data.objects[0]));
+  it('should send a change in count', function(done) {
+    let yellowHealth1 = obj.clone(alertFixtures.yellowHealth);
+    yellowHealth1.response.data.objects.push(
+      obj.clone(yellowHealth1.response.data.objects[0])
+    );
     yellowHealth1.expires = 1;
-    stubDaddy.inlineService
-      .mock(yellowHealth1);
+    stubDaddy.inlineService.mock(yellowHealth1);
 
-    var yellowHealth2 = utils.clone(alertFixtures.yellowHealth);
-    stubDaddy.inlineService
-      .mock(yellowHealth2);
+    let yellowHealth2 = utils.clone(alertFixtures.yellowHealth);
+    stubDaddy.inlineService.mock(yellowHealth2);
 
-    var messages = [];
+    let messages = [];
 
     emitMessage();
 
-    onMessage(function (data) {
+    onMessage(function(data) {
       messages.push(data);
 
       if (messages.length === 2) {
@@ -205,27 +207,26 @@ describe('health route', function () {
     });
   });
 
-  describe('handling error', function () {
-    var redHealth;
+  describe('handling error', function() {
+    let redHealth;
 
-    beforeEach(function () {
+    beforeEach(function() {
       redHealth = utils.clone(alertFixtures.redHealth);
       redHealth.response.statusCode = 500;
       redHealth.response.data = { err: 'boom!' };
 
-      stubDaddy.inlineService
-        .mock(redHealth);
+      stubDaddy.inlineService.mock(redHealth);
 
       emitMessage();
     });
 
-    it('should send error', function (done) {
-      onceMessage(function (data) {
+    it('should send error', function(done) {
+      onceMessage(function(data) {
         expect(data).toEqual({
           error: {
             name: 'Error',
             message: '{"err":"boom!"} From GET request to ' +
-            '/api/alert/?active=true&severity__in=WARNING&severity__in=ERROR&limit=0',
+              '/api/alert/?active=true&severity__in=WARNING&severity__in=ERROR&limit=0',
             stack: jasmine.any(String),
             statusCode: 500
           }

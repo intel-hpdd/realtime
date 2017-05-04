@@ -1,23 +1,24 @@
-var fp = require('intel-fp/dist/fp');
-var rewire = require('rewire');
-var serializeError = rewire('../../../serialize-error');
+import * as fp from '@mfl/fp';
+import rewire from 'rewire';
+let serializeError = rewire('../../../serialize-error');
 
-describe('error handler', function () {
-  var error, errorSerializer, revert;
+describe('error handler', function() {
+  let error, errorSerializer, revert;
 
-  beforeEach(function () {
-    errorSerializer = jasmine.createSpy('errorSerializer')
+  beforeEach(function() {
+    errorSerializer = jasmine
+      .createSpy('errorSerializer')
       .and.callFake(fp.identity);
     revert = serializeError.__set__('errorSerializer', errorSerializer);
 
     error = new Error('foo');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should return a normalized response', function () {
+  it('should return a normalized response', function() {
     error.statusCode = 404;
 
     expect(serializeError(error)).toEqual({
@@ -25,8 +26,8 @@ describe('error handler', function () {
     });
   });
 
-  it('should add a status code if it\'s missing', function () {
-    var result = serializeError(error);
+  it("should add a status code if it's missing", function() {
+    let result = serializeError(error);
 
     expect(result.error.statusCode).toEqual(500);
   });

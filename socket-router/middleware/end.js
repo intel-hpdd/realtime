@@ -19,7 +19,7 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var logger = require('../../logger');
+import logger from '../../logger';
 
 module.exports = function end (req, resp, stream, next) {
   resp.socket.once('disconnect', destroyStream);

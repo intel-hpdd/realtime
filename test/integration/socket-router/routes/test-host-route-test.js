@@ -1,7 +1,7 @@
-var utils = require('../../utils');
-var fixtures = require('../../fixtures');
-var start = require('../../../../index');
-var waitForRequests = require('../../../../api-request').waitForRequests;
+import utils from '../../utils';
+import fixtures from '../../fixtures';
+import start from '../../../../index';
+import { waitForRequests } from '../../../../api-request';
 
 describe('test host route', function () {
   var socket, shutdown, stubDaddy,

@@ -1,4 +1,4 @@
-var rewire = require('rewire');
+import rewire from 'rewire';
 var eventWildcard = rewire('../../event-wildcard');
 
 describe('event wildcard', function () {

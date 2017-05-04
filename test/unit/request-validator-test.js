@@ -1,4 +1,4 @@
-var requestValidator = require('../../request-validator');
+import requestValidator from '../../request-validator';
 
 describe('request channel validator', function () {
 

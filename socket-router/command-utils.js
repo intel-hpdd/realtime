@@ -19,26 +19,27 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var apiRequest = require('../api-request');
-var pollingRequest = require('../polling-request');
-var fp = require('intel-fp/dist/fp');
-var obj = require('intel-obj');
+import apiRequest from '../api-request';
 
-var objectsLens = fp.pathLens(['body', 'objects']);
+import pollingRequest from '../polling-request';
+import * as fp from '@mfl/fp';
+import * as obj from '@mfl/obj';
 
-exports.waitForCommands = fp.curry(2, function waitForCommands (headers, ids) {
-  var pickValues = fp.flow(
+let objectsLens = fp.pathLens(['body', 'objects']);
+
+exports.waitForCommands = fp.curry(2, function waitForCommands(headers, ids) {
+  let pickValues = fp.flow(
     obj.pick.bind(null, ['cancelled', 'complete', 'errored']),
     obj.values
   );
 
-  var commandsFinished = fp.flow(
+  let commandsFinished = fp.flow(
     fp.map(pickValues),
     fp.map(fp.some(fp.identity)),
     fp.every(fp.identity)
   );
 
-  var s = pollingRequest('/command', {
+  let s = pollingRequest('/command', {
     headers: headers,
     qs: {
       id__in: ids,
@@ -49,24 +50,24 @@ exports.waitForCommands = fp.curry(2, function waitForCommands (headers, ids) {
   return s
     .map(objectsLens)
     .filter(commandsFinished)
-    .tap(function destroyOnCompletion () {
+    .tap(function destroyOnCompletion() {
       process.nextTick(s.destroy.bind(s));
     });
 });
 
-var jobRegexp = /^\/api\/job\/(\d+)\/$/;
+let jobRegexp = /^\/api\/job\/(\d+)\/$/;
 
-var getJobIds = fp.flow(
+let getJobIds = fp.flow(
   fp.map(fp.lensProp('jobs')),
   fp.unwrap,
   fp.map(fp.invokeMethod('match', [jobRegexp])),
   fp.map(fp.lensProp('1'))
 );
 
-exports.getSteps = fp.curry(2, function getSteps (headers, s) {
+exports.getSteps = fp.curry(2, function getSteps(headers, s) {
   return s
     .map(getJobIds)
-    .flatMap(function getJobs (ids) {
+    .flatMap(function getJobs(ids) {
       return apiRequest('/job', {
         headers: headers,
         qs: {
@@ -77,7 +78,9 @@ exports.getSteps = fp.curry(2, function getSteps (headers, s) {
       });
     })
     .map(objectsLens)
-    .map(fp.map(function getSteps (job) {
-      return job.step_results[job.steps[0]];
-    }));
+    .map(
+      fp.map(function getSteps(job) {
+        return job.step_results[job.steps[0]];
+      })
+    );
 });

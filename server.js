@@ -19,12 +19,13 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var conf = require('./conf');
-var start = require('./index');
-var logger = require('./logger');
-var fp = require('intel-fp/dist/fp');
+import conf from './conf';
 
-var tryLogging = fp.curry(2, function tryLogging (level, msg) {
+import start from './index';
+import logger from './logger';
+import * as fp from '@mfl/fp';
+
+let tryLogging = fp.curry(2, function tryLogging(level, msg) {
   try {
     logger[level].apply(logger, msg);
   } catch (e) {
@@ -32,21 +33,20 @@ var tryLogging = fp.curry(2, function tryLogging (level, msg) {
   }
 });
 
-
 if (conf.RUNNER === 'supervisor') {
   process.on('SIGINT', cleanShutdown('SIGINT (Ctrl-C)'));
   process.on('SIGTERM', cleanShutdown('SIGTERM'));
 }
 
-function cleanShutdown (signal) {
-  return function cleanShutdownInner () {
+function cleanShutdown(signal) {
+  return function cleanShutdownInner() {
     tryLogging('info', [{}, 'Caught ' + signal + ', shutting down cleanly.']);
     // Exit with 0 to keep supervisor happy.
     process.exit(0);
   };
 }
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function(err) {
   tryLogging('error', [{ err: err }, 'unhandledException']);
   process.exit(1);
 });

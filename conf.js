@@ -19,23 +19,24 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-var obj = require('intel-obj');
-var confJson = {};
+import * as obj from '@mfl/obj';
 
-if (process.env.NODE_ENV !== 'test')
-  confJson = require('./conf.json');
+let confJson = {};
 
-var defaults = {
+if (process.env.NODE_ENV !== 'test') confJson = require('./conf.json');
+
+let defaults = {
   LOG_FILE: 'realtime.log',
   NODE_ENV: process.env.NODE_ENV || 'development',
   RUNNER: process.env.RUNNER
 };
 
-var conf = obj.merge({}, defaults, confJson);
+let conf = obj.merge({}, defaults, confJson);
 if (conf.NODE_ENV === 'test')
   conf = obj.merge({}, conf, {
     SERVER_HTTP_URL: 'https://localhost:9200/',
-    SOURCE_MAP_PATH: __dirname + '/test/integration/fixtures/built-fd5ce21b.js.map',
+    SOURCE_MAP_PATH: __dirname +
+      '/test/integration/fixtures/built-fd5ce21b.js.map',
     REALTIME_PORT: 9201,
     LOG_PATH: __dirname
   });
