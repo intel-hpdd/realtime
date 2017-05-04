@@ -1,6 +1,15 @@
 import rewire from 'rewire';
 const logStart = rewire('../../../../socket-router/middleware/log-start');
 
+import {
+  describe,
+  beforeEach,
+  afterEach,
+  it,
+  expect,
+  jasmine
+} from '../../../jasmine.js';
+
 describe('log start', function() {
   let logger, revert, next, req, resp;
 

@@ -2,6 +2,15 @@ import * as fp from '@mfl/fp';
 import rewire from 'rewire';
 const serializeError = rewire('../../../serialize-error');
 
+import {
+  describe,
+  beforeEach,
+  afterEach,
+  it,
+  expect,
+  jasmine
+} from '../../jasmine.js';
+
 describe('error handler', function() {
   let error, errorSerializer, revert;
 

@@ -1,5 +1,7 @@
 import requestValidator from '../../request-validator';
 
+import { describe, it, expect } from '../jasmine.js';
+
 describe('request channel validator', function() {
   it('should fail on an empty argument', function() {
     expect(requestValidator()).toEqual('instance is required\n');

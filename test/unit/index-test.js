@@ -1,6 +1,15 @@
 import rewire from 'rewire';
 const start = rewire('../../index');
 
+import {
+  describe,
+  beforeEach,
+  afterEach,
+  it,
+  expect,
+  jasmine
+} from '../jasmine.js';
+
 describe('realtime index test', function() {
   let createIo,
     io,

@@ -1,6 +1,8 @@
 import addCredentials
   from '../../../../socket-router/middleware/add-credentials';
 
+import { describe, beforeEach, it, expect, jasmine } from '../../../jasmine.js';
+
 describe('add credentials', function() {
   let next, req, resp;
 

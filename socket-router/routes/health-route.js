@@ -26,13 +26,11 @@ import pollingRequest from '../../polling-request';
 import socketRouter from '../index';
 import pushSerializeError from '../../serialize-error/push-serialize-error';
 
-var STATES;
-
-export const STATES = (STATES = {
+export const STATES = {
   ERROR: 'ERROR',
   WARN: 'WARNING',
   GOOD: 'GOOD'
-});
+};
 
 export default function healthRoutes() {
   socketRouter.get('/health', function healthRoute(req, resp, next) {

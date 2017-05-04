@@ -2,6 +2,8 @@ const proxyquire = require('proxyquire').noPreserveCache().noCallThru();
 import λ from 'highland';
 import * as fp from '@mfl/fp';
 
+import { describe, beforeEach, it, expect, jasmine } from '../jasmine.js';
+
 describe('polling request', function() {
   let pollingRequest, apiRequest, s;
 

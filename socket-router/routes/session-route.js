@@ -21,7 +21,6 @@
 
 import socketRouter from '../index';
 
-import * as obj from '@mfl/obj';
 import apiRequest from '../../api-request';
 import pushSerializeError from '../../serialize-error/push-serialize-error';
 import * as fp from '@mfl/fp';

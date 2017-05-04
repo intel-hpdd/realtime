@@ -1,6 +1,15 @@
 import rewire from 'rewire';
 const eventWildcard = rewire('../../event-wildcard');
 
+import {
+  describe,
+  beforeEach,
+  afterEach,
+  it,
+  expect,
+  jasmine
+} from '../jasmine.js';
+
 describe('event wildcard', function() {
   let revert, emit, socket, acker, next;
 

@@ -5,6 +5,16 @@ import λ from 'highland';
 import * as obj from '@mfl/obj';
 import * as fp from '@mfl/fp';
 
+import {
+  describe,
+  beforeEach,
+  afterEach,
+  it,
+  expect,
+  spyOn,
+  jasmine
+} from '../../jasmine.js';
+
 describe('command utils', function() {
   let revoke, apiRequest, responseStream, pollingRequest, pollStream;
 

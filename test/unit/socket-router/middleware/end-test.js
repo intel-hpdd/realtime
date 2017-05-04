@@ -1,6 +1,15 @@
 import rewire from 'rewire';
 const end = rewire('../../../../socket-router/middleware/end');
 
+import {
+  describe,
+  beforeEach,
+  afterEach,
+  it,
+  expect,
+  jasmine
+} from '../../../jasmine.js';
+
 describe('end spec', function() {
   let logger, next, req, resp, revert, stream, onDestroy;
 
