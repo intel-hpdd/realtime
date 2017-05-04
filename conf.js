@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -20,10 +22,11 @@
 // express and approved by Intel in writing.
 
 import * as obj from '@mfl/obj';
+import confJsonImport from './conf.json';
 
 let confJson = {};
 
-if (process.env.NODE_ENV !== 'test') confJson = require('./conf.json');
+if (process.env.NODE_ENV !== 'test') confJson = confJsonImport;
 
 const defaults = {
   LOG_FILE: 'realtime.log',

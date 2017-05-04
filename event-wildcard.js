@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -19,8 +21,10 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-const emit = require('events').EventEmitter.prototype.emit;
+import events from 'events';
 import * as obj from '@mfl/obj';
+
+const emit = events.EventEmitter.prototype.emit;
 
 export default function eventWildcard(socket, next) {
   if (socket.onevent !== onEvent) socket.onevent = onEvent;

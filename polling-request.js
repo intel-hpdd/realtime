@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -24,10 +26,10 @@ import λ from 'highland';
 import * as obj from '@mfl/obj';
 import apiRequest from './api-request';
 
-export default function pollingRequest(path, options) {
+export default function pollingRequest(path: string, options) {
   let ifNoneMatch = 0;
 
-  return λ(function generator(push, next) {
+  return λ((push, next) => {
     const withHeader = obj.merge(
       {},
       {

@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -21,19 +23,17 @@
 
 import conf from './conf';
 
-import logger from '@mfl/logger';
+import { default as logger, LEVELS, serializers } from '@mfl/logger';
 import path from 'path';
 
-const level = conf.NODE_ENV === 'production'
-  ? logger.LEVELS.ERROR
-  : logger.LEVELS.INFO;
+const level = conf.NODE_ENV === 'production' ? LEVELS.ERROR : LEVELS.INFO;
 
-export default logger.default({
+export default logger({
   name: 'realtime',
   path: path.join(conf.LOG_PATH, conf.LOG_FILE),
   level: level,
   serializers: {
-    err: logger.serializers.err,
+    err: serializers.err,
     sock: socketSerializer,
     sockReq: reqSerializer
   }

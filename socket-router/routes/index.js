@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -19,9 +21,7 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-export default {
-  testHostRoute: require('./test-host-route'),
-  healthRoute: require('./health-route'),
-  sessionRoute: require('./session-route'),
-  wildcardRoute: require('./wildcard-route')
-};
+export { default as testHostRoute } from './test-host-route.js';
+export { default as healthRoute } from './health-route.js';
+export { default as sessionRoute } from './session-route.js';
+export { default as wildcardRoute } from './wildcard-route.js';

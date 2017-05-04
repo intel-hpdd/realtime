@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -23,15 +25,14 @@ import conf from './conf';
 
 import start from './index';
 import logger from './logger';
-import * as fp from '@mfl/fp';
 
-const tryLogging = fp.curry(2, function tryLogging(level, msg) {
+function tryLogging(level, msg) {
   try {
     logger[level].apply(logger, msg);
   } catch (e) {
     console.log.apply(console, msg);
   }
-});
+}
 
 if (conf.RUNNER === 'supervisor') {
   process.on('SIGINT', cleanShutdown('SIGINT (Ctrl-C)'));

@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -39,13 +41,13 @@ const apiFormat = format.bind(format, '/api%s');
 
 const req = getReq();
 
-export default fp.curry(2, function apiRequest(path, options) {
+export default function apiRequest(path: string, options) {
   path = path.replace(/^\/*/, '/').replace(/\/*$/, '/');
 
   const opts = obj.merge({}, options, hostOptions);
   opts.path = apiFormat(path);
 
   return req.bufferRequest(opts);
-});
+}
 
 export const waitForRequests = req.waitForRequests;

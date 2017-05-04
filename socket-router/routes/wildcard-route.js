@@ -1,3 +1,5 @@
+// @flow
+
 //
 // INTEL CONFIDENTIAL
 //
@@ -29,7 +31,7 @@ import pollingRequest from '../../polling-request';
 import socketRouter from '../index';
 import pushSerializeError from '../../serialize-error/push-serialize-error';
 
-export default function wildcardRoute() {
+export default () => {
   socketRouter.all('/:endpoint/:rest*', function genericHandler(
     req,
     resp,
@@ -41,7 +43,7 @@ export default function wildcardRoute() {
     let stream;
 
     const toPoll = ['host', 'lnet_configuration', 'alert', 'command'];
-    const paths = fp.zipObject(toPoll, toPoll);
+    const paths = fp.zipObject(toPoll)(toPoll);
 
     if (resp.ack) {
       stream = request();
@@ -77,4 +79,4 @@ export default function wildcardRoute() {
 
     next(req, resp, stream);
   });
-}
+};
