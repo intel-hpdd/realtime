@@ -48,7 +48,5 @@ const schema = {
 export default function getErrorList(data) {
   return validator
     .validate(data, schema)
-    .errors.reduce(function joinErrors(message, error) {
-      return message + error.stack + '\n';
-    }, '');
+    .errors.reduce((message, error) => message + error.stack + '\n', '');
 }

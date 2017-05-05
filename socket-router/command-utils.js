@@ -69,23 +69,17 @@ const getJobIds = fp.flow(
   fp.map(fp.lensProp('1'))
 );
 
-export const getSteps = fp.curry(2, function getSteps(headers, s) {
-  return s
-    .map(getJobIds)
-    .flatMap(function getJobs(ids) {
-      return apiRequest('/job', {
-        headers: headers,
-        qs: {
-          id__in: ids,
-          limit: 0
-        },
-        jsonMask: 'objects(step_results,steps)'
-      });
-    })
-    .map(objectsLens)
-    .map(
-      fp.map(function getSteps(job) {
-        return job.step_results[job.steps[0]];
-      })
-    );
-});
+export const getSteps = fp.curry(2, (headers, s) => s
+  .map(getJobIds)
+  .flatMap(ids => apiRequest('/job', {
+  headers: headers,
+  qs: {
+    id__in: ids,
+    limit: 0
+  },
+  jsonMask: 'objects(step_results,steps)'
+}))
+  .map(objectsLens)
+  .map(
+    fp.map(job => job.step_results[job.steps[0]])
+  ));

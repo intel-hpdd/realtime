@@ -58,9 +58,9 @@ export default function srcmapReverseRoute() {
       .each(fp.noop);
 
     reversedStream
-      .map(function setData(stack) {
-        return { data: stack };
-      })
+      .map(stack => ({
+      data: stack
+    }))
       .stopOnError(pushSerializeError)
       .each(resp.ack.bind(resp));
 
