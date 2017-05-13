@@ -9,3 +9,5 @@ node_modules/@mfl/flow-jasmine/flow-typed
 [options]
 esproposal.class_instance_fields=enable
 experimental.strict_type_args=true
+experimental.strict_call_arity=true
+module.name_mapper='^\.\/conf\.json$' -> '<PROJECT_ROOT>/fake.json'

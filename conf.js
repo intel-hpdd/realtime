@@ -3,7 +3,7 @@
 //
 // INTEL CONFIDENTIAL
 //
-// Copyright 2013-2016 Intel Corporation All Rights Reserved.
+// Copyright 2013-2017 Intel Corporation All Rights Reserved.
 //
 // The source code contained or described herein and all documents related
 // to the source code ("Material") are owned by Intel Corporation or its
@@ -21,27 +21,45 @@
 // otherwise. Any license under such intellectual property rights must be
 // express and approved by Intel in writing.
 
-import * as obj from '@mfl/obj';
 import confJsonImport from './conf.json';
+
+type DefaultConfig = {
+  LOG_FILE: string,
+  NODE_ENV: 'test' | 'production'
+};
+
+type Conf = {
+  SERVER_HTTP_URL: string,
+  SOURCE_MAP_PATH: string,
+  REALTIME_PORT: number,
+  LOG_PATH: string
+};
 
 let confJson = {};
 
 if (process.env.NODE_ENV !== 'test') confJson = confJsonImport;
 
-const defaults = {
+let nodeEnvironment = process.env.NODE_ENV;
+if (nodeEnvironment !== 'test' && nodeEnvironment !== 'production')
+  nodeEnvironment = 'test';
+
+const defaults: DefaultConfig = {
   LOG_FILE: 'realtime.log',
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  RUNNER: process.env.RUNNER
+  NODE_ENV: nodeEnvironment
 };
 
-let conf = obj.merge({}, defaults, confJson);
-if (conf.NODE_ENV === 'test')
-  conf = obj.merge({}, conf, {
+if (Object.keys(confJson).length === 0 || nodeEnvironment === 'test')
+  confJson = {
     SERVER_HTTP_URL: 'https://localhost:9200/',
     SOURCE_MAP_PATH: __dirname +
       '/test/integration/fixtures/built-fd5ce21b.js.map',
     REALTIME_PORT: 9201,
     LOG_PATH: __dirname
-  });
+  };
+
+const conf: Conf = {
+  ...defaults,
+  ...confJson
+};
 
 export default conf;
