@@ -1,17 +1,10 @@
 {
   "parser": "babel-eslint",
   "plugins": [
-    "flowtype",
     "import",
     "prettier"
   ],
   "rules": {
-    "flowtype/define-flow-type": 1,
-    "flowtype/use-flow-type": 1,
-    "flowtype/space-after-type-colon": [
-      0,
-      "never"
-    ],
     "import/no-commonjs": 2,
     "import/no-amd": 2,
     "import/export": 2,

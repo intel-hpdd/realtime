@@ -14,8 +14,9 @@
   <ItemGroup>
     <Compile Include="lib/Fable.Import.SocketIo.fs" />
     <Compile Include="lib/Fable.Import.Router.fs" />
-    <Compile Include="lib/multiplex-middleware.fs" />
+    <Compile Include="lib/wildcard-route.fs" />
     <Compile Include="lib/router.fs" />
+    <Compile Include="lib/multiplex-middleware.fs" />
     <Compile Include="lib/main.fs" />
   </ItemGroup>
 </Project>
