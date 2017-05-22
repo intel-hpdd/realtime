@@ -3,3 +3,5 @@ node_modules
 obj
 bin
 dist
+project.lock.json
+packages/
