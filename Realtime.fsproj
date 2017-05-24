@@ -5,7 +5,6 @@
   <Import Project=".paket/Paket.Restore.targets" />
   <ItemGroup>
     <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
-    <ProjectReference Include="node_modules/fable-jest/fable-jest.fsproj" />
     <ProjectReference Include="../fable-node6/Fable-Node6.fsproj" />
     <DotNetCliToolReference Include="dotnet-fable" Version="1.0.4" />
   </ItemGroup>

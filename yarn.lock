@@ -1428,16 +1428,6 @@ extsprintf@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.0.2.tgz#e1080e0658e300b06294990cc70e1502235fd550"
 
-fable-core@^1.0.0-narumi-910, fable-core@next:
-  version "1.0.0-narumi-914"
-  resolved "https://registry.yarnpkg.com/fable-core/-/fable-core-1.0.0-narumi-914.tgz#1c95a3eb1774987d83fc9fde1ead9ede4c341640"
-
-fable-jest@2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/fable-jest/-/fable-jest-2.4.1.tgz#75123ae0055aacab7716a13b13a9246b027d2a06"
-  dependencies:
-    fable-core next
-
 fable-utils@1.0.0, fable-utils@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fable-utils/-/fable-utils-1.0.0.tgz#3e746283010d775f3b95208805c71c7f75143011"
@@ -1497,11 +1487,11 @@ fill-range@^2.1.0:
     repeat-element "^1.1.2"
     repeat-string "^1.5.2"
 
-find-babel-config@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/find-babel-config/-/find-babel-config-1.0.1.tgz#179fa7b36bf3e94b487410855df448b6f853b9ec"
+find-babel-config@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/find-babel-config/-/find-babel-config-1.1.0.tgz#acc01043a6749fec34429be6b64f542ebb5d6355"
   dependencies:
-    json5 "^0.5.0"
+    json5 "^0.5.1"
     path-exists "^3.0.0"
 
 find-up@^1.0.0:
@@ -2098,14 +2088,13 @@ jest-environment-node@^20.0.3:
     jest-mock "^20.0.3"
     jest-util "^20.0.3"
 
-jest-fable-preprocessor@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/jest-fable-preprocessor/-/jest-fable-preprocessor-1.1.2.tgz#0c93b1f05ce3e0358ca4b053c50ab89d547f5830"
+jest-fable-preprocessor@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jest-fable-preprocessor/-/jest-fable-preprocessor-1.2.0.tgz#32d38e2b05b1038dce84986e6ae1fe44201b1862"
   dependencies:
     babel-core "^6.24.0"
-    fable-core "^1.0.0-narumi-910"
     fable-utils "1.0.0"
-    find-babel-config "1.0.1"
+    find-babel-config "1.1.0"
 
 jest-haste-map@^20.0.4:
   version "20.0.4"
@@ -2323,7 +2312,7 @@ json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
-json5@^0.5.0:
+json5@^0.5.0, json5@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.1.tgz#1eade7acc012034ad84e2396767ead9fa5495821"
 
@@ -3051,17 +3040,17 @@ right-align@^0.1.1:
   dependencies:
     align-text "^0.1.1"
 
-rimraf@^2.2.8, rimraf@~2.4.0:
-  version "2.4.5"
-  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.4.5.tgz#ee710ce5d93a8fdb856fb5ea8ff0e2d75934b2da"
-  dependencies:
-    glob "^6.0.1"
-
-rimraf@^2.6.1:
+rimraf@^2.2.8, rimraf@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.1.tgz#c2338ec643df7a1b7fe5c54fa86f57428a55f33d"
   dependencies:
     glob "^7.0.5"
+
+rimraf@~2.4.0:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.4.5.tgz#ee710ce5d93a8fdb856fb5ea8ff0e2d75934b2da"
+  dependencies:
+    glob "^6.0.1"
 
 rollup-plugin-babel@2.7.1:
   version "2.7.1"
