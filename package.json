@@ -10,10 +10,15 @@
   "scripts": {
     "app": "node ./dist/bundle.js",
     "eslint": "eslint ./",
-    "test": "jest",
-    "cover": "NODE_ENV=test yarn test -- --coverage",
+    "prejest": "sendProjFile",
+    "jest": "jest --watch",
+    "test": "dotnet fable npm-run jest",
+    "cover": "yarn test -- --coverage",
     "rollup": "rollup -c rollup-config.js",
     "postversion": "dotnet fable npm-run rollup"
+  },
+  "fable": {
+    "projLocation": "./Realtime.fsproj"
   },
   "pre-commit": [
     "eslint",
@@ -26,17 +31,6 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "jest": {
-    "resetMocks": true,
-    "resetModules": true,
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test"
-    ],
-    "transformIgnorePatterns": [
-      "/node_modules/(?!@mfl)/"
-    ]
   },
   "author": "MFL Team",
   "license": "MIT",
@@ -53,10 +47,11 @@
     "babel-preset-env": "1.5.1",
     "eslint": "3.19.0",
     "eslint-config-prettier": "2.1.1",
-    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-import": "2.3.0",
     "eslint-plugin-prettier": "2.1.1",
     "fable-jest": "2.4.1",
-    "jest": "20.0.3",
+    "jest": "20.0.4",
+    "jest-fable-preprocessor": "1.1.2",
     "pre-commit": "1.2.2",
     "prettier": "1.3.1",
     "rollup": "0.41.6",

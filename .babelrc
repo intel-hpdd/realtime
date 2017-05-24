@@ -9,8 +9,6 @@
       }
     ]
   ],
-  "plugins": [
-    "transform-flow-strip-types"
-  ],
+  "plugins": [],
   "sourceMaps": "inline"
 }
