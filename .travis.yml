@@ -1,13 +1,15 @@
-language: node_js
-node_js:
-- 6
-- 7
+language: csharp
+sudo: false
+dist: trusty
+dotnet: 1.0.3
+before_script:
+  - nvm install 6
+  - npm install -g codecov
+  - npm install -g yarn
 cache: yarn
-deploy:
-  provider: npm
-  email: joe.grund@intel.com
-  api_key:
-    secure: wfSfTbSmecQAN45AUyTFL+yZ5geY5t3DldDlfYheDANhLGb8fjsaPpfpgrUw4VZkCogc53H1ubGT426HUXMMfblho1FAieHQG2Q6TWtViEAIFx/nPI4hAZOz17h6BQpjSit/9kjCYZuzYdiKsfEtjS2dgsTnWFEQ1JIpEJrRnyB2CXB3GE49nHfZKy5p6JMssT9hw1cPd+r8JxSRxXq8e0oibJhEpCtZPsufSucHyqyzSAsAfpX+xbz9jWn2GaZiknYNhUzOIw0sCGNvkXzlfKoZKaJfPZDd3FGIZ+HVnKrfxaz3yNUhUD/IPGjeobdZ0uwkfjCOV+3M0fzp45WJz7aOzL2F7MVUcIV2vjJ1Xan8cuO3ZeQRhat1oSvJRq9tQHZSALVfZEG7E2Xj8F01m448IlPyoo6rc8d0TVLkALtJE7UueP2HRu2BCrmMYxq7CQyy0hteKsWSFfCNmBEOHqGz1wYmrMiRCpae7GYEf4/UDXSzSUhFeKD4bAFu+PV+xZ6XWajIIzJPFLO+aS8z5H05jax/9+puOw25Gw8kYlwHzqa+AbSYe9WqklGryB0VWFxRtcgThbu1FVYSVcun11zTHeiAFfy6OwnSw0TMiWLGvT/pBYzBm69vQZvuIFHsHRnn7/286cmNXbKp6Ip+/U3wBmWfWWGPjdAlmb/7IPA=
-  on:
-    tags: true
-    repo: intel-hpdd/realtime
+script:
+  - yarn
+  - dotnet restore
+  - yarn run test
+after_success:
+  - codecov
