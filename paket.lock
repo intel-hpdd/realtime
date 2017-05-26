@@ -1,10 +1,11 @@
 NUGET
   remote: https://www.nuget.org/api/v2
-    Fable.Core (1.0.4)
+    Fable.Core (1.0.6)
       FSharp.Core (>= 4.1.17) - framework: >= net463, >= netstandard16
       NETStandard.Library (>= 1.6.1) - framework: >= net463, >= netstandard16
-    Fable.Jest (1.0)
-      Fable.Core (>= 1.0.4) - framework: >= net463, >= netstandard16
+    Fable.Import.Jest (1.2)
+      Fable.Core (>= 1.0.6) - framework: >= net463, >= netstandard16
+      Fable.PowerPack (>= 1.0.0-narumi-902) - framework: >= net463, >= netstandard16
       FSharp.Core (>= 4.1.17) - framework: >= net463, >= netstandard16
     Fable.PowerPack (1.0.0-narumi-902)
       Fable.Core (>= 1.0.0-narumi-915) - framework: >= net463, >= netstandard16

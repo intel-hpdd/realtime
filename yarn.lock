@@ -2088,11 +2088,12 @@ jest-environment-node@^20.0.3:
     jest-mock "^20.0.3"
     jest-util "^20.0.3"
 
-jest-fable-preprocessor@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/jest-fable-preprocessor/-/jest-fable-preprocessor-1.2.0.tgz#32d38e2b05b1038dce84986e6ae1fe44201b1862"
+jest-fable-preprocessor@1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/jest-fable-preprocessor/-/jest-fable-preprocessor-1.2.6.tgz#ad1ecb882ebdfef3f21e67e7136be17ee1c93f05"
   dependencies:
     babel-core "^6.24.0"
+    babel-preset-env "1.5.1"
     fable-utils "1.0.0"
     find-babel-config "1.1.0"
 
