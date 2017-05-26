@@ -6,5 +6,6 @@ module.exports = {
     '^.+\\.js$': 'babel-jest'
   },
   testMatch: ['**/**/*.(test.fs|test.fsx)'],
+  transformIgnorePatterns: ['/node_modules/(?!@mfl)/'],
   coveragePathIgnorePatterns: ['/packages/', 'test/']
 };

@@ -21,6 +21,7 @@
     <Compile Include="lib/polling-req.fs" />
     <Compile Include="lib/serialize-error.fs" />-->
     <Compile Include="lib/router.fs" />
+    <Compile Include="lib/router.test.fs" />
     <!--<Compile Include="lib/health-route.fs" />
     <Compile Include="lib/wildcard-route.fs" />
     <Compile Include="lib/routes.fs" />
