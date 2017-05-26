@@ -3,6 +3,6 @@ node_modules
 obj
 bin
 dist
+packages
+coverage
 project.lock.json
-packages/
-coverage/

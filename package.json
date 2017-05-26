@@ -11,14 +11,13 @@
     "app": "node ./dist/bundle.js",
     "eslint": "eslint ./",
     "prejest": "sendProjFile",
-    "jest": "jest --watch",
+    "jest": "jest --coverage",
     "test": "dotnet fable npm-run jest",
     "rollup": "rollup -c rollup-config.js",
     "postversion": "dotnet fable npm-run rollup"
   },
   "pre-commit": [
     "eslint",
-    "flow",
     "test"
   ],
   "repository": {
@@ -42,7 +41,6 @@
     "babel-preset-env": "1.5.1",
     "eslint": "3.19.0",
     "eslint-config-prettier": "2.1.1",
-    "eslint-plugin-import": "2.3.0",
     "eslint-plugin-prettier": "2.1.1",
     "jest": "20.0.4",
     "jest-fable-preprocessor": "1.2.6",
@@ -53,7 +51,6 @@
     "rollup-plugin-bundle-size": "1.0.1",
     "rollup-plugin-commonjs": "8.0.2",
     "rollup-plugin-fable": "1.0.4",
-    "rollup-plugin-flow": "1.1.1",
     "rollup-plugin-node-resolve": "3.0.0",
     "rollup-watch": "3.2.2",
     "socket.io": "2.0.1",
