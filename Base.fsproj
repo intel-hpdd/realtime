@@ -13,15 +13,15 @@
   </ItemGroup>
   <ItemGroup>
     <!--<Compile Include="lib/Fable.Import.Highland.fs" />
-    <Compile Include="lib/Fable.Import.Req.fs" />
+    <Compile Include="lib/Fable.Import.Req.fs" />-->
     <Compile Include="lib/Fable.Import.SocketIo.fs" />
-    <Compile Include="lib/Fable.Import.Router.fs" />-->
+    <Compile Include="lib/Fable.Import.Router.fs" />
     <!--<Compile Include="lib/env.fs" />
     <Compile Include="lib/req.fs" />
     <Compile Include="lib/polling-req.fs" />
-    <Compile Include="lib/serialize-error.fs" />
+    <Compile Include="lib/serialize-error.fs" />-->
     <Compile Include="lib/router.fs" />
-    <Compile Include="lib/health-route.fs" />
+    <!--<Compile Include="lib/health-route.fs" />
     <Compile Include="lib/wildcard-route.fs" />
     <Compile Include="lib/routes.fs" />
     <Compile Include="lib/multiplex-middleware.fs" />-->
