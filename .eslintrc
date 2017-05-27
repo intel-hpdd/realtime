@@ -1,34 +1,44 @@
 {
+  "parser": "babel-eslint",
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
-    "quotes": [
-      2,
-      "single"
-    ],
+    "no-var": 2,
     "linebreak-style": [
       2,
       "unix"
     ],
-    "semi": [
+    "curly": [
       2,
-      "always"
+      "multi",
+      "consistent"
     ],
-    "indent": [
-      2,
-      2
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "all",
+        "ignoreReadBeforeAssign": false
+      }
     ],
-    "no-console": 0
-  },
-  "globals": {
-    "describe": false,
-    "beforeEach": false,
-    "afterEach": false,
-    "jasmine": false,
-    "spyOn": false,
-    "it": false,
-    "expect": false
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true
+      }
+    ]
   },
   "env": {
+    "es6": true,
     "node": true
   },
-  "extends": "eslint:recommended"
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "experimentalObjectRestSpread": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "prettier"
+  ]
 }

@@ -1,0 +1,36 @@
+<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
+    <DotNetCliToolReference Include="dotnet-fable" Version="1.0.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="lib/__mocks__/https.fs" />
+    <Compile Include="lib/request.fs" />
+    <Compile Include="lib/request.test.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="lib/maybe.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--<Compile Include="lib/Fable.Import.Highland.fs" />
+    <Compile Include="lib/Fable.Import.Req.fs" />-->
+    <Compile Include="lib/Fable.Import.SocketIo.fs" />
+    <Compile Include="lib/Fable.Import.Router.fs" />
+    <!--<Compile Include="lib/env.fs" />
+    <Compile Include="lib/req.fs" />
+    <Compile Include="lib/polling-req.fs" />
+    <Compile Include="lib/serialize-error.fs" />-->
+    <Compile Include="lib/router.fs" />
+    <Compile Include="lib/router.test.fs" />
+    <!--<Compile Include="lib/health-route.fs" />
+    <Compile Include="lib/wildcard-route.fs" />
+    <Compile Include="lib/routes.fs" />-->
+    <Compile Include="lib/multiplex-middleware.fs" />
+    <Compile Include="lib/multiplex-middleware.test.fs" />
+    <!--<Compile Include="lib/main.fs" />-->
+  </ItemGroup>
+  <Import Project=".paket\Paket.Restore.targets" />
+</Project>

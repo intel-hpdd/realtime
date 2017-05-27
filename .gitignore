@@ -1,2 +1,8 @@
 node_modules
 *.log
+obj
+bin
+dist
+packages
+coverage
+project.lock.json
