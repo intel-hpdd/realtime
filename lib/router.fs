@@ -5,7 +5,7 @@ open Fable.Import.Node
 open Fable.Import.Router
 
 type IRealtimeRouterInputReq =
-  abstract verb: string with get, set
+  abstract verb: Http.Methods with get, set
   abstract data: Https.RequestOptions with get, set
   abstract messageId: string with get, set
 
