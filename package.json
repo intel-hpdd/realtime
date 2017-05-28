@@ -11,7 +11,7 @@
     "app": "node ./dist/bundle.js",
     "eslint": "eslint ./",
     "prejest": "sendProjFile",
-    "jest": "jest --coverage",
+    "jest": "jest --watch",
     "test": "dotnet fable npm-run jest",
     "rollup": "rollup -c rollup-config.js",
     "postversion": "dotnet fable npm-run rollup"
@@ -30,9 +30,9 @@
   "author": "MFL Team",
   "license": "MIT",
   "dependencies": {
-    "@mfl/req": "3.0.4",
     "@mfl/router": "6.0.1",
-    "highland": "3.0.0-beta.4"
+    "highland": "3.0.0-beta.4",
+    "pg": "6.2.3"
   },
   "devDependencies": {
     "@mfl/stub-daddy": "2.0.3",

@@ -9,7 +9,7 @@ type MaybeBuilder() =
         match x with
         | Some(x) -> f(x)
         | _ -> None
-    member this.Zero() = (Some ())
-    member this.Return x = x
+    member this.Zero() = None
+    member this.Return x = Some x
 
 let maybe = MaybeBuilder()

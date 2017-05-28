@@ -86,7 +86,7 @@ type [<AllowNullLiteral>] Packet =
   abstract data: Option<obj> with get, set
   abstract id: int option with get, set
 
-type SocketUseArgs<'T> = string * 'T option * Function option
+type SocketUseArgs<'T> = string * 'T option * (obj -> unit) option
 
 type [<AllowNullLiteral>] Socket =
     inherit Events.EventEmitter

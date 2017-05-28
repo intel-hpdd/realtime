@@ -5,23 +5,20 @@
 module Realtime.Main
 
 open Fable.Import
-open Fable.Import.Node.Globals
 open Fable.Import.Node
 open Fable.Import.Node.Base
+open Fable.Import.Node.Globals
 open Fable.Import.SocketIo
 open Fable.Core
+open Realtime.Routes
 
 open Realtime.MultiplexMiddleware
+open Realtime.Env
 
-type Config = {
-  npm_package_config_port: string
-}
+printfn "Listening on %s" env.npm_package_config_port
+let private io = ``socket.io``.Invoke(env.npm_package_config_port)
 
-let private env = ``process``.env :?> Config
-let private port = env.npm_package_config_port
-
-printfn "Listening on %s" port
-let private io = ``socket.io``.Invoke(port)
+addRoutes()
 
 io.on_connection (fun (s:Socket) ->
   s.``use`` (multiplexMiddleware s) |> ignore

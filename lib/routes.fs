@@ -5,6 +5,7 @@ open Realtime.WildcardRoute
 open Realtime.HealthRoute
 
 let addRoutes () =
-  realtimeRouter.all "/:endpoint/:rest*" wildcardRouteHandler
+  realtimeRouter
     |> fun x -> x.all "/health" healthRouteHandler
+    |> fun x -> x.all "/:endpoint/:rest*" wildcardRouteHandler
     |> ignore

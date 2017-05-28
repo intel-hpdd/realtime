@@ -19,18 +19,20 @@
     <Compile Include="lib/Fable.Import.Req.fs" />-->
     <Compile Include="lib/Fable.Import.SocketIo.fs" />
     <Compile Include="lib/Fable.Import.Router.fs" />
-    <!--<Compile Include="lib/env.fs" />
-    <Compile Include="lib/req.fs" />
+    <Compile Include="lib/Fable.Import.Pg.fs" />
+    <Compile Include="lib/env.fs" />
+    <Compile Include="lib/api-request.fs" />
+    <!--<Compile Include="lib/req.fs" />
     <Compile Include="lib/polling-req.fs" />
     <Compile Include="lib/serialize-error.fs" />-->
     <Compile Include="lib/router.fs" />
     <Compile Include="lib/router.test.fs" />
-    <!--<Compile Include="lib/health-route.fs" />
+    <Compile Include="lib/health-route.fs" />
     <Compile Include="lib/wildcard-route.fs" />
-    <Compile Include="lib/routes.fs" />-->
+    <Compile Include="lib/routes.fs" />
     <Compile Include="lib/multiplex-middleware.fs" />
     <Compile Include="lib/multiplex-middleware.test.fs" />
-    <!--<Compile Include="lib/main.fs" />-->
+    <Compile Include="lib/main.fs" />
   </ItemGroup>
   <Import Project=".paket\Paket.Restore.targets" />
 </Project>
