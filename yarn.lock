@@ -2334,6 +2334,12 @@ lru-cache@^4.0.1:
     pseudomap "^1.0.1"
     yallist "^2.0.0"
 
+magic-string@^0.16.0:
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.16.0.tgz#970ebb0da7193301285fb1aa650f39bdd81eb45a"
+  dependencies:
+    vlq "^0.2.1"
+
 magic-string@^0.19.0:
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.19.1.tgz#14d768013caf2ec8fdea16a49af82fc377e75201"
@@ -3046,6 +3052,13 @@ rollup-plugin-node-resolve@3.0.0:
     builtin-modules "^1.1.0"
     is-module "^1.0.0"
     resolve "^1.1.6"
+
+rollup-plugin-re@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-re/-/rollup-plugin-re-1.0.2.tgz#39c1ffa71b6f82b5746c748e7131f03d78d990f1"
+  dependencies:
+    magic-string "^0.16.0"
+    rollup-pluginutils "^2.0.1"
 
 rollup-pluginutils@2.0.1, rollup-pluginutils@^2.0.1:
   version "2.0.1"
