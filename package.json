@@ -8,16 +8,16 @@
     "unit": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/unit/**/*-test.js",
     "eslint": "eslint ./"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "pre-commit": [
     "eslint",
     "test"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.intel.com/IML/realtime.git"
-  },
-  "publishConfig": {
-    "registry": "https://ubit-artifactory-or.intel.com/artifactory/api/npm/iml-npm-local"
+    "url": "https://github.com/intel-hpdd/realtime.git"
   },
   "author": "IML Team",
   "license": "MIT",
