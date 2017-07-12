@@ -9,5 +9,6 @@ module.exports = {
   testHostRoute: require('./test-host-route'),
   healthRoute: require('./health-route'),
   srcmapReverseRoute: require('./srcmap-reverse-route'),
+  sessionRoute: require('./session-route'),
   wildcardRoute: require('./wildcard-route')
 };

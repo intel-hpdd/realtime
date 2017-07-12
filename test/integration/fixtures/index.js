@@ -10,5 +10,6 @@ module.exports = {
   clientError: require('./client-error'),
   command: require('./command'),
   job: require('./job'),
-  testHost: require('./test-host')
+  testHost: require('./test-host'),
+  session: require('./session')
 };

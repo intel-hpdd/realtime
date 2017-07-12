@@ -1,16 +1,14 @@
 {
-  "name": "intel-realtime",
-  "version": "5.0.3",
+  "name": "@iml/realtime",
+  "version": "5.1.0",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
     "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
     "integration": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/integration/**/*-test.js",
     "unit": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/unit/**/*-test.js",
-    "eslint": "eslint ./",
-    "jscs": "jscs ."
+    "eslint": "eslint ./"
   },
   "pre-commit": [
-    "jscs",
     "eslint",
     "test"
   ],
@@ -24,29 +22,27 @@
   "author": "IML Team",
   "license": "MIT",
   "dependencies": {
-    "clone": "1.0.2",
     "highland": "2.7.3",
     "intel-fp": "3.2.1",
     "intel-logger": "1.0.0",
-    "intel-obj": "5.0.2",
+    "intel-obj": "6.0.0",
     "intel-req": "1.0.9",
-    "intel-router": "3.0.4",
+    "intel-router": "5.0.1",
     "intel-srcmap-reverse": "2.0.0",
     "intel-through": "1.0.8",
-    "json-mask": "0.3.5",
-    "jsonschema": "1.0.2",
-    "socket.io": "1.4.8"
+    "json-mask": "0.3.8",
+    "jsonschema": "1.1.1",
+    "socket.io": "1.7.2"
   },
   "devDependencies": {
-    "eslint": "2.7.0",
-    "intel-jasmine-n-matchers": "2.1.1",
-    "intel-stub-daddy": "2.0.2",
-    "jasmine": "2.4.1",
-    "jscs": "2.11.0",
+    "eslint": "3.14.1",
+    "@iml/jasmine-n-matchers": "2.1.1",
+    "@iml/stub-daddy": "2.0.5",
+    "jasmine": "2.5.3",
     "krusty-jasmine-reporter": "1.0.0",
-    "pre-commit": "1.1.3",
-    "proxyquire": "1.7.4",
-    "rewire": "2.5.1",
-    "socket.io-client": "1.4.8"
+    "pre-commit": "1.2.2",
+    "proxyquire": "1.7.11",
+    "rewire": "2.5.2",
+    "socket.io-client": "1.7.2"
   }
 }

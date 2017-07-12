@@ -1,6 +1,6 @@
 'use strict';
 
-require('intel-jasmine-n-matchers');
+require('@iml/jasmine-n-matchers');
 
 var conf = require('../conf');
 
