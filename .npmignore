@@ -1,0 +1,10 @@
+/.idea
+/.vscode
+/test
+/.editorconfig
+/.eslintignore
+/.eslintrc
+/.jscsrc
+/.travis.yml
+/jasmine.json
+/*.log
