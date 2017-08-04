@@ -7,7 +7,6 @@
 
 module.exports = {
   alert: require('./alert'),
-  clientError: require('./client-error'),
   command: require('./command'),
   job: require('./job'),
   testHost: require('./test-host'),

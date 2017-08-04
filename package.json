@@ -11,10 +11,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "pre-commit": [
-    "eslint",
-    "test"
-  ],
+  "pre-commit": ["eslint", "test"],
   "repository": {
     "type": "git",
     "url": "https://github.com/intel-hpdd/realtime.git"
@@ -28,7 +25,6 @@
     "intel-obj": "6.0.0",
     "intel-req": "1.0.9",
     "intel-router": "5.0.1",
-    "intel-srcmap-reverse": "2.0.0",
     "intel-through": "1.0.8",
     "json-mask": "0.3.8",
     "jsonschema": "1.1.1",
