@@ -1,8 +1,7 @@
 language: node_js
 node_js:
 - 6
-- 7
-cache: yarn
+- 8
 deploy:
   provider: npm
   email: joe.grund@intel.com
