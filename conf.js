@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2017 Intel Corporation. All rights reserved.
+// Copyright (c) 2018 Intel Corporation. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -9,7 +8,12 @@ var obj = require('intel-obj');
 var confJson = {};
 
 if (process.env.NODE_ENV !== 'test')
-  confJson = require('./conf.json');
+  confJson = {
+    LOG_PATH: process.env.LOG_PATH,
+    REALTIME_PORT: process.env.REALTIME_PORT,
+    SERVER_HTTP_URL: process.env.SERVER_HTTP_URL,
+    SOURCE_MAP_PATH: process.env.SOURCE_MAP_PATH
+  };
 
 var defaults = {
   LOG_FILE: 'realtime.log',
