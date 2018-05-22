@@ -1,12 +1,10 @@
 language: node_js
 node_js:
 - 8
-cache: yarn
 deploy:
   provider: npm
-  email: joe.grund@intel.com
-  api_key:
-    secure: URDVoZ96t9kYJgN7LeWFy3fMhxP2pBE92yRDf8vQxJPJ3Pi0pjRhZ4DO/3fKvbFpEipBVqQbW/TUv4XxfPL8Jstmd/Vwrgli22xKBpJL17LUDoJvNmbnpVZ7btBRPqKwCrJfAbwaptC99q9B5/geXyz+OJB5GwDnffyOT77NnsTkQX4Qgc2HDtfUPWNnh+v7Hw5OlredBSJBx0PZkt7P9gdhfk17smwWJxzVQpmniAdo16daqDU7zLJYhd7XH4TdZhCe3gwKU4qiRmUvB7QitEYoUpIMae4FsQ24JdZ9zO9sfCcox0Fs9PFsb7md1GTORESqVcO2DbdAZxfY1IlCMjCmZS2VKGTSZnEUnFLWAtDcNfrOwcgPOUKH15gtKFf2lz4FWiHH1NULcj8DR7Y51xofDam6KK6daZVMLkSJqBHKzocYYD2gQyiWLela/l3yK617McipzvB0NGiXD+lvy7T+1jQJ26tqKG8AB5CN1nDGzi48JFOmW6xFQhva6HCXj0b5ezcaQ2aL0bQbbsZmcM615VvuwFdogLJDl0mFi23HP3BCX3UCVQEzd9PNkCs5OLgJjfkiDUU5TN+thHbrnOpmcO4KNcohCScyFdLZt42apa+sY2h+6enxThY0d0WRZgzlh8oZOKzK571pzv667XEbmP/suUgh1JKGsT8zXCE=
+  email: "$NPM_EMAIL"
+  api_key: "$NPM_TOKEN"
   on:
     tags: true
     repo: intel-hpdd/realtime
