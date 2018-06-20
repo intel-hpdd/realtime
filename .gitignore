@@ -1,2 +1,9 @@
 node_modules
+targetdir
+_topdir
+iml-realtime-*.tgz
+copr-key
+.DS_Store
+.store
+.fake
 *.log

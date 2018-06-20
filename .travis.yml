@@ -1,10 +1,41 @@
+sudo: required
 language: node_js
 node_js:
-- 8
-deploy:
-  provider: npm
-  email: "$NPM_EMAIL"
-  api_key: "$NPM_TOKEN"
-  on:
-    tags: true
-    repo: intel-hpdd/realtime
+  - 10
+services:
+  - docker
+jobs:
+  include:
+    - stage: test
+      env: Type='Lint & Test'
+      script: 
+        - npm run eslint
+        - npm run test
+    - stage: deploy-npm
+      if: branch =~ ^v\d+\.\d+\.\d+$
+      env: Type='npm Deploy'
+      before_deploy:
+        - npm i --ci
+      deploy:
+        provider: npm
+        skip_cleanup: true
+        email: "$NPM_EMAIL"
+        api_key: "$NPM_TOKEN"
+        on:
+          all_branches: true
+    - stage: deploy-copr
+      if: branch =~ ^v\d+\.\d+\.\d+-.+$
+      env: Type='Copr deploy'
+      before_deploy:
+        - openssl aes-256-cbc -K $encrypted_253525cedcf6_key -iv $encrypted_253525cedcf6_iv -in copr-key.enc -out copr-key -d
+        - curl -O https://raw.githubusercontent.com/m3t/travis_wait/master/travis_wait
+        - chmod 755 travis_wait
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script:
+          - docker run -dit --name copr -v $(pwd):/builddir imlteam/dotnet-docker
+          - docker exec -it copr yum install -y rpmdevtools copr-cli
+          - docker exec -it copr bash -c 'cd /builddir && fake run buid.fsx -- --prod'
+        on:
+          all_branches: true
