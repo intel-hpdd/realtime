@@ -8,7 +8,7 @@ Requires=iml-settings-populator.service
 Type=simple
 EnvironmentFile=/var/lib/chroma/iml-settings.conf
 Environment=NODE_ENV=production
-ExecStart=/bin/node /usr/lib/node_modules/@iml/realtime/index.js
+ExecStart=/bin/node /usr/lib/node_modules/@iml/realtime/server.js
 Restart=on-failure
 StandardOutput=journal
 StandardError=journal
