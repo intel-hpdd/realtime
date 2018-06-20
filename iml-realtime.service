@@ -1,8 +1,8 @@
 [Unit]
 Description=IML Realtime Service
 PartOf=iml-manager.target
-After=iml-settings-populator.Service
-Requires=iml-settings-populatore.Service
+After=iml-settings-populator.service
+Requires=iml-settings-populator.service
 
 [Service]
 Type=simple
