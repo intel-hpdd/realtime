@@ -1,0 +1,17 @@
+[Unit]
+Description=IML Realtime Service
+PartOf=iml-manager.target
+After=iml-settings-populator.Service
+Requires=iml-settings-populatore.Service
+
+[Service]
+Type=simple
+EnvironmentFile=/var/lib/chroma/iml-settings.conf
+Environment=NODE_ENV=production
+ExecStart=/bin/node /usr/lib/node_modules/@iml/realtime/index.js
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=iml-manager.target
