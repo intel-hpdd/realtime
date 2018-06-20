@@ -1,0 +1,65 @@
+%define base_name realtime
+
+Name:     iml-%{base_name}
+Version:  @version@
+Release:  1%{?dist}
+Summary:  Provides Realtime data to IML
+License:  MIT
+Group:    System Environment/Libraries
+URL:      https://github.com/whamcloud/%{base_name}
+Source0:  %{name}-%{version}.tgz
+
+%{?systemd_requires}
+BuildRequires: systemd
+
+BuildRequires: nodejs-packaging
+BuildRequires: npm
+BuildArch: noarch
+
+%description
+This modules provides realtime data to the GUI.
+
+%prep
+%setup -q -n package
+npm i --production
+%nodejs_fixdep -r highland 
+%nodejs_fixdep -r intel-fp
+%nodejs_fixdep -r intel-logger
+%nodejs_fixdep -r intel-obj
+%nodejs_fixdep -r intel-req
+%nodejs_fixdep -r intel-router
+%nodejs_fixdep -r intel-through
+%nodejs_fixdep -r json-mask
+%nodejs_fixdep -r jsonschema
+%nodejs_fixdep -r socket.io
+
+
+%build
+#nothing to do
+
+%install
+mkdir -p %{buildroot}%{_unitdir}
+mkdir -p %{buildroot}%{nodejs_sitelib}/@iml/%{base_name}
+mv iml-realtime.service %{buildroot}%{_unitdir}
+cp -al . %{buildroot}%{nodejs_sitelib}/@iml/%{base_name}
+
+%post
+systemctl preset iml-realtime.service
+
+%preun
+%systemd_preun iml-realtime.service
+
+%postun
+%systemd_postun_with_restart iml-realtime.service
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%{nodejs_sitelib}
+%attr(0644,root,root)%{_unitdir}/iml-realtime.service 
+
+%changelog
+* Tue Jun 19 2018 Will Johnson <wjohnson@whamcloud.com> - 7.0.0-1
+  - Build using FAKE
+  - Initial standalone RPM package
