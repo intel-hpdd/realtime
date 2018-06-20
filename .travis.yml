@@ -12,13 +12,10 @@ jobs:
         - npm run eslint
         - npm run test
     - stage: deploy-npm
-      if: branch =~ ^v\d+\.\d+\.\d+$
+      if: branch =~ ^v\d+\.\d+\.\d+-1.*$
       env: Type='npm Deploy'
-      before_deploy:
-        - npm i --ci
       deploy:
         provider: npm
-        skip_cleanup: true
         email: "$NPM_EMAIL"
         api_key: "$NPM_TOKEN"
         on:
@@ -26,10 +23,9 @@ jobs:
     - stage: deploy-copr
       if: branch =~ ^v\d+\.\d+\.\d+-.+$
       env: Type='Copr deploy'
+      language: generic
       before_deploy:
         - openssl aes-256-cbc -K $encrypted_253525cedcf6_key -iv $encrypted_253525cedcf6_iv -in copr-key.enc -out copr-key -d
-        - curl -O https://raw.githubusercontent.com/m3t/travis_wait/master/travis_wait
-        - chmod 755 travis_wait
       deploy:
         skip_cleanup: true
         provider: script
