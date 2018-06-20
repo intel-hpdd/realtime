@@ -34,8 +34,6 @@ jobs:
         skip_cleanup: true
         provider: script
         script:
-          - docker run -dit --name copr -v $(pwd):/builddir imlteam/dotnet-docker
-          - docker exec -it copr yum install -y rpmdevtools copr-cli
-          - docker exec -it copr bash -c 'cd /builddir && fake run buid.fsx -- --prod'
+          - docker run -it --name copr -v $(pwd):/builddir imlteam/dotnet-docker bash -c 'yum install -y rpmdevtools copr-cli && cd /builddir && fake run build.fsx -- --prod'
         on:
           all_branches: true
