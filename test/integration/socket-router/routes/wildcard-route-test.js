@@ -1,103 +1,95 @@
-'use strict';
+"use strict";
 
-var utils = require('../../utils');
-var getAlertFixtures = require('../../fixtures/alert');
-var start = require('../../../../index');
-var waitForRequests = require('../../../../api-request').waitForRequests;
-var fp = require('intel-fp/dist/fp');
+var utils = require("../../utils");
+var getAlertFixtures = require("../../fixtures/alert");
+var start = require("../../../../index");
+var waitForRequests = require("../../../../api-request").waitForRequests;
+var fp = require("intel-fp/dist/fp");
 
-describe('wildcard route', function () {
-  var socket, stubDaddy,
-    alertFixtures, alertRequest,
-    shutdown, emitMessage, onceMessage;
+describe("wildcard route", function() {
+  var socket, stubDaddy, alertFixtures, alertRequest, shutdown, emitMessage, onceMessage;
 
-  beforeEach(function () {
+  beforeEach(function() {
     alertFixtures = getAlertFixtures();
 
     alertRequest = {
-      path: '/alert',
+      path: "/alert",
       options: {
         qs: {
-          active: 'true',
-          severity__in: [
-            'WARNING',
-            'ERROR'
-          ],
+          active: "true",
+          severity__in: ["WARNING", "ERROR"],
           limit: 0
         }
       }
     };
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     stubDaddy = utils.getStubDaddy();
 
-    stubDaddy.webService
-      .startService();
+    stubDaddy.webService.startService();
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     shutdown = start();
     socket = utils.getSocket();
-    emitMessage = socket.emit.bind(socket, 'message1');
-    onceMessage = socket.once.bind(socket, 'message1');
+    emitMessage = socket.emit.bind(socket, "message1");
+    onceMessage = socket.once.bind(socket, "message1");
   });
 
-  afterEach(function (done) {
-    stubDaddy.webService
-      .stopService(done.fail, done);
+  afterEach(function(done) {
+    stubDaddy.webService.stopService(done.fail, done);
   });
 
-  afterEach(function () {
-    stubDaddy.inlineService
-      .mockState();
+  afterEach(function() {
+    stubDaddy.inlineService.mockState();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     shutdown();
   });
 
-  afterEach(function (done) {
+  afterEach(function(done) {
     waitForRequests(done);
   });
 
-  afterEach(function (done) {
-    socket.on('disconnect', done);
+  afterEach(function(done) {
+    socket.on("disconnect", done);
     socket.close();
   });
 
-  describe('handling response', function () {
-    beforeEach(function () {
+  describe("handling response", function() {
+    beforeEach(function() {
       stubDaddy.inlineService.mock(alertFixtures.yellowHealth);
     });
 
-    it('should provide an ack', function (done) {
-      emitMessage(alertRequest, function ack (resp) {
+    it("should provide an ack", function(done) {
+      emitMessage(alertRequest, function ack(resp) {
         expect(resp).toEqual(alertFixtures.yellowHealth.response.data);
         done();
       });
     });
 
-    it('should provide an event', function (done) {
+    it("should provide an event", function(done) {
       emitMessage(alertRequest);
-      onceMessage(function onData (resp) {
+      onceMessage(function onData(resp) {
         expect(resp).toEqual(alertFixtures.yellowHealth.response.data);
         done();
       });
     });
 
-    describe('handling post with json-mask', function () {
-      describe('on a valid match', function () {
-        beforeEach(function () {
-          alertRequest.options.jsonMask = 'objects/(id,active)';
+    describe("handling post with json-mask", function() {
+      describe("on a valid match", function() {
+        beforeEach(function() {
+          alertRequest.options.jsonMask = "objects/(id,active)";
         });
 
-        it('should filter the response to only the parameters specified in the json mask', function (done) {
-          emitMessage(alertRequest, function ack (resp) {
+        it("should filter the response to only the parameters specified in the json mask", function(done) {
+          emitMessage(alertRequest, function ack(resp) {
             expect(resp).toEqual({
               objects: [
                 {
-                  id: '2',
+                  id: "2",
                   active: false
                 }
               ]
@@ -108,19 +100,20 @@ describe('wildcard route', function () {
         });
       });
 
-      describe('on an invalid match', function () {
-        beforeEach(function () {
-          alertRequest.options.jsonMask = 'objects/(invalid)';
+      describe("on an invalid match", function() {
+        beforeEach(function() {
+          alertRequest.options.jsonMask = "objects/(invalid)";
         });
 
-        it('should throw an exception', function (done) {
-          emitMessage(alertRequest, function ack (resp) {
+        it("should throw an exception", function(done) {
+          emitMessage(alertRequest, function ack(resp) {
             expect(resp).toEqual({
               error: {
-                message: 'The json mask did not match the response and as a result returned null. Examine the mask: ' +
-                '"objects/(invalid)" From GET request to ' +
-                '/api/alert/?active=true&severity__in=WARNING&severity__in=ERROR&limit=0',
-                name: 'Error',
+                message:
+                  "The json mask did not match the response and as a result returned null. Examine the mask: " +
+                  '"objects/(invalid)" From GET request to ' +
+                  "/api/alert/?active=true&severity__in=WARNING&severity__in=ERROR&limit=0",
+                name: "Error",
                 stack: jasmine.any(String),
                 statusCode: 400
               }
@@ -132,14 +125,14 @@ describe('wildcard route', function () {
     });
   });
 
-  describe('handling errors', function () {
+  describe("handling errors", function() {
     var spy;
-    beforeEach(function () {
-      spy = jasmine.createSpy('spy');
+    beforeEach(function() {
+      spy = jasmine.createSpy("spy");
       stubDaddy.inlineService.mock({
         request: {
-          method: 'GET',
-          url: '/api/throw-error/',
+          method: "GET",
+          url: "/api/throw-error/",
           data: {},
           headers: {}
         },
@@ -147,7 +140,7 @@ describe('wildcard route', function () {
           statusCode: 500,
           headers: {},
           data: {
-            err: { cause: 'boom!' }
+            err: { cause: "boom!" }
           }
         },
         expires: 0,
@@ -155,16 +148,23 @@ describe('wildcard route', function () {
       });
     });
 
-    describe('acking the error', function () {
-      beforeEach(function (done) {
-        emitMessage({path: '/throw-error'}, fp.flow(spy, fp.always([]), fp.invoke(done)));
+    describe("acking the error", function() {
+      beforeEach(function(done) {
+        emitMessage(
+          { path: "/throw-error" },
+          fp.flow(
+            spy,
+            fp.always([]),
+            fp.invoke(done)
+          )
+        );
       });
 
-      it('should receive a 500', function () {
+      it("should receive a 500", function() {
         expect(spy).toHaveBeenCalledWith({
           error: {
             message: '{"err":{"cause":"boom!"}} From GET request to /api/throw-error/',
-            name: 'Error',
+            name: "Error",
             stack: jasmine.any(String),
             statusCode: 500
           }
@@ -172,17 +172,24 @@ describe('wildcard route', function () {
       });
     });
 
-    describe('sending an error through events', function () {
-      beforeEach(function (done) {
-        emitMessage({ path: '/throw-error' });
-        onceMessage(fp.flow(spy, fp.always([]), fp.invoke(done)));
+    describe("sending an error through events", function() {
+      beforeEach(function(done) {
+        emitMessage({ path: "/throw-error" });
+        onceMessage(
+          fp.flow(
+            spy,
+            fp.always([]),
+            fp.invoke(done)
+          )
+        );
       });
 
-      it('should receive a 500', function () {
-        expect(spy).toHaveBeenCalledOnceWith({
+      it("should receive a 500", function() {
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith({
           error: {
             message: '{"err":{"cause":"boom!"}} From GET request to /api/throw-error/',
-            name: 'Error',
+            name: "Error",
             stack: jasmine.any(String),
             statusCode: 500
           }
@@ -191,11 +198,11 @@ describe('wildcard route', function () {
     });
   });
 
-  it('should long poll the host endpoint', function (done) {
+  it("should long poll the host endpoint", function(done) {
     stubDaddy.inlineService.mock({
       request: {
-        method: 'GET',
-        url: '/api/host/1/',
+        method: "GET",
+        url: "/api/host/1/",
         data: {},
         headers: {}
       },
@@ -212,8 +219,8 @@ describe('wildcard route', function () {
       expires: 0
     });
 
-    emitMessage({ path: '/host/1/' });
-    onceMessage(function onData (resp) {
+    emitMessage({ path: "/host/1/" });
+    onceMessage(function onData(resp) {
       expect(resp).toEqual({
         objects: []
       });
@@ -221,11 +228,11 @@ describe('wildcard route', function () {
     });
   });
 
-  it('should re-poll with a 304', function (done) {
+  it("should re-poll with a 304", function(done) {
     stubDaddy.inlineService.mock({
       request: {
-        method: 'GET',
-        url: '/api/host/',
+        method: "GET",
+        url: "/api/host/",
         data: {},
         headers: {}
       },
@@ -242,8 +249,8 @@ describe('wildcard route', function () {
 
     stubDaddy.inlineService.mock({
       request: {
-        method: 'GET',
-        url: '/api/host/',
+        method: "GET",
+        url: "/api/host/",
         data: {},
         headers: {}
       },
@@ -255,7 +262,7 @@ describe('wildcard route', function () {
         data: {
           objects: [
             {
-              foo: 'bar'
+              foo: "bar"
             }
           ]
         }
@@ -266,11 +273,11 @@ describe('wildcard route', function () {
 
     stubDaddy.inlineService.mock({
       request: {
-        method: 'GET',
-        url: '/api/host/',
+        method: "GET",
+        url: "/api/host/",
         data: {},
         headers: {
-          'if-none-match': 1441818174.99
+          "if-none-match": 1441818174.99
         }
       },
       response: {
@@ -286,14 +293,14 @@ describe('wildcard route', function () {
     });
 
     emitMessage({
-      path: '/host',
+      path: "/host",
       options: {}
     });
-    onceMessage(function onData (resp) {
+    onceMessage(function onData(resp) {
       expect(resp).toEqual({
         objects: [
           {
-            foo: 'bar'
+            foo: "bar"
           }
         ]
       });

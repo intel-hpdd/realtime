@@ -1,30 +1,30 @@
-'use strict';
+"use strict";
 
-var rewire = require('rewire');
-var end = rewire('../../../../socket-router/middleware/end');
+var rewire = require("rewire");
+var end = rewire("../../../../socket-router/middleware/end");
 
-describe('end spec', function () {
+describe("end spec", function() {
   var logger, next, req, resp, revert, stream, onDestroy;
 
-  beforeEach(function () {
+  beforeEach(function() {
     logger = {
-      info: jasmine.createSpy('info')
+      info: jasmine.createSpy("info")
     };
 
-    revert = end.__set__('logger', logger);
+    revert = end.__set__("logger", logger);
 
-    next = jasmine.createSpy('next');
+    next = jasmine.createSpy("next");
 
-    req = { matches: ['foo'] };
+    req = { matches: ["foo"] };
 
     resp = {
       socket: {
-        once: jasmine.createSpy('once')
+        once: jasmine.createSpy("once")
       }
     };
 
     stream = {
-      destroy: jasmine.createSpy('destroy')
+      destroy: jasmine.createSpy("destroy")
     };
 
     end(req, resp, stream, next);
@@ -32,15 +32,16 @@ describe('end spec', function () {
     onDestroy = resp.socket.once.calls.mostRecent().args[1];
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should call next with the request and response', function () {
-    expect(next).toHaveBeenCalledOnceWith(req, resp);
+  it("should call next with the request and response", function() {
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith(req, resp);
   });
 
-  it('should not call destroy if nil was seen', function () {
+  it("should not call destroy if nil was seen", function() {
     stream._nil_seen = true;
 
     onDestroy();
@@ -48,7 +49,7 @@ describe('end spec', function () {
     expect(stream.destroy).not.toHaveBeenCalled();
   });
 
-  it('should not call destroy if stream was ended', function () {
+  it("should not call destroy if stream was ended", function() {
     stream.ended = true;
 
     onDestroy();
@@ -56,10 +57,10 @@ describe('end spec', function () {
     expect(stream.destroy).not.toHaveBeenCalled();
   });
 
-  it('should not call destroy twice', function () {
+  it("should not call destroy twice", function() {
     onDestroy();
     onDestroy();
 
-    expect(stream.destroy).toHaveBeenCalledOnce();
+    expect(stream.destroy).toHaveBeenCalledTimes(1);
   });
 });

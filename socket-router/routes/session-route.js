@@ -29,16 +29,16 @@ module.exports = function sessionRoute () {
     const headers = resp.socket.request.headers;
 
     return request
-     .map(x => x.headers['set-cookie'])
-     .map(fp.find(x => x.match(regexp)))
-     .tap(
-       fp.flow(
-         x => x.split('; ')[0],
-         x => headers.cookie = headers.cookie.replace(regexp, () => `${x}`)
-       )
-     )
-     .errors(pushSerializeError)
-     .each(resp.ack.bind(resp.ack));
+      .map(x => x.headers['set-cookie'])
+      .map(fp.find(x => x.match(regexp)))
+      .tap(
+        fp.flow(
+          x => x.split('; ')[0],
+          x => headers.cookie = headers.cookie.replace(regexp, () => `${x}`)
+        )
+      )
+      .errors(pushSerializeError)
+      .each(resp.ack.bind(resp.ack));
   };
 
   socketRouter.post('/session', sessionRoute);

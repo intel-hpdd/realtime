@@ -1,32 +1,32 @@
-'use strict';
+"use strict";
 
-var rewire = require('rewire');
-var logStart = rewire('../../../../socket-router/middleware/log-start');
+var rewire = require("rewire");
+var logStart = rewire("../../../../socket-router/middleware/log-start");
 
-describe('log start', function () {
+describe("log start", function() {
   var logger, revert, next, req, resp;
 
-  beforeEach(function () {
+  beforeEach(function() {
     logger = {
-      info: jasmine.createSpy('info')
+      info: jasmine.createSpy("info")
     };
 
-    revert = logStart.__set__('logger', logger);
+    revert = logStart.__set__("logger", logger);
 
-    req = { matches: ['foo'] };
+    req = { matches: ["foo"] };
 
     resp = {};
 
-    next = jasmine.createSpy('next');
+    next = jasmine.createSpy("next");
 
     logStart(req, resp, next);
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should call next with the request and response', function () {
-    expect(next).toHaveBeenCalledOnceWith(req, resp);
+  it("should call next with the request and response", function() {
+    expect(next).toHaveBeenCalledWith(req, resp);
   });
 });

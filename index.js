@@ -3,70 +3,69 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var createIo = require('socket.io');
-var socketRouter = require('./socket-router');
-var requestValidator = require('./request-validator');
-var serializeError = require('./serialize-error');
-var eventWildcard = require('./event-wildcard');
-var conf = require('./conf');
-var logger = require('./logger');
-var obj = require('intel-obj');
+var createIo = require("socket.io");
+var socketRouter = require("./socket-router");
+var requestValidator = require("./request-validator");
+var serializeError = require("./serialize-error");
+var eventWildcard = require("./event-wildcard");
+var conf = require("./conf");
+var logger = require("./logger");
+var obj = require("intel-obj");
 
 // Don't limit to pool to 5 in node 0.10.x
-var https = require('https');
-var http = require('http');
+var https = require("https");
+var http = require("http");
 https.globalAgent.maxSockets = http.globalAgent.maxSockets = Infinity;
 
-var qs = require('querystring');
-var url = require('url');
+var qs = require("querystring");
+var url = require("url");
 
-module.exports = function start () {
+module.exports = function start() {
   var io = createIo();
   io.use(eventWildcard);
-  io.attach(conf.REALTIME_PORT);
+  io.attach(conf.REALTIME_PORT, { wsEngine: "uws" });
 
   var isMessage = /message(\d+)/;
 
-  io.on('connection', function (socket) {
+  io.on("connection", function(socket) {
     var child = logger.child({ sock: socket });
 
-    child.info('socket connected');
+    child.info("socket connected");
 
-    socket.on('*', function onData (data, ack) {
+    socket.on("*", function onData(data, ack) {
       var matches = isMessage.exec(data.eventName);
 
-      if (!matches)
-        return;
+      if (!matches) return;
 
       handleRequest(data, socket, ack, matches[1]);
     });
 
-    socket.on('error', function onError (err) {
-      child.error({ err: err }, 'socket error');
+    socket.on("error", function onError(err) {
+      child.error({ err: err }, "socket error");
     });
   });
 
-  function handleRequest (data, socket, ack, id) {
+  function handleRequest(data, socket, ack, id) {
     try {
       var errors = requestValidator(data);
 
-      if (errors.length)
-        throw new Error(errors);
+      if (errors.length) throw new Error(errors);
 
       var options = data.options || {};
-      var method = (typeof options.method !== 'string' ? 'get' : options.method);
+      var method = typeof options.method !== "string" ? "get" : options.method;
 
       var parsedUrl = url.parse(data.path);
-      var qsObj =  { qs: qs.parse(parsedUrl.query) };
+      var qsObj = { qs: qs.parse(parsedUrl.query) };
 
-      socketRouter.go(parsedUrl.pathname,
+      socketRouter.go(
+        parsedUrl.pathname,
         {
           verb: method,
           data: obj.merge({}, options, qsObj),
           messageName: data.eventName,
-          endName: 'end' + id
+          endName: "end" + id
         },
         {
           socket: socket,
@@ -77,14 +76,12 @@ module.exports = function start () {
       error.statusCode = 400;
       var err = serializeError(error);
 
-      if (ack)
-        ack(err);
-      else
-        socket.emit(data.eventName, err);
+      if (ack) ack(err);
+      else socket.emit(data.eventName, err);
     }
   }
 
-  return function shutdown () {
+  return function shutdown() {
     io.close();
   };
 };

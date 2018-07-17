@@ -3,10 +3,10 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var emit = require('events').EventEmitter.prototype.emit;
-var obj = require('intel-obj');
+var emit = require("events").EventEmitter.prototype.emit;
+var obj = require("intel-obj");
 
 module.exports = function eventWildcard(socket, next) {
   if (socket.onevent !== onEvent) socket.onevent = onEvent;
@@ -23,7 +23,7 @@ function onEvent(packet) {
 
   var wildcardArgs = [...args];
 
-  var eventName = wildcardArgs.splice(0, 1, '*');
+  var eventName = wildcardArgs.splice(0, 1, "*");
 
   wildcardArgs[1] = obj.clone(wildcardArgs[1] || {});
 
