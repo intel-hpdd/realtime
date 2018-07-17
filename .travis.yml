@@ -12,7 +12,6 @@ jobs:
         - npm run eslint
         - npm run test
     - stage: deploy-npm
-      if: branch =~ ^v\d+\.\d+\.\d+-1.*$
       env: Type='npm Deploy'
       script: skip
       deploy:
@@ -22,7 +21,6 @@ jobs:
         on:
           all_branches: true
     - stage: deploy-copr
-      if: branch =~ ^v\d+\.\d+\.\d+-.+$
       env: Type='Copr deploy'
       language: generic
       before_deploy:
@@ -33,3 +31,20 @@ jobs:
         script: docker run -it --name copr -v $(pwd):/builddir imlteam/dotnet-docker bash -c 'yum install -y rpmdevtools copr-cli && cd /builddir && fake run build.fsx -- --prod'
         on:
           all_branches: true
+    - stage: cd
+      git:
+        depth: 999999
+      env: 'Type=Continuous Deployment'
+      script:
+        - openssl aes-256-cbc -K $encrypted_253525cedcf6_key -iv $encrypted_253525cedcf6_iv -in copr-mfl.enc -out copr-key -d
+        - docker run -dit --name copr -v $(pwd):/builddir imlteam/dotnet-docker /usr/sbin/init
+        - docker exec -it copr bash -c 'yum install -y rpmdevtools copr-cli git'
+        - docker exec -it copr bash -c 'cd /builddir && fake run build.fsx --release=$(git rev-list HEAD | wc -l)'
+stages:
+  - test
+  - name: deploy-npm
+    if: branch =~ ^v\d+\.\d+\.\d+-1.*$
+  - name: deploy-copr
+    if: branch =~ ^v\d+\.\d+\.\d+-.+$
+  - name: cd
+    if: branch = master AND type = push AND fork = false
