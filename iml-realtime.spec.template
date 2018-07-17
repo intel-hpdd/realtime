@@ -14,7 +14,8 @@ BuildRequires: systemd
 
 BuildRequires: nodejs-packaging
 BuildRequires: npm
-BuildArch: noarch
+
+ExclusiveArch: %{nodejs_arches}
 
 %description
 This modules provides realtime data to the GUI.
