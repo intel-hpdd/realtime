@@ -22,7 +22,7 @@ This modules provides realtime data to the GUI.
 %prep
 %setup -q -n package
 npm i --production
-%nodejs_fixdep -r highland 
+%nodejs_fixdep -r highland
 %nodejs_fixdep -r intel-fp
 %nodejs_fixdep -r intel-logger
 %nodejs_fixdep -r intel-obj
@@ -32,6 +32,7 @@ npm i --production
 %nodejs_fixdep -r json-mask
 %nodejs_fixdep -r jsonschema
 %nodejs_fixdep -r socket.io
+%nodejs_fixdep -r uws
 
 
 %build
@@ -57,7 +58,7 @@ rm -rf %{buildroot}
 
 %files
 %{nodejs_sitelib}
-%attr(0644,root,root)%{_unitdir}/iml-realtime.service 
+%attr(0644,root,root)%{_unitdir}/iml-realtime.service
 
 %changelog
 * Tue Jun 19 2018 Will Johnson <wjohnson@whamcloud.com> - 7.0.0-1

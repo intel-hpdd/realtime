@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-var rewire = require('rewire');
-var pushSerializeError = rewire('../../../serialize-error/push-serialize-error');
+var rewire = require("rewire");
+var pushSerializeError = rewire("../../../serialize-error/push-serialize-error");
 
-describe('push serialize error', function () {
+describe("push serialize error", function() {
   var revert, err, push, serializeError, serializedError;
-  beforeEach(function () {
-    err = new Error('im an error');
-    push = jasmine.createSpy('push');
-    serializedError = { error: 'im an error' };
-    serializeError = jasmine.createSpy('serializeError').and.returnValue(serializedError);
+  beforeEach(function() {
+    err = new Error("im an error");
+    push = jasmine.createSpy("push");
+    serializedError = { error: "im an error" };
+    serializeError = jasmine.createSpy("serializeError").and.returnValue(serializedError);
 
     revert = pushSerializeError.__set__({
       serializeError: serializeError
@@ -18,15 +18,15 @@ describe('push serialize error', function () {
     pushSerializeError(err, push);
   });
 
-  afterEach(function () {
+  afterEach(function() {
     revert();
   });
 
-  it('should push', function () {
-    expect(push).toHaveBeenCalledOnceWith(null, serializedError);
+  it("should push", function() {
+    expect(push).toHaveBeenCalledWith(null, serializedError);
   });
 
-  it('should invoke serializeError with the error', function () {
-    expect(serializeError).toHaveBeenCalledOnceWith(err);
+  it("should invoke serializeError with the error", function() {
+    expect(serializeError).toHaveBeenCalledWith(err);
   });
 });
