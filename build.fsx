@@ -36,6 +36,7 @@ Options:
   --prod                            Production build
   --copr-project=NAME               Copr Project
   -t, --target <target>             Run the given target (ignored if positional argument 'target' is given)
+  --release=NUM                     The release field for this build (defaults to 1)
   --help                            Help
 """
 
@@ -44,6 +45,10 @@ let args = ctx.Arguments
 let parser = Docopt(cli)
 let parsedArguments = parser.Parse(args |> List.toArray)
 
+let release =
+  DocoptResult.tryGetArgument "--release" parsedArguments
+  |> Option.defaultValue "1"
+
 let isProd =
   DocoptResult.hasFlag "--prod" parsedArguments
 
@@ -51,7 +56,7 @@ let coprRepo =
   DocoptResult.tryGetArgument "--copr-project" parsedArguments
   |> Option.defaultValue "managerforlustre/manager-for-lustre-devel/"
 
-let getPackageValue key decoder = 
+let getPackageValue key decoder =
   Fake.IO.File.readAsString "package.json"
     |> decodeString (field key decoder)
     |> function
@@ -75,7 +80,7 @@ Target.create "NpmBuild" (fun _ ->
     Fake.JavaScript.Npm.exec ("pack " + name) (fun o -> {
       o with WorkingDirectory = sources
     })
-  else 
+  else
     Fake.JavaScript.Npm.install(id)
     Fake.JavaScript.Npm.exec ("pack " + pwd) (fun o -> {
       o with WorkingDirectory = sources
@@ -87,6 +92,7 @@ Target.create "BuildSpec" (fun _ ->
 
   Fake.IO.Templates.load [specName + ".template"]
     |> Fake.IO.Templates.replaceKeywords [("@version@", v)]
+    |> Fake.IO.Templates.replaceKeywords [("@release@", release)]
     |> Seq.iter(fun (_, file) ->
       let x = UTF8Encoding()
 
