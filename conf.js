@@ -11,8 +11,7 @@ if (process.env.NODE_ENV !== "test")
   confJson = {
     LOG_PATH: process.env.LOG_PATH,
     REALTIME_PORT: process.env.REALTIME_PORT,
-    SERVER_HTTP_URL: process.env.SERVER_HTTP_URL,
-    SOURCE_MAP_PATH: process.env.SOURCE_MAP_PATH
+    SERVER_HTTP_URL: process.env.SERVER_HTTP_URL
   };
 
 var defaults = {
@@ -25,7 +24,6 @@ var conf = obj.merge({}, defaults, confJson);
 if (conf.NODE_ENV === "test")
   conf = obj.merge({}, conf, {
     SERVER_HTTP_URL: "https://localhost:9200/",
-    SOURCE_MAP_PATH: __dirname + "/test/integration/fixtures/built-fd5ce21b.js.map",
     REALTIME_PORT: 9201,
     LOG_PATH: __dirname
   });

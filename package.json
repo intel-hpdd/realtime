@@ -41,7 +41,7 @@
     "uws": "10.148.0"
   },
   "devDependencies": {
-    "eslint": "5.1.0",
+    "eslint": "5.3.0",
     "@iml/stub-daddy": "2.0.5",
     "jasmine": "3.1.0",
     "pre-commit": "1.2.2",

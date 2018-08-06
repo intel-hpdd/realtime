@@ -1,7 +1,7 @@
 sudo: required
 language: node_js
 node_js:
-  - 6
+  - 8
 services:
   - docker
 jobs:
@@ -23,23 +23,18 @@ jobs:
     - stage: deploy-copr
       env: Type='Copr deploy'
       language: generic
-      before_deploy:
-        - openssl aes-256-cbc -K $encrypted_253525cedcf6_key -iv $encrypted_253525cedcf6_iv -in copr-mfl.enc -out copr-key -d
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: docker run -it --name copr -v $(pwd):/builddir imlteam/dotnet-docker bash -c 'yum install -y rpmdevtools copr-cli && cd /builddir && fake run build.fsx -- --prod'
-        on:
-          all_branches: true
+      script:
+        - docker run -dit --name copr -v $(pwd):/builddir imlteam/dotnet-docker /usr/sbin/init
+        - docker exec -it copr bash -c 'yum install -y rpmdevtools copr-cli'
+        - docker exec -it copr bash -c "cd /builddir && fake run build.fsx --copr-login=$COPR_LOGIN --copr-username=$COPR_USERNAME --copr-token=$COPR_TOKEN --prod"
     - stage: cd
       git:
         depth: 999999
       env: 'Type=Continuous Deployment'
       script:
-        - openssl aes-256-cbc -K $encrypted_253525cedcf6_key -iv $encrypted_253525cedcf6_iv -in copr-mfl.enc -out copr-key -d
         - docker run -dit --name copr -v $(pwd):/builddir imlteam/dotnet-docker /usr/sbin/init
         - docker exec -it copr bash -c 'yum install -y rpmdevtools copr-cli git'
-        - docker exec -it copr bash -c 'cd /builddir && fake run build.fsx --release=$(git rev-list HEAD | wc -l)'
+        - docker exec -it copr bash -c "cd /builddir && fake run build.fsx --release=\$(git rev-list HEAD | wc -l) --copr-login=$COPR_LOGIN --copr-username=$COPR_USERNAME --copr-token=$COPR_TOKEN"
 stages:
   - test
   - name: deploy-npm
