@@ -6,7 +6,6 @@
 "use strict";
 
 const socketRouter = require("../index");
-const obj = require("intel-obj");
 const apiRequest = require("../../api-request");
 const pushSerializeError = require("../../serialize-error/push-serialize-error");
 const fp = require("intel-fp/dist/fp");

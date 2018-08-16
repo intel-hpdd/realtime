@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 DDN. All rights reserved.
+// Copyright (c) 2017 Intel Corporation. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -12,10 +12,10 @@ const { viewer, pool } = require("../../db-utils");
 const highland = require("highland");
 const broadcaster = require("../../broadcaster");
 
-function getHealth() {
+function getHosts() {
   return pool.connect().then(c =>
     c
-      .query("select * from health_status()")
+      .query("select * from chroma_core_managedhost;")
       .then(r => {
         c.release();
         return r.rows[0];
@@ -34,7 +34,7 @@ const getHealth$ = broadcaster(
     highland(getHealth()),
     viewer()
       .map(x => x.payload.split(","))
-      .filter(xs => xs[1] === "chroma_core_alertstate")
+      .filter(xs => xs[1] === "chroma_core_managedhost")
       .flatMap(() => highland(getHealth()))
   ]).sequence()
 );

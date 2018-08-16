@@ -34,6 +34,7 @@ npm i --production
 %nodejs_fixdep -r jsonschema
 %nodejs_fixdep -r socket.io
 %nodejs_fixdep -r uws
+%nodejs_fixdep -r pg
 
 
 %build
