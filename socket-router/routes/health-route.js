@@ -13,20 +13,13 @@ const highland = require("highland");
 const broadcaster = require("../../broadcaster");
 
 function getHealth() {
-  return pool.connect().then(c =>
-    c
-      .query("select * from health_status()")
-      .then(r => {
-        c.release();
-        return r.rows[0];
-      })
-      .then(x => {
-        return {
-          health: x.health,
-          count: x.num_alerts
-        };
-      })
-  );
+  return pool
+    .query("select * from health_status()")
+    .then(r => r.rows[0])
+    .then(x => ({
+      health: x.health,
+      count: x.num_alerts
+    }));
 }
 
 const getHealth$ = broadcaster(
