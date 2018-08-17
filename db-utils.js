@@ -8,20 +8,23 @@ const highland = require("highland");
 const broadcaster = require("./broadcaster");
 
 const pool = new Pool({ user: conf.DB_USER, password: conf.DB_PASSWORD, database: conf.DB_NAME, host: conf.DB_HOST });
-pool.on('error', e => {
-  console.error('Connection pool encountered an error', e.stack);
-  process.exit(-1);
+pool.on("error", e => {
+  console.error("Connection pool encountered an error", e.stack);
+  pool.end().then(() => process.exit(-1));
 });
 
 exports.pool = pool;
 
-const stream = highland((push, _) => { 
+const stream = highland((push, _) => {
   pool.connect().then(c => {
     c.on("notification", x => push(null, x));
-    c.on('notice', msg => console.warn('notice: ', msg));
-    c.on("error", (e) => {
+    c.on("notice", msg => console.warn("notice: ", msg));
+    c.on("error", e => {
       console.error("Error listening for table_update", e.stack);
-      setImmediate(() => { throw e; });
+      c.release();
+      setImmediate(() => {
+        throw e;
+      });
     });
     c.query("LISTEN table_update");
   });
