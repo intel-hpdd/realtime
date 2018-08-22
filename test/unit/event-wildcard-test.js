@@ -1,19 +1,21 @@
 "use strict";
 
-var rewire = require("rewire");
-var eventWildcard = rewire("../../event-wildcard");
-
 describe("event wildcard", function() {
-  var revert, emit, socket, acker, next;
+  var revert, emit, socket, acker, next, mockEvents, eventWildcard;
 
   beforeEach(function() {
     emit = {
       apply: jasmine.createSpy("apply")
     };
 
-    revert = eventWildcard.__set__({
-      emit: emit
-    });
+    mockEvents = {
+      EventEmitter: {
+        prototype: {
+          emit
+        }
+      }
+    };
+    jest.mock("events", () => mockEvents);
 
     acker = {};
 
@@ -23,11 +25,9 @@ describe("event wildcard", function() {
 
     next = jasmine.createSpy("next");
 
-    eventWildcard(socket, next);
-  });
+    eventWildcard = require("../../event-wildcard");
 
-  afterEach(function() {
-    revert();
+    eventWildcard(socket, next);
   });
 
   it("should call next", function() {

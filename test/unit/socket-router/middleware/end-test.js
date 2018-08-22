@@ -1,47 +1,42 @@
 "use strict";
 
-var rewire = require("rewire");
-var end = rewire("../../../../socket-router/middleware/end");
+describe("end spec", () => {
+  var mockLogger, next, req, resp, revert, stream, onDestroy, end;
 
-describe("end spec", function() {
-  var logger, next, req, resp, revert, stream, onDestroy;
-
-  beforeEach(function() {
-    logger = {
-      info: jasmine.createSpy("info")
+  beforeEach(() => {
+    mockLogger = {
+      info: jest.fn()
     };
 
-    revert = end.__set__("logger", logger);
+    jest.mock("../../../../logger", () => mockLogger);
 
-    next = jasmine.createSpy("next");
+    next = jest.fn();
 
     req = { matches: ["foo"] };
 
     resp = {
       socket: {
-        once: jasmine.createSpy("once")
+        once: jest.fn()
       }
     };
 
     stream = {
-      destroy: jasmine.createSpy("destroy")
+      destroy: jest.fn()
     };
+
+    end = require("../../../../socket-router/middleware/end");
 
     end(req, resp, stream, next);
 
-    onDestroy = resp.socket.once.calls.mostRecent().args[1];
+    onDestroy = resp.socket.once.mock.calls[0][1];
   });
 
-  afterEach(function() {
-    revert();
-  });
-
-  it("should call next with the request and response", function() {
+  it("should call next with the request and response", () => {
     expect(next).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledWith(req, resp);
   });
 
-  it("should not call destroy if nil was seen", function() {
+  it("should not call destroy if nil was seen", () => {
     stream._nil_seen = true;
 
     onDestroy();
@@ -49,7 +44,7 @@ describe("end spec", function() {
     expect(stream.destroy).not.toHaveBeenCalled();
   });
 
-  it("should not call destroy if stream was ended", function() {
+  it("should not call destroy if stream was ended", () => {
     stream.ended = true;
 
     onDestroy();
@@ -57,7 +52,7 @@ describe("end spec", function() {
     expect(stream.destroy).not.toHaveBeenCalled();
   });
 
-  it("should not call destroy twice", function() {
+  it("should not call destroy twice", () => {
     onDestroy();
     onDestroy();
 

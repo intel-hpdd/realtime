@@ -6,6 +6,7 @@
 "use strict";
 
 var errorSerializer = require("intel-logger").serializers.err;
+
 /**
  * Returns a normalized error
  * object for consumption
