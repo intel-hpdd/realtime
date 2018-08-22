@@ -3,33 +3,33 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var Validator = require('jsonschema').Validator;
+var Validator = require("jsonschema").Validator;
 var validator = new Validator();
 
 var schema = {
-  id: '/RequestData',
-  type: 'object',
+  id: "/RequestData",
+  type: "object",
   required: true,
   properties: {
     path: {
-      type: 'string',
+      type: "string",
       required: true
     },
     options: {
-      type: 'object',
+      type: "object",
       properties: {
         method: {
-          enum: [ 'get', 'post', 'put', 'patch', 'delete' ]
+          enum: ["get", "post", "put", "patch", "delete"]
         }
       }
     }
   }
 };
 
-module.exports = function getErrorList (data) {
-  return validator.validate(data, schema).errors.reduce(function joinErrors (message, error) {
-    return (message + error.stack + '\n');
-  }, '');
+module.exports = function getErrorList(data) {
+  return validator.validate(data, schema).errors.reduce(function joinErrors(message, error) {
+    return message + error.stack + "\n";
+  }, "");
 };

@@ -3,14 +3,14 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var conf = require('./conf');
-var url = require('url');
-var obj = require('intel-obj');
-var fp = require('intel-fp/dist/fp');
-var getReq = require('intel-req');
-var format = require('util').format;
+var conf = require("./conf");
+var url = require("url");
+var obj = require("intel-obj");
+var fp = require("intel-fp/dist/fp");
+var getReq = require("intel-req");
+var format = require("util").format;
 
 var serverHttpUrl = url.parse(conf.SERVER_HTTP_URL);
 var hostOptions = {
@@ -20,14 +20,12 @@ var hostOptions = {
   port: serverHttpUrl.port
 };
 
-var apiFormat = format.bind(format, '/api%s');
+var apiFormat = format.bind(format, "/api%s");
 
 var req = getReq();
 
-module.exports = fp.curry(2, function apiRequest (path, options) {
-  path = path
-    .replace(/^\/*/, '/')
-    .replace(/\/*$/, '/');
+module.exports = fp.curry(2, function apiRequest(path, options) {
+  path = path.replace(/^\/*/, "/").replace(/\/*$/, "/");
 
   var opts = obj.merge({}, options, hostOptions);
   opts.path = apiFormat(path);

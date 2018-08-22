@@ -3,12 +3,12 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
 module.exports = {
-  alert: require('./alert'),
-  command: require('./command'),
-  job: require('./job'),
-  testHost: require('./test-host'),
-  session: require('./session')
+  alert: require("./alert"),
+  command: require("./command"),
+  job: require("./job"),
+  testHost: require("./test-host"),
+  session: require("./session")
 };
