@@ -3,13 +3,13 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var obj = require('intel-obj');
+var obj = require("intel-obj");
 
 var regexp = /csrftoken=([^;|$]+)/;
 
-module.exports = function addCredentials (req, resp, next) {
+module.exports = function addCredentials(req, resp, next) {
   var headers = {};
   var requestHeaders = resp.socket.request.headers;
 
@@ -17,15 +17,18 @@ module.exports = function addCredentials (req, resp, next) {
     headers.Cookie = requestHeaders.cookie;
 
     var csrfTokenMatch = requestHeaders.cookie.match(regexp);
-    if (csrfTokenMatch && csrfTokenMatch[1])
-      headers['X-CSRFToken'] = csrfTokenMatch[1];
+    if (csrfTokenMatch && csrfTokenMatch[1]) headers["X-CSRFToken"] = csrfTokenMatch[1];
   }
 
-  headers['User-Agent'] = requestHeaders['user-agent'];
+  headers["User-Agent"] = requestHeaders["user-agent"];
 
-  req.data = obj.merge({}, {
-    headers: headers
-  }, req.data);
+  req.data = obj.merge(
+    {},
+    {
+      headers: headers
+    },
+    req.data
+  );
 
   next(req, resp);
 };

@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-module.exports = function () {
+module.exports = function() {
   return {
     twoServers: {
       request: {
-        method: 'GET',
-        url: '/api/job/?id__in=2&id__in=3&limit=0',
+        method: "GET",
+        url: "/api/job/?id__in=2&id__in=3&limit=0",
         data: {},
         headers: {}
       },
@@ -24,146 +24,138 @@ module.exports = function () {
             {
               available_transitions: [],
               cancelled: false,
-              class_name: 'TestHostConnectionJob',
-              commands: [
-                '/api/command/2/'
-              ],
-              created_at: '2015-01-09T14:18:57.519464+00:00',
-              description: 'Test for host connectivity',
+              class_name: "TestHostConnectionJob",
+              commands: ["/api/command/2/"],
+              created_at: "2015-01-09T14:18:57.519464+00:00",
+              description: "Test for host connectivity",
               errored: false,
-              id: '2',
-              modified_at: '2015-01-09T14:18:57.519397+00:00',
+              id: "2",
+              modified_at: "2015-01-09T14:18:57.519397+00:00",
               read_locks: [],
-              resource_uri: '/api/job/2/',
-              state: 'complete',
+              resource_uri: "/api/job/2/",
+              state: "complete",
               step_results: {
-                '/api/step/2/': {
-                  address: 'lotus-34vm5.iml.intel.com',
+                "/api/step/2/": {
+                  address: "lotus-34vm5.iml.intel.com",
                   status: [
                     {
-                      name: 'resolve',
+                      name: "resolve",
                       value: true
                     },
                     {
-                      name: 'ping',
+                      name: "ping",
                       value: true
                     },
                     {
-                      name: 'auth',
+                      name: "auth",
                       value: true
                     },
                     {
-                      name: 'hostname_valid',
+                      name: "hostname_valid",
                       value: true
                     },
                     {
-                      name: 'fqdn_resolves',
+                      name: "fqdn_resolves",
                       value: true
                     },
                     {
-                      name: 'fqdn_matches',
+                      name: "fqdn_matches",
                       value: true
                     },
                     {
-                      name: 'reverse_resolve',
+                      name: "reverse_resolve",
                       value: true
                     },
                     {
-                      name: 'reverse_ping',
+                      name: "reverse_ping",
                       value: true
                     },
                     {
-                      name: 'yum_valid_repos',
+                      name: "yum_valid_repos",
                       value: true
                     },
                     {
-                      name: 'yum_can_update',
+                      name: "yum_can_update",
                       value: true
                     },
                     {
-                      name: 'openssl',
+                      name: "openssl",
                       value: true
                     }
                   ],
                   valid: true
                 }
               },
-              steps: [
-                '/api/step/2/'
-              ],
+              steps: ["/api/step/2/"],
               wait_for: [],
               write_locks: []
             },
             {
               available_transitions: [],
               cancelled: false,
-              class_name: 'TestHostConnectionJob',
-              commands: [
-                '/api/command/3/'
-              ],
-              created_at: '2015-01-09T14:18:57.587166+00:00',
-              description: 'Test for host connectivity',
+              class_name: "TestHostConnectionJob",
+              commands: ["/api/command/3/"],
+              created_at: "2015-01-09T14:18:57.587166+00:00",
+              description: "Test for host connectivity",
               errored: false,
-              id: '3',
-              modified_at: '2015-01-09T14:18:57.587139+00:00',
+              id: "3",
+              modified_at: "2015-01-09T14:18:57.587139+00:00",
               read_locks: [],
-              resource_uri: '/api/job/3/',
-              state: 'complete',
+              resource_uri: "/api/job/3/",
+              state: "complete",
               step_results: {
-                '/api/step/3/': {
-                  address: 'lotus-34vm6.iml.intel.com',
+                "/api/step/3/": {
+                  address: "lotus-34vm6.iml.intel.com",
                   status: [
                     {
-                      name: 'resolve',
+                      name: "resolve",
                       value: true
                     },
                     {
-                      name: 'ping',
+                      name: "ping",
                       value: true
                     },
                     {
-                      name: 'auth',
+                      name: "auth",
                       value: true
                     },
                     {
-                      name: 'hostname_valid',
+                      name: "hostname_valid",
                       value: true
                     },
                     {
-                      name: 'fqdn_resolves',
+                      name: "fqdn_resolves",
                       value: true
                     },
                     {
-                      name: 'fqdn_matches',
+                      name: "fqdn_matches",
                       value: true
                     },
                     {
-                      name: 'reverse_resolve',
+                      name: "reverse_resolve",
                       value: true
                     },
                     {
-                      name: 'reverse_ping',
+                      name: "reverse_ping",
                       value: true
                     },
                     {
-                      name: 'yum_valid_repos',
+                      name: "yum_valid_repos",
                       value: true
                     },
                     {
-                      name: 'yum_can_update',
+                      name: "yum_can_update",
                       value: true
                     },
                     {
-                      name: 'openssl',
+                      name: "openssl",
                       value: true
                     }
                   ],
                   valid: true
                 }
               },
-              steps: [
-                '/api/step/3/'
-              ],
+              steps: ["/api/step/3/"],
               wait_for: [],
               write_locks: []
             }

@@ -6,7 +6,8 @@
     "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
     "integration": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/integration/**/*-test.js",
     "unit": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/unit/**/*-test.js",
-    "eslint": "eslint ./"
+    "eslint": "eslint ./",
+    "format": "prettier --write '**/*.js'"
   },
   "publishConfig": {
     "access": "public"
@@ -41,10 +42,11 @@
     "uws": "10.148.0"
   },
   "devDependencies": {
-    "eslint": "5.3.0",
     "@iml/stub-daddy": "2.0.5",
+    "eslint": "5.3.0",
     "jasmine": "3.1.0",
     "pre-commit": "1.2.2",
+    "prettier": "^1.14.2",
     "proxyquire": "1.7.11",
     "rewire": "2.5.2",
     "socket.io-client": "2.1.1"
