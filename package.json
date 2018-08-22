@@ -29,7 +29,7 @@
   "author": "IML Team",
   "license": "MIT",
   "dependencies": {
-    "highland": "2.7.3",
+    "highland": "3.0.0-beta.6",
     "intel-fp": "3.2.1",
     "intel-logger": "1.0.0",
     "intel-obj": "6.0.0",
@@ -39,6 +39,7 @@
     "json-mask": "0.3.8",
     "jsonschema": "1.1.1",
     "socket.io": "2.1.1",
+    "pg": "^7.4.3",
     "uws": "10.148.0"
   },
   "devDependencies": {

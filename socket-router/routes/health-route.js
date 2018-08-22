@@ -5,66 +5,42 @@
 
 "use strict";
 
-var fp = require("intel-fp/dist/fp");
-var through = require("intel-through");
-var pollingRequest = require("../../polling-request");
-var socketRouter = require("../index");
-var pushSerializeError = require("../../serialize-error/push-serialize-error");
+const through = require("intel-through");
+const socketRouter = require("../index");
+const pushSerializeError = require("../../serialize-error/push-serialize-error");
+const { viewer, pool } = require("../../db-utils");
+const highland = require("highland");
+const broadcaster = require("../../broadcaster");
 
-var STATES;
-exports.STATES = STATES = {
-  ERROR: "ERROR",
-  WARN: "WARNING",
-  GOOD: "GOOD"
-};
+function getHealth() {
+  return pool
+    .query("select * from health_status()")
+    .then(r => r.rows[0])
+    .then(x => ({
+      health: x.health,
+      count: x.num_alerts
+    }));
+}
+
+const getHealth$ = broadcaster(
+  highland([
+    highland(getHealth()),
+    viewer()
+      .map(x => x.payload.split(","))
+      .filter(xs => xs[1] === "chroma_core_alertstate")
+      .flatMap(() => highland(getHealth()))
+  ]).sequence()
+);
 
 module.exports = function healthRoutes() {
-  socketRouter.get("/health", function healthRoute(req, resp, next) {
-    var stream = pollingRequest("/alert", {
-      headers: req.data.headers,
-      qs: {
-        active: true,
-        severity__in: [STATES.WARN, STATES.ERROR],
-        limit: 0
-      }
-    });
+  socketRouter.get("/health", (req, resp, next) => {
+    const stream = getHealth$();
 
-    var getHealth = fp.flow(
-      unique,
-      fp.invokeMethod("sort", [compare]),
-      fp.tail
-    );
-
-    var buildOutput = fp.flow(
-      fp.pathLens(["body", "objects"]),
-      fp.map(fp.lensProp("severity")),
-      fp.filter(fp.identity),
-      fp.arrayWrap,
-      fp.mapFn([getHealth, fp.lensProp("length")]),
-      fp.zipObject(["health", "count"])
-    );
-
-    fp.map(buildOutput, stream)
+    stream
+      .tap(x => console.error(x))
       .errors(pushSerializeError)
       .through(through.unchangedFilter)
-      .each(resp.socket.emit.bind(resp.socket, req.messageName));
-
-    function unique(xs) {
-      return xs.reduce(
-        function reducer(a, b) {
-          if (a.indexOf(b) < 0) a.push(b);
-
-          return a;
-        },
-        [STATES.GOOD]
-      );
-    }
-
-    function compare(a, b) {
-      var states = [STATES.GOOD, STATES.WARN, STATES.ERROR];
-
-      return states.indexOf(a) - states.indexOf(b);
-    }
+      .each(x => resp.socket.emit(req.messageName, x));
 
     next(req, resp, stream);
   });
