@@ -4,7 +4,7 @@
 // license that can be found in the LICENSE file.
 
 "use strict";
-
+debugger;
 var createIo = require("socket.io");
 var socketRouter = require("./socket-router");
 var requestValidator = require("./request-validator");
@@ -77,6 +77,8 @@ function handleRequest(data, socket, ack, id) {
   }
 }
 
-return function shutdown() {
+const shutdown = () => {
   io.close();
 };
+
+module.exports = shutdown;

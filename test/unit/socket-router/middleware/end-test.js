@@ -1,15 +1,9 @@
 "use strict";
 
 describe("end spec", () => {
-  var mockLogger, next, req, resp, revert, stream, onDestroy, end;
+  var next, req, resp, revert, stream, onDestroy, end;
 
   beforeEach(() => {
-    mockLogger = {
-      info: jest.fn()
-    };
-
-    jest.mock("../../../../logger", () => mockLogger);
-
     next = jest.fn();
 
     req = { matches: ["foo"] };

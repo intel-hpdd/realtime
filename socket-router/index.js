@@ -6,12 +6,10 @@
 "use strict";
 
 const getRouter = require("intel-router").default;
-const logStart = require("./middleware/log-start");
 const addCredentials = require("./middleware/add-credentials");
 const end = require("./middleware/end");
 
 module.exports = getRouter()
-  .addStart(logStart)
   .addStart(addCredentials)
   .addEnd(end);
 
