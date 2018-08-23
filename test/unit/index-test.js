@@ -73,8 +73,6 @@ describe("realtime index test", () => {
 
   describe("setup events", () => {
     beforeEach(() => {
-      debugger;
-      console.log("bla");
       require("../../index");
     });
 

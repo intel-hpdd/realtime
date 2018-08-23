@@ -4,7 +4,7 @@
 // license that can be found in the LICENSE file.
 
 "use strict";
-debugger;
+
 var createIo = require("socket.io");
 var socketRouter = require("./socket-router");
 var requestValidator = require("./request-validator");
