@@ -1,32 +1,32 @@
 "use strict";
 
 var fp = require("intel-fp/dist/fp");
-var rewire = require("rewire");
-var serializeError = rewire("../../../serialize-error");
 
-describe("error handler", function() {
-  var error, errorSerializer, revert;
+describe("error handler", () => {
+  var error, revert, mockIntelLogger, serializeError;
 
-  beforeEach(function() {
-    errorSerializer = jasmine.createSpy("errorSerializer").and.callFake(fp.identity);
-    revert = serializeError.__set__("errorSerializer", errorSerializer);
+  beforeEach(() => {
+    mockIntelLogger = {
+      serializers: {
+        err: jest.fn(fp.identity)
+      }
+    };
+    jest.mock("intel-logger", () => mockIntelLogger);
 
     error = new Error("foo");
+
+    serializeError = require("../../../serialize-error/index");
   });
 
-  afterEach(function() {
-    revert();
-  });
-
-  it("should return a normalized response", function() {
+  it("should return a normalized response", () => {
     error.statusCode = 404;
 
     expect(serializeError(error)).toEqual({
-      error: error
+      error
     });
   });
 
-  it("should add a status code if it's missing", function() {
+  it("should add a status code if it's missing", () => {
     var result = serializeError(error);
 
     expect(result.error.statusCode).toEqual(500);

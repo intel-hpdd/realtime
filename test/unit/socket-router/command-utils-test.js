@@ -1,37 +1,31 @@
 "use strict";
 
-var rewire = require("rewire");
-var commandUtils = rewire("../../../socket-router/command-utils");
 var fixtures = require("../../integration/fixtures");
 var highland = require("highland");
 var obj = require("intel-obj");
 var fp = require("intel-fp/dist/fp");
 
-describe("command utils", function() {
-  var revoke, apiRequest, responseStream, pollingRequest, pollStream;
+describe("command utils", () => {
+  var revoke, mockApiRequest, responseStream, mockPollingRequest, pollStream, commandUtils;
 
-  beforeEach(function() {
+  beforeEach(() => {
     responseStream = highland();
-    apiRequest = jasmine.createSpy("apiRequest").and.returnValue(responseStream);
+    mockApiRequest = jest.fn(() => responseStream);
 
     pollStream = highland();
-    spyOn(pollStream, "destroy").and.callThrough();
-    pollingRequest = jasmine.createSpy("pollingRequest").and.returnValue(pollStream);
+    jest.spyOn(pollStream, "destroy");
+    mockPollingRequest = jest.fn(() => pollStream);
 
-    revoke = commandUtils.__set__({
-      apiRequest: apiRequest,
-      pollingRequest: pollingRequest
-    });
+    jest.mock("../../../api-request", () => mockApiRequest);
+    jest.mock("../../../polling-request", () => mockPollingRequest);
+
+    commandUtils = require("../../../socket-router/command-utils");
   });
 
-  afterEach(function() {
-    revoke();
-  });
-
-  describe("wait for commands", function() {
+  describe("wait for commands", () => {
     var waiter, commandData;
 
-    beforeEach(function() {
+    beforeEach(() => {
       commandData = {
         body: {
           objects: [
@@ -55,25 +49,25 @@ describe("command utils", function() {
       );
     });
 
-    it("should be a function", function() {
-      expect(commandUtils.waitForCommands).toEqual(jasmine.any(Function));
+    it("should be a function", () => {
+      expect(commandUtils.waitForCommands).toEqual(expect.any(Function));
     });
 
-    it("should return a stream", function() {
+    it("should return a stream", () => {
       expect(highland.isStream(waiter)).toBe(true);
     });
 
-    describe("getting values", function() {
+    describe("getting values", () => {
       var spy;
 
-      beforeEach(function() {
-        spy = jasmine.createSpy("spy");
+      beforeEach(() => {
+        spy = jest.fn();
         waiter.pull(spy);
       });
 
-      it("should pass the headers and ids to pollingRequest", function() {
-        expect(pollingRequest).toHaveBeenCalledTimes(1);
-        expect(pollingRequest).toHaveBeenCalledWith("/command", {
+      it("should pass the headers and ids to pollingRequest", () => {
+        expect(mockPollingRequest).toHaveBeenCalledTimes(1);
+        expect(mockPollingRequest).toHaveBeenCalledWith("/command", {
           headers: {
             Cookie: "sessionid=123"
           },
@@ -84,7 +78,7 @@ describe("command utils", function() {
         });
       });
 
-      it("should push the value downstream", function() {
+      it("should push the value downstream", () => {
         pollStream.write(commandData);
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalledWith(null, commandData.body.objects);
@@ -95,7 +89,7 @@ describe("command utils", function() {
         pollStream.write(highland.nil);
         waiter.errors(done.fail).pull(spy);
 
-        process.nextTick(function() {
+        process.nextTick(() => {
           expect(spy).toHaveBeenCalledTimes(2);
           expect(spy).toHaveBeenCalledWith(null, highland.nil);
           done();
@@ -105,20 +99,20 @@ describe("command utils", function() {
       it("should destroy on data", function(done) {
         pollStream.write(commandData);
 
-        process.nextTick(function() {
+        process.nextTick(() => {
           expect(pollStream.destroy).toHaveBeenCalledTimes(1);
           done();
         });
       });
 
-      it("should push an error downstream", function() {
+      it("should push an error downstream", () => {
         var err = new Error("boom!");
         pollStream.write(new StreamError(err));
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalledWith(err, undefined);
       });
 
-      it("should not return on unfinished commands", function() {
+      it("should not return on unfinished commands", () => {
         var incompleteData = obj.clone(commandData);
         incompleteData.body.objects[0].complete = false;
 
@@ -129,11 +123,11 @@ describe("command utils", function() {
     });
   });
 
-  describe("get steps", function() {
+  describe("get steps", () => {
     var commands, jobs, commandStream, resultStream, spy;
 
-    beforeEach(function() {
-      spy = jasmine.createSpy("spy");
+    beforeEach(() => {
+      spy = jest.fn();
       commands = fixtures.command().twoServers.response.data.objects;
 
       jobs = fixtures.job().twoServers.response.data;
@@ -147,13 +141,13 @@ describe("command utils", function() {
       );
     });
 
-    it("should call apiRequest with job ids", function() {
+    it("should call apiRequest with job ids", () => {
       commandStream.write(commands);
       commandStream.end();
 
       resultStream.each(fp.noop);
-      expect(apiRequest).toHaveBeenCalledTimes(1);
-      expect(apiRequest).toHaveBeenCalledWith("/job", {
+      expect(mockApiRequest).toHaveBeenCalledTimes(1);
+      expect(mockApiRequest).toHaveBeenCalledWith("/job", {
         headers: {
           Cookie: "sessionid=123"
         },
@@ -186,7 +180,7 @@ describe("command utils", function() {
       });
     });
 
-    it("should return empty on no data", function() {
+    it("should return empty on no data", () => {
       commandStream.end();
 
       resultStream.otherwise(highland(["nope"])).each(spy);

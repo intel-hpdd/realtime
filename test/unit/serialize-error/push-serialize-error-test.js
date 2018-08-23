@@ -1,32 +1,25 @@
 "use strict";
 
-var rewire = require("rewire");
-var pushSerializeError = rewire("../../../serialize-error/push-serialize-error");
+describe("push serialize error", () => {
+  var revert, err, push, mockSerializeError, serializedError, pushSerializeError;
 
-describe("push serialize error", function() {
-  var revert, err, push, serializeError, serializedError;
-  beforeEach(function() {
+  beforeEach(() => {
     err = new Error("im an error");
-    push = jasmine.createSpy("push");
+    push = jest.fn();
     serializedError = { error: "im an error" };
-    serializeError = jasmine.createSpy("serializeError").and.returnValue(serializedError);
+    mockSerializeError = jest.fn(() => serializedError);
 
-    revert = pushSerializeError.__set__({
-      serializeError: serializeError
-    });
+    jest.mock("../../../serialize-error/index", () => mockSerializeError);
+    pushSerializeError = require("../../../serialize-error/push-serialize-error");
 
     pushSerializeError(err, push);
   });
 
-  afterEach(function() {
-    revert();
-  });
-
-  it("should push", function() {
+  it("should push", () => {
     expect(push).toHaveBeenCalledWith(null, serializedError);
   });
 
-  it("should invoke serializeError with the error", function() {
-    expect(serializeError).toHaveBeenCalledWith(err);
+  it("should invoke serializeError with the error", () => {
+    expect(mockSerializeError).toHaveBeenCalledWith(err);
   });
 });
