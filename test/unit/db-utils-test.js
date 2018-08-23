@@ -169,7 +169,7 @@ describe("db utils", () => {
     let query, p;
     beforeEach(() => {
       query = "select * from table";
-      p = dbUtils.query(query, obj => ({ magicNumber: obj.x }));
+      p = dbUtils.query(query);
     });
 
     it("should call query on the pool", () => {
@@ -179,7 +179,11 @@ describe("db utils", () => {
     it("should return the result", done => {
       p.then(x => {
         expect(x).toEqual({
-          magicNumber: 7
+          rows: [
+            {
+              x: 7
+            }
+          ]
         });
         done();
       });

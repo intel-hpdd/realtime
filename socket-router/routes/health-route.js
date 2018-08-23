@@ -13,10 +13,12 @@ const highland = require("highland");
 const broadcaster = require("../../broadcaster");
 
 const getHealth = () =>
-  query("select * from health_status()", x => ({
-    health: x.health,
-    count: x.num_alerts
-  }));
+  query("select * from health_status()")
+    .then(r => r.rows[0])
+    .then(x => ({
+      health: x.health,
+      count: x.num_alerts
+    }));
 
 const getHealth$ = broadcaster(
   highland([

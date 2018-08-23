@@ -37,17 +37,17 @@ describe("health route", () => {
       mockQuery
         .mockReturnValueOnce(
           Promise.resolve({
-            rows: [{ health: "GOOD", count: 0 }]
+            rows: [{ health: "GOOD", num_alerts: 0 }]
           })
         )
         .mockReturnValueOnce(
           Promise.resolve({
-            rows: [{ health: "WARNING", count: 1 }]
+            rows: [{ health: "WARNING", num_alerts: 1 }]
           })
         )
         .mockReturnValue(
           Promise.resolve({
-            rows: [{ health: "GOOD", count: 0 }]
+            rows: [{ health: "GOOD", num_alerts: 0 }]
           })
         );
 
@@ -85,7 +85,7 @@ describe("health route", () => {
 
       it("should query the db for health status", done => {
         p.then(() => {
-          expect(mockQuery).toHaveBeenCalledWith("select * from health_status()", expect.any(Function));
+          expect(mockQuery).toHaveBeenCalledWith("select * from health_status()");
           done();
         });
       });
@@ -97,15 +97,9 @@ describe("health route", () => {
         });
       });
 
-      it("should transform the query results", () => {
-        const transformFn = mockQuery.mock.calls[0][1];
-        const result = transformFn({ health: "GOOD", num_alerts: 0 });
-        expect(result).toEqual({ health: "GOOD", count: 0 });
-      });
-
       it("should emit the message and data", done => {
         p.then(x => {
-          expect(resp.socket.emit).toHaveBeenCalledWith("health-message", { rows: [{ health: "WARNING", count: 1 }] });
+          expect(resp.socket.emit).toHaveBeenCalledWith("health-message", { health: "WARNING", count: 1 });
           done();
         });
       });

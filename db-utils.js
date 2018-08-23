@@ -31,10 +31,6 @@ const stream = highland((push, _) => {
 
 exports.viewer = broadcaster(stream);
 
-const query = (query, transform) =>
-  pool
-    .query(query)
-    .then(r => r.rows[0])
-    .then(x => transform(x));
+const query = query => pool.query(query);
 
 exports.query = query;
