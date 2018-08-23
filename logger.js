@@ -5,34 +5,34 @@
 
 "use strict";
 
-var conf = require("./conf");
-var logger = require("intel-logger");
-var path = require("path");
+const fp = require("intel-fp/dist/fp");
 
-var level = conf.NODE_ENV === "production" ? logger.LEVELS.ERROR : logger.LEVELS.INFO;
+const info = (...args) => {
+  console.info(...args);
+};
 
-module.exports = logger.default({
-  name: "realtime",
-  path: path.join(conf.LOG_PATH, conf.LOG_FILE),
-  level: level,
-  serializers: {
-    err: logger.serializers.err,
-    sock: socketSerializer,
-    sockReq: reqSerializer
-  }
+const warn = (...args) => {
+  console.warn(...args);
+};
+
+const error = (...args) => {
+  console.error(...args);
+};
+
+const logSerializer = fp.curry(4, (serializerFn, logFn, serializableData, msg) => {
+  logFn(serializerFn(serializableData), msg);
 });
 
-function socketSerializer(sock) {
+const socketSerializer = sock => {
   if (!sock) return false;
 
   return {
     id: sock.id
   };
-}
+};
 
-var message = /message(\d+)/;
-
-function reqSerializer(req) {
+const message = /message(\d+)/;
+const reqSerializer = req => {
   if (!req) return false;
 
   return {
@@ -41,4 +41,23 @@ function reqSerializer(req) {
     id: message.exec(req.messageName)[1],
     data: req.data
   };
-}
+};
+
+const socketLogSerializer = logSerializer(socketSerializer);
+const socketInfo = socketLogSerializer(info);
+const socketWarn = socketLogSerializer(warn);
+const socketError = socketLogSerializer(error);
+
+const reqLogSerializer = logSerializer(reqSerializer);
+const reqInfo = reqLogSerializer(info);
+const reqWarn = reqLogSerializer(warn);
+const reqError = reqLogSerializer(error);
+
+module.exports = {
+  socketInfo,
+  socketWarn,
+  socketError,
+  reqInfo,
+  reqWarn,
+  reqError
+};
