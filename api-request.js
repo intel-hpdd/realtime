@@ -5,29 +5,29 @@
 
 "use strict";
 
-var conf = require("./conf");
-var url = require("url");
-var obj = require("intel-obj");
-var fp = require("intel-fp/dist/fp");
-var getReq = require("intel-req");
-var format = require("util").format;
+const conf = require("./conf");
+const url = require("url");
+const obj = require("intel-obj");
+const fp = require("intel-fp/dist/fp");
+const getReq = require("intel-req");
+const format = require("util").format;
 
-var serverHttpUrl = url.parse(conf.SERVER_HTTP_URL);
-var hostOptions = {
+const serverHttpUrl = url.parse(conf.SERVER_HTTP_URL);
+const hostOptions = {
   localhost: serverHttpUrl.href,
   host: serverHttpUrl.host,
   hostname: serverHttpUrl.hostname,
   port: serverHttpUrl.port
 };
 
-var apiFormat = format.bind(format, "/api%s");
+const apiFormat = format.bind(format, "/api%s");
 
-var req = getReq();
+const req = getReq();
 
 module.exports = fp.curry(2, function apiRequest(path, options) {
   path = path.replace(/^\/*/, "/").replace(/\/*$/, "/");
 
-  var opts = obj.merge({}, options, hostOptions);
+  const opts = obj.merge({}, options, hostOptions);
   opts.path = apiFormat(path);
 
   return req.bufferRequest(opts);

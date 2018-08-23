@@ -1,7 +1,7 @@
 "use strict";
 
 describe("end spec", () => {
-  var next, req, resp, revert, stream, onDestroy, end;
+  let next, req, resp, stream, onDestroy, end;
 
   beforeEach(() => {
     next = jest.fn();

@@ -1,7 +1,7 @@
 "use strict";
 
 describe("push serialize error", () => {
-  var revert, err, push, mockSerializeError, serializedError, pushSerializeError;
+  let err, push, mockSerializeError, serializedError, pushSerializeError;
 
   beforeEach(() => {
     err = new Error("im an error");

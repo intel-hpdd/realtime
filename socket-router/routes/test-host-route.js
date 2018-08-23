@@ -5,29 +5,29 @@
 
 "use strict";
 
-var λ = require("highland");
-var through = require("intel-through");
-var apiRequest = require("../../api-request");
-var socketRouter = require("../index");
-var pushSerializeError = require("../../serialize-error/push-serialize-error");
-var commandUtils = require("../command-utils");
-var fp = require("intel-fp/dist/fp");
+const λ = require("highland");
+const through = require("intel-through");
+const apiRequest = require("../../api-request");
+const socketRouter = require("../index");
+const pushSerializeError = require("../../serialize-error/push-serialize-error");
+const commandUtils = require("../command-utils");
+const fp = require("intel-fp/dist/fp");
 
 module.exports = function testHostRoute() {
   socketRouter.post("/test_host", function getStatus(req, resp, next) {
-    var removeUndefined = fp.filter(
+    const removeUndefined = fp.filter(
       fp.flow(
         fp.eq(undefined),
         fp.not
       )
     );
-    var pullIds = fp.flow(
+    const pullIds = fp.flow(
       fp.pathLens(["body", "objects"]),
       fp.map(fp.pathLens(["command", "id"])),
       removeUndefined
     );
 
-    var stream = λ(function generator(push, next) {
+    const stream = λ(function generator(push, next) {
       apiRequest("/test_host", req.data)
         .map(pullIds)
         .filter(fp.lensProp("length"))

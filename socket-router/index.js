@@ -13,5 +13,5 @@ module.exports = getRouter()
   .addStart(addCredentials)
   .addEnd(end);
 
-var addRoutes = require("./add-routes");
+const addRoutes = require("./add-routes");
 addRoutes();

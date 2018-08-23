@@ -1,13 +1,13 @@
 "use strict";
 
-var utils = require("../../utils");
-var getAlertFixtures = require("../../fixtures/alert");
-var start = require("../../../../index");
-var waitForRequests = require("../../../../api-request").waitForRequests;
-var fp = require("intel-fp/dist/fp");
+const utils = require("../../utils");
+const getAlertFixtures = require("../../fixtures/alert");
+const start = require("../../../../index");
+const waitForRequests = require("../../../../api-request").waitForRequests;
+const fp = require("intel-fp/dist/fp");
 
 describe("wildcard route", function() {
-  var socket, stubDaddy, alertFixtures, alertRequest, shutdown, emitMessage, onceMessage;
+  let socket, stubDaddy, alertFixtures, alertRequest, shutdown, emitMessage, onceMessage;
 
   beforeEach(function() {
     alertFixtures = getAlertFixtures();
@@ -126,7 +126,7 @@ describe("wildcard route", function() {
   });
 
   describe("handling errors", function() {
-    var spy;
+    let spy;
     beforeEach(function() {
       spy = jasmine.createSpy("spy");
       stubDaddy.inlineService.mock({

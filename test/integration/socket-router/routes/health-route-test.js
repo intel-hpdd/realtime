@@ -1,13 +1,13 @@
 "use strict";
 
-var utils = require("../../utils");
-var getAlertFixtures = require("../../fixtures/alert");
-var start = require("../../../../index");
-var waitForRequests = require("../../../../api-request").waitForRequests;
-var obj = require("intel-obj");
+const utils = require("../../utils");
+const getAlertFixtures = require("../../fixtures/alert");
+const start = require("../../../../index");
+const waitForRequests = require("../../../../api-request").waitForRequests;
+const obj = require("intel-obj");
 
 describe("health route", function() {
-  var socket, stubDaddy, alertFixtures, shutdown, messageName, emitMessage, onceMessage, onMessage;
+  let socket, stubDaddy, alertFixtures, shutdown, messageName, emitMessage, onceMessage, onMessage;
 
   beforeEach(function() {
     messageName = "message1";
@@ -146,14 +146,14 @@ describe("health route", function() {
   });
 
   it("should send two responses", function(done) {
-    var greenHealth = utils.clone(alertFixtures.greenHealth);
+    const greenHealth = utils.clone(alertFixtures.greenHealth);
     greenHealth.expires = 1;
 
     stubDaddy.inlineService.mock(greenHealth);
 
     stubDaddy.inlineService.mock(alertFixtures.yellowHealth);
 
-    var messages = [];
+    const messages = [];
 
     emitMessage();
 
@@ -168,15 +168,15 @@ describe("health route", function() {
   });
 
   it("should send a change in count", function(done) {
-    var yellowHealth1 = obj.clone(alertFixtures.yellowHealth);
+    const yellowHealth1 = obj.clone(alertFixtures.yellowHealth);
     yellowHealth1.response.data.objects.push(obj.clone(yellowHealth1.response.data.objects[0]));
     yellowHealth1.expires = 1;
     stubDaddy.inlineService.mock(yellowHealth1);
 
-    var yellowHealth2 = utils.clone(alertFixtures.yellowHealth);
+    const yellowHealth2 = utils.clone(alertFixtures.yellowHealth);
     stubDaddy.inlineService.mock(yellowHealth2);
 
-    var messages = [];
+    const messages = [];
 
     emitMessage();
 
@@ -191,7 +191,7 @@ describe("health route", function() {
   });
 
   describe("handling error", function() {
-    var redHealth;
+    let redHealth;
 
     beforeEach(function() {
       redHealth = utils.clone(alertFixtures.redHealth);

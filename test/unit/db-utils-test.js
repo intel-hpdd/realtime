@@ -1,7 +1,7 @@
 const highland = require("highland");
 
 describe("db utils", () => {
-  let client, dbUtils, stream, mockStream, mockPool, pool, exit, warn, error, queryError;
+  let client, dbUtils, mockStream, mockPool, pool, exit, warn, error, queryError;
   beforeEach(() => {
     queryError = new Error("bad query");
     client = {

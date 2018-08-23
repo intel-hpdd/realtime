@@ -1,7 +1,7 @@
 const highland = require("highland");
 
 describe("health route", () => {
-  let viewer, pool, query, socketRouter, mockSocketGet, s$, mockViewer, mockQuery, viewer$, mockSerializeError;
+  let mockSocketGet, mockViewer, mockQuery, viewer$, mockSerializeError;
 
   beforeEach(() => {
     mockSocketGet = jest.fn();
@@ -76,7 +76,7 @@ describe("health route", () => {
         healthRouteCB(req, resp, next);
         next$ = next.mock.calls[0][2];
 
-        p = new Promise((res, rej) => {
+        p = new Promise(res => {
           resp.socket.emit.mockImplementation((name, x) => {
             if (mockQuery.mock.calls.length === 2) res({ name, x });
           });
@@ -91,14 +91,14 @@ describe("health route", () => {
       });
 
       it("should query the db twice", done => {
-        p.then(x => {
+        p.then(() => {
           expect(mockQuery).toHaveBeenCalledTimes(2);
           done();
         });
       });
 
       it("should emit the message and data", done => {
-        p.then(x => {
+        p.then(() => {
           expect(resp.socket.emit).toHaveBeenCalledWith("health-message", { health: "WARNING", count: 1 });
           done();
         });
@@ -132,7 +132,7 @@ describe("health route", () => {
 
       healthRouteCB(req, resp, next);
 
-      p = new Promise((res, rej) => {
+      p = new Promise(res => {
         mockSerializeError.mockImplementation((e, x) => {
           res({ e, x });
         });
@@ -140,7 +140,7 @@ describe("health route", () => {
     });
 
     it("should catch the error", done => {
-      p.then(({ e, x }) => {
+      p.then(({ e }) => {
         expect(e).toEqual(streamError);
         done();
       });

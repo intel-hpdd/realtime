@@ -5,33 +5,33 @@
 
 "use strict";
 
-var createIo = require("socket.io");
-var socketRouter = require("./socket-router");
-var requestValidator = require("./request-validator");
-var serializeError = require("./serialize-error");
-var eventWildcard = require("./event-wildcard");
-var conf = require("./conf");
-var obj = require("intel-obj");
+const createIo = require("socket.io");
+const socketRouter = require("./socket-router");
+const requestValidator = require("./request-validator");
+const serializeError = require("./serialize-error");
+const eventWildcard = require("./event-wildcard");
+const conf = require("./conf");
+const obj = require("intel-obj");
 
 // Don't limit to pool to 5 in node 0.10.x
-var https = require("https");
-var http = require("http");
+const https = require("https");
+const http = require("http");
 https.globalAgent.maxSockets = http.globalAgent.maxSockets = Infinity;
 
-var qs = require("querystring");
-var url = require("url");
+const qs = require("querystring");
+const url = require("url");
 
-var io = createIo();
+const io = createIo();
 io.use(eventWildcard);
 io.attach(conf.REALTIME_PORT, { wsEngine: "uws" });
 
-var isMessage = /message(\d+)/;
+const isMessage = /message(\d+)/;
 
 io.on("connection", function(socket) {
   console.log(`socket connected: ${socket.id}`);
 
   socket.on("*", function onData(data, ack) {
-    var matches = isMessage.exec(data.eventName);
+    const matches = isMessage.exec(data.eventName);
 
     if (!matches) return;
 
@@ -45,15 +45,15 @@ io.on("connection", function(socket) {
 
 function handleRequest(data, socket, ack, id) {
   try {
-    var errors = requestValidator(data);
+    const errors = requestValidator(data);
 
     if (errors.length) throw new Error(errors);
 
-    var options = data.options || {};
-    var method = typeof options.method !== "string" ? "get" : options.method;
+    const options = data.options || {};
+    const method = typeof options.method !== "string" ? "get" : options.method;
 
-    var parsedUrl = url.parse(data.path);
-    var qsObj = { qs: qs.parse(parsedUrl.query) };
+    const parsedUrl = url.parse(data.path);
+    const qsObj = { qs: qs.parse(parsedUrl.query) };
 
     socketRouter.go(
       parsedUrl.pathname,
@@ -70,7 +70,7 @@ function handleRequest(data, socket, ack, id) {
     );
   } catch (error) {
     error.statusCode = 400;
-    var err = serializeError(error);
+    const err = serializeError(error);
 
     if (ack) ack(err);
     else socket.emit(data.eventName, err);

@@ -5,7 +5,7 @@
 
 "use strict";
 
-var serializeError = require("./index");
+const serializeError = require("./index");
 
 module.exports = function pushSerializeError(err, push) {
   push(null, serializeError(err));

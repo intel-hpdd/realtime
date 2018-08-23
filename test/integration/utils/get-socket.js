@@ -1,7 +1,7 @@
 "use strict";
-var client = require("socket.io-client");
-var conf = require("../../../conf");
-var format = require("util").format;
+const client = require("socket.io-client");
+const conf = require("../../../conf");
+const format = require("util").format;
 
 module.exports = function invokeSocket(extraHeaders) {
   return client(format("http://localhost:%s", conf.REALTIME_PORT), {

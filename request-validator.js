@@ -5,10 +5,10 @@
 
 "use strict";
 
-var Validator = require("jsonschema").Validator;
-var validator = new Validator();
+const Validator = require("jsonschema").Validator;
+const validator = new Validator();
 
-var schema = {
+const schema = {
   id: "/RequestData",
   type: "object",
   required: true,

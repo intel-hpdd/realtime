@@ -4,8 +4,8 @@
 
 "use strict";
 
-var obj = require("intel-obj");
-var confJson = {};
+const obj = require("intel-obj");
+let confJson = {};
 
 if (process.env.NODE_ENV !== "test")
   confJson = {
@@ -21,14 +21,14 @@ if (process.env.NODE_ENV !== "test")
 
 if (confJson.DB_HOST === "") confJson.DB_HOST = "/var/run/postgresql";
 
-var defaults = {
+const defaults = {
   LOG_PATH: "./",
   LOG_FILE: "realtime.log",
   NODE_ENV: process.env.NODE_ENV || "development",
   RUNNER: process.env.RUNNER
 };
 
-var conf = obj.merge({}, defaults, confJson);
+let conf = obj.merge({}, defaults, confJson);
 if (conf.NODE_ENV === "test")
   conf = obj.merge({}, conf, {
     SERVER_HTTP_URL: "https://localhost:9200/",

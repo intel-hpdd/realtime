@@ -5,8 +5,8 @@
 
 "use strict";
 
-var routes = require("./routes");
-var fp = require("intel-fp/dist/fp");
+const routes = require("./routes");
+const fp = require("intel-fp/dist/fp");
 
 module.exports = fp.once(function addRoutes() {
   routes.testHostRoute();
