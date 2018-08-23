@@ -8,19 +8,17 @@
 const through = require("intel-through");
 const socketRouter = require("../index");
 const pushSerializeError = require("../../serialize-error/push-serialize-error");
-const { viewer, pool } = require("../../db-utils");
+const { viewer, query } = require("../../db-utils");
 const highland = require("highland");
 const broadcaster = require("../../broadcaster");
 
-function getHealth() {
-  return pool
-    .query("select * from health_status()")
+const getHealth = () =>
+  query("select * from health_status()")
     .then(r => r.rows[0])
     .then(x => ({
       health: x.health,
       count: x.num_alerts
     }));
-}
 
 const getHealth$ = broadcaster(
   highland([
@@ -37,7 +35,6 @@ module.exports = function healthRoutes() {
     const stream = getHealth$();
 
     stream
-      .tap(x => console.error(x))
       .errors(pushSerializeError)
       .through(through.unchangedFilter)
       .each(x => resp.socket.emit(req.messageName, x));

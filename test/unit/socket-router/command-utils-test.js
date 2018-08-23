@@ -3,7 +3,7 @@
 var rewire = require("rewire");
 var commandUtils = rewire("../../../socket-router/command-utils");
 var fixtures = require("../../integration/fixtures");
-var λ = require("highland");
+var highland = require("highland");
 var obj = require("intel-obj");
 var fp = require("intel-fp/dist/fp");
 
@@ -11,10 +11,10 @@ describe("command utils", function() {
   var revoke, apiRequest, responseStream, pollingRequest, pollStream;
 
   beforeEach(function() {
-    responseStream = λ();
+    responseStream = highland();
     apiRequest = jasmine.createSpy("apiRequest").and.returnValue(responseStream);
 
-    pollStream = λ();
+    pollStream = highland();
     spyOn(pollStream, "destroy").and.callThrough();
     pollingRequest = jasmine.createSpy("pollingRequest").and.returnValue(pollStream);
 
@@ -60,7 +60,7 @@ describe("command utils", function() {
     });
 
     it("should return a stream", function() {
-      expect(λ.isStream(waiter)).toBe(true);
+      expect(highland.isStream(waiter)).toBe(true);
     });
 
     describe("getting values", function() {
@@ -92,11 +92,12 @@ describe("command utils", function() {
 
       it("should push nil downstream", function(done) {
         pollStream.write(commandData);
+        pollStream.write(highland.nil);
         waiter.errors(done.fail).pull(spy);
 
         process.nextTick(function() {
           expect(spy).toHaveBeenCalledTimes(2);
-          expect(spy).toHaveBeenCalledWith(null, λ.nil);
+          expect(spy).toHaveBeenCalledWith(null, highland.nil);
           done();
         });
       });
@@ -137,7 +138,7 @@ describe("command utils", function() {
 
       jobs = fixtures.job().twoServers.response.data;
 
-      commandStream = λ();
+      commandStream = highland();
       resultStream = commandUtils.getSteps(
         {
           Cookie: "sessionid=123"
@@ -188,7 +189,7 @@ describe("command utils", function() {
     it("should return empty on no data", function() {
       commandStream.end();
 
-      resultStream.otherwise(λ(["nope"])).each(spy);
+      resultStream.otherwise(highland(["nope"])).each(spy);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith("nope");
     });

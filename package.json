@@ -3,10 +3,9 @@
   "version": "7.0.0",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
-    "test": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine",
-    "integration": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/integration/**/*-test.js",
-    "unit": "JASMINE_CONFIG_PATH=jasmine.json NODE_ENV=test jasmine test/unit/**/*-test.js",
     "eslint": "eslint ./",
+    "test": "jest -c ./jest.config.unit.js --silent",
+    "cover": "jest --coverage -c ./jest.config.unit.js",
     "format": "prettier --write '**/*.js'"
   },
   "publishConfig": {
@@ -45,10 +44,9 @@
   "devDependencies": {
     "@iml/stub-daddy": "2.0.5",
     "eslint": "5.3.0",
-    "jasmine": "3.1.0",
+    "jest": "^23.5.0",
     "pre-commit": "1.2.2",
     "prettier": "^1.14.2",
-    "proxyquire": "1.7.11",
     "rewire": "2.5.2",
     "socket.io-client": "2.1.1"
   }
