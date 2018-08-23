@@ -10,4 +10,4 @@ COPY --from=builder /build/*.js ./
 COPY --from=builder /build/serialize-error ./serialize-error
 COPY --from=builder /build/socket-router ./socket-router
 
-CMD ["node", "./server.js"]
+CMD ["node", "./index.js"]

@@ -11,7 +11,6 @@ var requestValidator = require("./request-validator");
 var serializeError = require("./serialize-error");
 var eventWildcard = require("./event-wildcard");
 var conf = require("./conf");
-var logger = require("./logger");
 var obj = require("intel-obj");
 
 // Don't limit to pool to 5 in node 0.10.x
@@ -22,66 +21,64 @@ https.globalAgent.maxSockets = http.globalAgent.maxSockets = Infinity;
 var qs = require("querystring");
 var url = require("url");
 
-module.exports = function start() {
-  var io = createIo();
-  io.use(eventWildcard);
-  io.attach(conf.REALTIME_PORT, { wsEngine: "uws" });
+var io = createIo();
+io.use(eventWildcard);
+io.attach(conf.REALTIME_PORT, { wsEngine: "uws" });
 
-  var isMessage = /message(\d+)/;
+var isMessage = /message(\d+)/;
 
-  io.on("connection", function(socket) {
-    var child = logger.child({ sock: socket });
+io.on("connection", function(socket) {
+  console.log(`socket connected: ${socket.id}`);
 
-    child.info("socket connected");
+  socket.on("*", function onData(data, ack) {
+    var matches = isMessage.exec(data.eventName);
 
-    socket.on("*", function onData(data, ack) {
-      var matches = isMessage.exec(data.eventName);
+    if (!matches) return;
 
-      if (!matches) return;
-
-      handleRequest(data, socket, ack, matches[1]);
-    });
-
-    socket.on("error", function onError(err) {
-      child.error({ err: err }, "socket error");
-    });
+    handleRequest(data, socket, ack, matches[1]);
   });
 
-  function handleRequest(data, socket, ack, id) {
-    try {
-      var errors = requestValidator(data);
+  socket.on("error", function onError(err) {
+    console.error(`socket error: ${err}`);
+  });
+});
 
-      if (errors.length) throw new Error(errors);
+function handleRequest(data, socket, ack, id) {
+  try {
+    var errors = requestValidator(data);
 
-      var options = data.options || {};
-      var method = typeof options.method !== "string" ? "get" : options.method;
+    if (errors.length) throw new Error(errors);
 
-      var parsedUrl = url.parse(data.path);
-      var qsObj = { qs: qs.parse(parsedUrl.query) };
+    var options = data.options || {};
+    var method = typeof options.method !== "string" ? "get" : options.method;
 
-      socketRouter.go(
-        parsedUrl.pathname,
-        {
-          verb: method,
-          data: obj.merge({}, options, qsObj),
-          messageName: data.eventName,
-          endName: "end" + id
-        },
-        {
-          socket: socket,
-          ack: ack
-        }
-      );
-    } catch (error) {
-      error.statusCode = 400;
-      var err = serializeError(error);
+    var parsedUrl = url.parse(data.path);
+    var qsObj = { qs: qs.parse(parsedUrl.query) };
 
-      if (ack) ack(err);
-      else socket.emit(data.eventName, err);
-    }
+    socketRouter.go(
+      parsedUrl.pathname,
+      {
+        verb: method,
+        data: obj.merge({}, options, qsObj),
+        messageName: data.eventName,
+        endName: "end" + id
+      },
+      {
+        socket: socket,
+        ack: ack
+      }
+    );
+  } catch (error) {
+    error.statusCode = 400;
+    var err = serializeError(error);
+
+    if (ack) ack(err);
+    else socket.emit(data.eventName, err);
   }
+}
 
-  return function shutdown() {
-    io.close();
-  };
+const shutdown = () => {
+  io.close();
 };
+
+module.exports = shutdown;
