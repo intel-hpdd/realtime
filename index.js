@@ -11,7 +11,6 @@ var requestValidator = require("./request-validator");
 var serializeError = require("./serialize-error");
 var eventWildcard = require("./event-wildcard");
 var conf = require("./conf");
-var logger = require("./logger");
 var obj = require("intel-obj");
 
 // Don't limit to pool to 5 in node 0.10.x
@@ -30,9 +29,7 @@ module.exports = function start() {
   var isMessage = /message(\d+)/;
 
   io.on("connection", function(socket) {
-    var child = logger.child({ sock: socket });
-
-    child.info("socket connected");
+    console.log(`socket connected: ${socket.id}`);
 
     socket.on("*", function onData(data, ack) {
       var matches = isMessage.exec(data.eventName);
@@ -43,7 +40,7 @@ module.exports = function start() {
     });
 
     socket.on("error", function onError(err) {
-      child.error({ err: err }, "socket error");
+      console.error(`socket error: ${err}`);
     });
   });
 

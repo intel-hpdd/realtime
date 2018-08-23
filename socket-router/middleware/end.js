@@ -5,8 +5,6 @@
 
 "use strict";
 
-var logger = require("../../logger");
-
 module.exports = function end(req, resp, stream, next) {
   resp.socket.once("disconnect", destroyStream);
   resp.socket.once(req.endName, destroyStream);
@@ -21,7 +19,7 @@ module.exports = function end(req, resp, stream, next) {
     }
 
     stream = null;
-    logger.info({ sock: resp.socket }, "stream ended");
+    console.info(`stream ended: ${resp.socket.id}`);
   }
 
   next(req, resp);

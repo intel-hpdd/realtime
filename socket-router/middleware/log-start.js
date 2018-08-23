@@ -5,10 +5,8 @@
 
 "use strict";
 
-var logger = require("../../logger");
-
 module.exports = function logStart(req, resp, next) {
-  logger.info({ sock: resp.socket }, "routing request");
+  console.log(`routing request: ${resp.socket.id}`);
 
   next(req, resp);
 };
