@@ -5,8 +5,8 @@
 
 "use strict";
 
-var emit = require("events").EventEmitter.prototype.emit;
-var obj = require("intel-obj");
+const emit = require("events").EventEmitter.prototype.emit;
+const obj = require("intel-obj");
 
 module.exports = function eventWildcard(socket, next) {
   if (socket.onevent !== onEvent) socket.onevent = onEvent;
@@ -15,15 +15,15 @@ module.exports = function eventWildcard(socket, next) {
 };
 
 function onEvent(packet) {
-  var args = packet.data || [];
+  const args = packet.data || [];
 
   if (packet.id != null) args.push(this.ack(packet.id));
 
   emit.apply(this, args);
 
-  var wildcardArgs = [...args];
+  const wildcardArgs = [...args];
 
-  var eventName = wildcardArgs.splice(0, 1, "*");
+  const eventName = wildcardArgs.splice(0, 1, "*");
 
   wildcardArgs[1] = obj.clone(wildcardArgs[1] || {});
 

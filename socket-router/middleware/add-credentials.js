@@ -5,18 +5,18 @@
 
 "use strict";
 
-var obj = require("intel-obj");
+const obj = require("intel-obj");
 
-var regexp = /csrftoken=([^;|$]+)/;
+const regexp = /csrftoken=([^;|$]+)/;
 
 module.exports = function addCredentials(req, resp, next) {
-  var headers = {};
-  var requestHeaders = resp.socket.request.headers;
+  const headers = {};
+  const requestHeaders = resp.socket.request.headers;
 
   if (requestHeaders.cookie) {
     headers.Cookie = requestHeaders.cookie;
 
-    var csrfTokenMatch = requestHeaders.cookie.match(regexp);
+    const csrfTokenMatch = requestHeaders.cookie.match(regexp);
     if (csrfTokenMatch && csrfTokenMatch[1]) headers["X-CSRFToken"] = csrfTokenMatch[1];
   }
 

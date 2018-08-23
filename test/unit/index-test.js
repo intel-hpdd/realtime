@@ -1,10 +1,9 @@
 "use strict";
 
 describe("realtime index test", () => {
-  var mockCreateIo,
+  let mockCreateIo,
     io,
     mockConf,
-    revert,
     socket,
     data,
     ack,
@@ -12,7 +11,6 @@ describe("realtime index test", () => {
     mockSocketRouter,
     mockSerializeError,
     mockEventWildcard,
-    mockStart,
     consoleLog,
     consoleError;
 
@@ -149,7 +147,7 @@ describe("realtime index test", () => {
         });
 
         describe("error", () => {
-          var error, serializedError;
+          let error, serializedError;
           beforeEach(() => {
             error = "something bad happened";
             serializedError = "serialized error";
@@ -185,7 +183,7 @@ describe("realtime index test", () => {
       });
 
       describe("on socket error", () => {
-        var err;
+        let err;
         beforeEach(() => {
           err = new Error("something bad happend");
           socket.on.mockImplementation((evt, fn) => {

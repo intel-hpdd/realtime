@@ -1,9 +1,9 @@
 "use strict";
 
-var fp = require("intel-fp/dist/fp");
+const fp = require("intel-fp/dist/fp");
 
 describe("error handler", () => {
-  var error, revert, mockIntelLogger, serializeError;
+  let error, mockIntelLogger, serializeError;
 
   beforeEach(() => {
     mockIntelLogger = {
@@ -27,7 +27,7 @@ describe("error handler", () => {
   });
 
   it("should add a status code if it's missing", () => {
-    var result = serializeError(error);
+    const result = serializeError(error);
 
     expect(result.error.statusCode).toEqual(500);
   });

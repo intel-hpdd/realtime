@@ -15,7 +15,7 @@ pool.on("error", e => {
 
 exports.pool = pool;
 
-const stream = highland((push, _) => {
+const stream = highland(push => {
   pool.connect().then(c => {
     c.on("notification", x => push(null, x));
     c.on("notice", msg => console.warn("notice: ", msg));

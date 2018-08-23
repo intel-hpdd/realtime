@@ -1,12 +1,12 @@
 "use strict";
 
-var fixtures = require("../../integration/fixtures");
-var highland = require("highland");
-var obj = require("intel-obj");
-var fp = require("intel-fp/dist/fp");
+const fixtures = require("../../integration/fixtures");
+const highland = require("highland");
+const obj = require("intel-obj");
+const fp = require("intel-fp/dist/fp");
 
 describe("command utils", () => {
-  var revoke, mockApiRequest, responseStream, mockPollingRequest, pollStream, commandUtils;
+  let mockApiRequest, responseStream, mockPollingRequest, pollStream, commandUtils;
 
   beforeEach(() => {
     responseStream = highland();
@@ -23,7 +23,7 @@ describe("command utils", () => {
   });
 
   describe("wait for commands", () => {
-    var waiter, commandData;
+    let waiter, commandData;
 
     beforeEach(() => {
       commandData = {
@@ -58,7 +58,7 @@ describe("command utils", () => {
     });
 
     describe("getting values", () => {
-      var spy;
+      let spy;
 
       beforeEach(() => {
         spy = jest.fn();
@@ -106,14 +106,14 @@ describe("command utils", () => {
       });
 
       it("should push an error downstream", () => {
-        var err = new Error("boom!");
+        const err = new Error("boom!");
         pollStream.write(new StreamError(err));
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalledWith(err, undefined);
       });
 
       it("should not return on unfinished commands", () => {
-        var incompleteData = obj.clone(commandData);
+        const incompleteData = obj.clone(commandData);
         incompleteData.body.objects[0].complete = false;
 
         pollStream.write(incompleteData);
@@ -124,7 +124,7 @@ describe("command utils", () => {
   });
 
   describe("get steps", () => {
-    var commands, jobs, commandStream, resultStream, spy;
+    let commands, jobs, commandStream, resultStream, spy;
 
     beforeEach(() => {
       spy = jest.fn();
@@ -168,7 +168,7 @@ describe("command utils", () => {
       responseStream.end();
 
       resultStream.errors(done.fail).each(function(x) {
-        var result = fp.flow(
+        const result = fp.flow(
           fp.lensProp("objects"),
           fp.map(fp.lensProp("step_results")),
           fp.map(obj.values),
@@ -189,7 +189,7 @@ describe("command utils", () => {
     });
 
     it("should throw on error", function(done) {
-      var boom = new Error("boom!");
+      const boom = new Error("boom!");
       commandStream.write(new StreamError(boom));
 
       resultStream

@@ -1,16 +1,16 @@
 "use strict";
 
-var highland = require("highland");
-var fp = require("intel-fp/dist/fp");
+const highland = require("highland");
+const fp = require("intel-fp/dist/fp");
 
 const createStream = () => {
-  let s = highland();
+  const s = highland();
   s.abort = jest.fn(() => "abort");
   return s;
 };
 
 describe("polling request", function() {
-  var pollingRequest, mockApiRequest, r, s;
+  let pollingRequest, mockApiRequest, r, s;
 
   beforeEach(function() {
     mockApiRequest = jest.fn();
@@ -104,7 +104,7 @@ describe("polling request", function() {
       });
 
       it("should filter out 304s", function() {
-        var spy = jest.fn(() => "spy");
+        const spy = jest.fn(() => "spy");
 
         r.each(spy);
 
@@ -122,9 +122,9 @@ describe("polling request", function() {
   });
 
   it("should update if-none-match with last etag", function(done) {
-    let s1 = createStream();
-    let s2 = createStream();
-    let s3 = createStream();
+    const s1 = createStream();
+    const s2 = createStream();
+    const s3 = createStream();
 
     mockApiRequest
       .mockReturnValueOnce(s1)

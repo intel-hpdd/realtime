@@ -1,12 +1,12 @@
 "use strict";
 
-var utils = require("../../utils");
-var getSessionFixtures = require("../../fixtures/session");
-var start = require("../../../../index");
-var waitForRequests = require("../../../../api-request").waitForRequests;
+const utils = require("../../utils");
+const getSessionFixtures = require("../../fixtures/session");
+const start = require("../../../../index");
+const waitForRequests = require("../../../../api-request").waitForRequests;
 
 describe("session route", () => {
-  var socket, sessionFixtures, stubDaddy, shutdown, messageName;
+  let socket, sessionFixtures, stubDaddy, shutdown, messageName;
 
   beforeEach(() => {
     messageName = "message1";
@@ -50,7 +50,7 @@ describe("session route", () => {
   });
 
   describe("post session", () => {
-    var postSpy;
+    let postSpy;
     beforeEach(done => {
       postSpy = jasmine.createSpy("postSpy");
 
@@ -90,7 +90,7 @@ describe("session route", () => {
   });
 
   describe("delete session", () => {
-    var deleteSpy;
+    let deleteSpy;
     beforeEach(done => {
       deleteSpy = jasmine.createSpy("deleteSpy");
 

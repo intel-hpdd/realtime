@@ -1,12 +1,12 @@
 "use strict";
 
-var utils = require("../../utils");
-var fixtures = require("../../fixtures");
-var start = require("../../../../index");
-var waitForRequests = require("../../../../api-request").waitForRequests;
+const utils = require("../../utils");
+const fixtures = require("../../fixtures");
+const start = require("../../../../index");
+const waitForRequests = require("../../../../api-request").waitForRequests;
 
 describe("test host route", function() {
-  var socket, shutdown, stubDaddy, testHostFixtures, commandFixtures, jobFixtures;
+  let socket, shutdown, stubDaddy, testHostFixtures, commandFixtures, jobFixtures;
 
   beforeEach(function() {
     testHostFixtures = fixtures.testHost();

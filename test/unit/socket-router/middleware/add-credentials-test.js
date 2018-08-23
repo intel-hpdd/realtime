@@ -1,9 +1,9 @@
 "use strict";
 
-var addCredentials = require("../../../../socket-router/middleware/add-credentials");
+const addCredentials = require("../../../../socket-router/middleware/add-credentials");
 
 describe("add credentials", function() {
-  var next, req, resp;
+  let next, req, resp;
 
   beforeEach(function() {
     next = jasmine.createSpy("next");

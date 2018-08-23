@@ -5,26 +5,26 @@
 
 "use strict";
 
-var apiRequest = require("../api-request");
-var pollingRequest = require("../polling-request");
-var fp = require("intel-fp/dist/fp");
-var obj = require("intel-obj");
+const apiRequest = require("../api-request");
+const pollingRequest = require("../polling-request");
+const fp = require("intel-fp/dist/fp");
+const obj = require("intel-obj");
 
-var objectsLens = fp.pathLens(["body", "objects"]);
+const objectsLens = fp.pathLens(["body", "objects"]);
 
 exports.waitForCommands = fp.curry(2, function waitForCommands(headers, ids) {
-  var pickValues = fp.flow(
+  const pickValues = fp.flow(
     obj.pick.bind(null, ["cancelled", "complete", "errored"]),
     obj.values
   );
 
-  var commandsFinished = fp.flow(
+  const commandsFinished = fp.flow(
     fp.map(pickValues),
     fp.map(fp.some(fp.identity)),
     fp.every(fp.identity)
   );
 
-  var s = pollingRequest("/command", {
+  const s = pollingRequest("/command", {
     headers: headers,
     qs: {
       id__in: ids,
@@ -40,9 +40,9 @@ exports.waitForCommands = fp.curry(2, function waitForCommands(headers, ids) {
     });
 });
 
-var jobRegexp = /^\/api\/job\/(\d+)\/$/;
+const jobRegexp = /^\/api\/job\/(\d+)\/$/;
 
-var getJobIds = fp.flow(
+const getJobIds = fp.flow(
   fp.map(fp.lensProp("jobs")),
   fp.unwrap,
   fp.map(fp.invokeMethod("match", [jobRegexp])),

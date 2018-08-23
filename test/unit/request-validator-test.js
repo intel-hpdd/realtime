@@ -1,6 +1,6 @@
 "use strict";
 
-var requestValidator = require("../../request-validator");
+const requestValidator = require("../../request-validator");
 
 describe("request channel validator", function() {
   it("should fail on an empty argument", function() {

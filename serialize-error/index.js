@@ -5,7 +5,7 @@
 
 "use strict";
 
-var errorSerializer = require("intel-logger").serializers.err;
+const errorSerializer = require("intel-logger").serializers.err;
 
 /**
  * Returns a normalized error
@@ -17,7 +17,7 @@ var errorSerializer = require("intel-logger").serializers.err;
 module.exports = function serializeError(error) {
   if (!error.statusCode) error.statusCode = 500;
 
-  var serialized = errorSerializer(error);
+  const serialized = errorSerializer(error);
   serialized.statusCode = error.statusCode;
 
   return { error: serialized };

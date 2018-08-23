@@ -1,7 +1,7 @@
 "use strict";
 
 describe("event wildcard", function() {
-  var revert, emit, socket, acker, next, mockEvents, eventWildcard;
+  let emit, socket, acker, next, mockEvents, eventWildcard;
 
   beforeEach(function() {
     emit = {
@@ -39,7 +39,7 @@ describe("event wildcard", function() {
   });
 
   describe("socket.onevent", function() {
-    var packet;
+    let packet;
 
     beforeEach(function() {
       packet = {};
