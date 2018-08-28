@@ -21,6 +21,11 @@ https.globalAgent.maxSockets = http.globalAgent.maxSockets = Infinity;
 const qs = require("querystring");
 const url = require("url");
 
+process.on('unhandledRejection', error => {
+  console.error(error);
+  process.exit(1);
+});
+
 const io = createIo();
 io.use(eventWildcard);
 io.attach(conf.REALTIME_PORT, { wsEngine: "uws" });
