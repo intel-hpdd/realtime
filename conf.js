@@ -19,7 +19,7 @@ if (process.env.NODE_ENV !== "test")
     DB_PASSWORD: process.env.DB_PASSWORD,
     API_KEY: process.env.API_KEY,
     API_USER: process.env.API_USER,
-    ALLOW_ANONYMOUS_READ: process.env.ALLOW_ANONYMOUS_READ
+    ALLOW_ANONYMOUS_READ: process.env.ALLOW_ANONYMOUS_READ === "true"
   };
 
 if (confJson.DB_HOST === "") confJson.DB_HOST = "/var/run/postgresql";

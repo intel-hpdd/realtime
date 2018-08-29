@@ -33,8 +33,17 @@ module.exports = () => {
       .each(resp.ack.bind(resp.ack));
   };
 
+  const getSessionRoute = (req, resp, data, next) => {
+    const stream = apiRequest("/session", { method: "get", headers: resp.socket.request.headers })
+      .map(x => x.body)
+      .each(resp.socket.emit.bind(resp.socket, req.messageName));
+
+    next(req, resp, stream);
+  };
+
   socketRouter
     .route("/session")
+    .get(getSessionRoute)
     .post(sessionRoute)
     .delete(sessionRoute);
 };
