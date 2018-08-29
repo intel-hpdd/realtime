@@ -23,8 +23,7 @@ module.exports = (socket, next) => {
     .flatMap(({ _auth_user_id: authUserId }) => highland(query("SELECT * FROM auth_user WHERE id = $1", [authUserId])))
     .filter(({ rows: { length: rowCount } }) => {
       if (rowCount > 0) return true;
-      else if (conf.ALLOW_ANONYMOUS_READ) next();
-      else next(new Error("ALLOW ANONYMOUS READ must be true for anonymous connections"));
+      else next();
     })
     .map(x => x.rows[0])
     .flatMap(x => {
