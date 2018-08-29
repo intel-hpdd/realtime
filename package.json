@@ -28,17 +28,18 @@
   "author": "IML Team",
   "license": "MIT",
   "dependencies": {
+    "@iml/router": "^6.1.1",
     "highland": "3.0.0-beta.6",
     "intel-fp": "3.2.1",
     "intel-logger": "1.0.0",
     "intel-obj": "6.0.0",
     "intel-req": "1.0.9",
-    "intel-router": "5.0.1",
     "intel-through": "1.0.8",
+    "jpickle": "^0.4.1",
     "json-mask": "0.3.8",
     "jsonschema": "1.1.1",
-    "socket.io": "2.1.1",
     "pg": "^7.4.3",
+    "socket.io": "2.1.1",
     "uws": "10.148.0"
   },
   "devDependencies": {

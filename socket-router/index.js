@@ -5,7 +5,7 @@
 
 "use strict";
 
-const getRouter = require("intel-router").default;
+const getRouter = require("@iml/router").default;
 const addCredentials = require("./middleware/add-credentials");
 const end = require("./middleware/end");
 

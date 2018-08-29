@@ -6,29 +6,22 @@
 "use strict";
 
 const obj = require("intel-obj");
-
-const regexp = /csrftoken=([^;|$]+)/;
+const conf = require("../../conf");
 
 module.exports = function addCredentials(req, resp, next) {
   const headers = {};
   const requestHeaders = resp.socket.request.headers;
 
-  if (requestHeaders.cookie) {
-    headers.Cookie = requestHeaders.cookie;
-
-    const csrfTokenMatch = requestHeaders.cookie.match(regexp);
-    if (csrfTokenMatch && csrfTokenMatch[1]) headers["X-CSRFToken"] = csrfTokenMatch[1];
-  }
-
   headers["User-Agent"] = requestHeaders["user-agent"];
+  headers["Authorization"] = `ApiKey ${conf.API_USER}:${conf.API_KEY}`;
 
-  req.data = obj.merge(
+  const data = obj.merge(
     {},
     {
-      headers: headers
+      headers
     },
     req.data
   );
 
-  next(req, resp);
+  next(req, resp, data);
 };

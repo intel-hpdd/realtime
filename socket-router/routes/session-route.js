@@ -10,10 +10,9 @@ const apiRequest = require("../../api-request");
 const pushSerializeError = require("../../serialize-error/push-serialize-error");
 const fp = require("intel-fp/dist/fp");
 
-module.exports = function sessionRoute() {
-  const sessionRoute = (req, resp, next) => {
-    const stream = processSession(apiRequest("/session", req.data), resp);
-
+module.exports = () => {
+  const sessionRoute = (req, resp, data, next) => {
+    const stream = processSession(apiRequest("/session", data), resp);
     next(req, resp, stream);
   };
 
@@ -34,6 +33,8 @@ module.exports = function sessionRoute() {
       .each(resp.ack.bind(resp.ack));
   };
 
-  socketRouter.post("/session", sessionRoute);
-  socketRouter.delete("/session", sessionRoute);
+  socketRouter
+    .route("/session")
+    .post(sessionRoute)
+    .delete(sessionRoute);
 };

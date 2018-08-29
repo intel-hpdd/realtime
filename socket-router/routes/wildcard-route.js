@@ -15,8 +15,8 @@ const socketRouter = require("../index");
 const pushSerializeError = require("../../serialize-error/push-serialize-error");
 
 module.exports = function wildcardRoute() {
-  socketRouter.all("/:endpoint/:rest*", function genericHandler(req, resp, next) {
-    const options = obj.merge({}, req.data, { method: req.verb.toUpperCase() });
+  socketRouter.route("/:endpoint/:rest*").all((req, resp, data, next) => {
+    const options = obj.merge({}, data, { method: req.verb.toUpperCase() });
     const requestToPath = apiRequest(req.matches[0]);
     const request = requestToPath.bind(null, options);
     let stream;
@@ -44,7 +44,7 @@ module.exports = function wildcardRoute() {
         request()
           .pluck("body")
           .errors(pushSerializeError)
-          .each(function pushData(x) {
+          .each(x => {
             push(null, x);
             next();
           });

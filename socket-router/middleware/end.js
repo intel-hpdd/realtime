@@ -12,11 +12,8 @@ module.exports = function end(req, resp, stream, next) {
   function destroyStream() {
     if (!stream || stream._nil_seen || stream.ended) return;
 
-    if (stream.endBroadcast) 
-      stream.endBroadcast();
-    else 
-      stream.destroy();
-    
+    if (stream.endBroadcast) stream.endBroadcast();
+    else stream.destroy();
 
     stream = null;
     console.info(`stream ended: ${resp.socket.id}`);

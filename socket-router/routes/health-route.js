@@ -31,7 +31,7 @@ const getHealth$ = broadcaster(
 );
 
 module.exports = function healthRoutes() {
-  socketRouter.get("/health", (req, resp, next) => {
+  socketRouter.route("/health").get((req, resp, data, next) => {
     const stream = getHealth$();
 
     stream

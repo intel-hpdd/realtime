@@ -12,43 +12,46 @@ const socketRouter = require("../index");
 const pushSerializeError = require("../../serialize-error/push-serialize-error");
 const commandUtils = require("../command-utils");
 const fp = require("intel-fp/dist/fp");
+const checkGroup = require("../middleware/check-group");
 
 module.exports = function testHostRoute() {
-  socketRouter.post("/test_host", function getStatus(req, resp, next) {
-    const removeUndefined = fp.filter(
-      fp.flow(
-        fp.eq(undefined),
-        fp.not
-      )
-    );
-    const pullIds = fp.flow(
-      fp.pathLens(["body", "objects"]),
-      fp.map(fp.pathLens(["command", "id"])),
-      removeUndefined
-    );
+  socketRouter.route("/test_host").post(
+    checkGroup.fsAdmins((req, resp, data, next) => {
+      const removeUndefined = fp.filter(
+        fp.flow(
+          fp.eq(undefined),
+          fp.not
+        )
+      );
+      const pullIds = fp.flow(
+        fp.pathLens(["body", "objects"]),
+        fp.map(fp.pathLens(["command", "id"])),
+        removeUndefined
+      );
 
-    const stream = λ(function generator(push, next) {
-      apiRequest("/test_host", req.data)
-        .map(pullIds)
-        .filter(fp.lensProp("length"))
-        .flatMap(commandUtils.waitForCommands(req.data.headers))
-        .through(commandUtils.getSteps(req.data.headers))
-        .errors(pushSerializeError)
-        .pull(function pullResponse(err, x) {
-          if (err) push(err);
-          else if (x === λ.nil) push(null, null);
-          else push(null, x);
+      const stream = λ(function generator(push, next) {
+        apiRequest("/test_host", data)
+          .map(pullIds)
+          .filter(fp.lensProp("length"))
+          .flatMap(commandUtils.waitForCommands(data.headers))
+          .through(commandUtils.getSteps(data.headers))
+          .errors(pushSerializeError)
+          .pull(function pullResponse(err, x) {
+            if (err) push(err);
+            else if (x === λ.nil) push(null, null);
+            else push(null, x);
 
-          next();
-        });
-    });
+            next();
+          });
+      });
 
-    stream
-      .ratelimit(1, 1000)
-      .compact()
-      .through(through.unchangedFilter)
-      .each(resp.socket.emit.bind(resp.socket, req.messageName));
+      stream
+        .ratelimit(1, 1000)
+        .compact()
+        .through(through.unchangedFilter)
+        .each(resp.socket.emit.bind(resp.socket, req.messageName));
 
-    next(req, resp, stream);
-  });
+      next(req, resp, stream);
+    })
+  );
 };
