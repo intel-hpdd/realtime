@@ -5,7 +5,7 @@
 
 "use strict";
 
-const λ = require("highland");
+const highland = require("highland");
 const through = require("intel-through");
 const apiRequest = require("../../api-request");
 const socketRouter = require("../index");
@@ -29,7 +29,7 @@ module.exports = function testHostRoute() {
         removeUndefined
       );
 
-      const stream = λ(function generator(push, next) {
+      const stream = highland(function generator(push, next) {
         apiRequest("/test_host", data)
           .map(pullIds)
           .filter(fp.lensProp("length"))
@@ -38,7 +38,7 @@ module.exports = function testHostRoute() {
           .errors(pushSerializeError)
           .pull(function pullResponse(err, x) {
             if (err) push(err);
-            else if (x === λ.nil) push(null, null);
+            else if (x === highland.nil) push(null, null);
             else push(null, x);
 
             next();

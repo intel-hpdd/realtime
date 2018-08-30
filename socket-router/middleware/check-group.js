@@ -14,7 +14,7 @@ const insufficientPermissionsError = serializeError(new Error("You do not have p
 const allowGroup = groupName => fn => (req, res, data, next) => {
   if (groupAllowed(groupName, data.groups)) {
     fn(req, res, data, next);
-  } else if (req.verb === "get" && conf.ALLOW_ANONYMOUS_READ === true) {
+  } else if (req.verb.toLowerCase() === "get" && conf.ALLOW_ANONYMOUS_READ === true) {
     fn(req, res, data, next);
   } else if (res.ack) {
     res.ack(insufficientPermissionsError);
