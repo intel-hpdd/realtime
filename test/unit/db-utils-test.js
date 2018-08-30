@@ -168,12 +168,12 @@ describe("db utils", () => {
   describe("query", () => {
     let query, p;
     beforeEach(() => {
-      query = "select * from table";
-      p = dbUtils.query(query);
+      query = "select * from table where name=$1";
+      p = dbUtils.query(query, "john");
     });
 
     it("should call query on the pool", () => {
-      expect(pool.query).toHaveBeenCalledWith(query);
+      expect(pool.query).toHaveBeenCalledWith(query, "john");
     });
 
     it("should return the result", done => {

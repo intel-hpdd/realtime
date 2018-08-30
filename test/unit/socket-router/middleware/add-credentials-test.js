@@ -1,14 +1,17 @@
 "use strict";
 
-const addCredentials = require("../../../../socket-router/middleware/add-credentials");
-
 describe("add credentials", function() {
-  let next, req, resp;
+  let next, req, resp, addCredentials;
 
   beforeEach(function() {
-    next = jasmine.createSpy("next");
+    next = jest.fn();
 
-    req = { data: {} };
+    jest.mock("../../../../conf", () => ({
+      API_USER: "api",
+      API_KEY: "api-key"
+    }));
+
+    req = { data: { key: "val" } };
 
     resp = {
       socket: {
@@ -19,18 +22,16 @@ describe("add credentials", function() {
         }
       }
     };
+
+    addCredentials = require("../../../../socket-router/middleware/add-credentials");
   });
 
-  it("should call next with empty headers", function() {
+  it("should call next", function() {
     addCredentials(req, resp, next);
     expect(next).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledWith(
       {
-        data: {
-          headers: {
-            "User-Agent": "bar"
-          }
-        }
+        data: { key: "val" }
       },
       {
         socket: {
@@ -40,42 +41,12 @@ describe("add credentials", function() {
             }
           }
         }
-      }
-    );
-  });
-
-  it("should set cookie, CSRF token, and user-agent headers", function() {
-    resp.socket.request.headers = {
-      cookie: "csrftoken=z2WVzbtXqNvydVFACW8HlCyVpebt82M1; sessionid=a948605f1cb2dc8b1e929b8371d41a45",
-      "user-agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) \
-Chrome/39.0.2171.95 Safari/537.36"
-    };
-
-    addCredentials(req, resp, next);
-    expect(next).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalledWith(
-      {
-        data: {
-          headers: {
-            Cookie: "csrftoken=z2WVzbtXqNvydVFACW8HlCyVpebt82M1; sessionid=a948605f1cb2dc8b1e929b8371d41a45",
-            "X-CSRFToken": "z2WVzbtXqNvydVFACW8HlCyVpebt82M1",
-            "User-Agent":
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) \
-Chrome/39.0.2171.95 Safari/537.36"
-          }
-        }
       },
       {
-        socket: {
-          request: {
-            headers: {
-              cookie: "csrftoken=z2WVzbtXqNvydVFACW8HlCyVpebt82M1; sessionid=a948605f1cb2dc8b1e929b8371d41a45",
-              "user-agent":
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) \
-Chrome/39.0.2171.95 Safari/537.36"
-            }
-          }
+        key: "val",
+        headers: {
+          Authorization: "ApiKey api:api-key",
+          "User-Agent": "bar"
         }
       }
     );
@@ -92,9 +63,9 @@ Chrome/39.0.2171.95 Safari/537.36"
       {
         data: {
           headers: {
-            "X-Foo-Header": "foo",
-            "User-Agent": "bar"
-          }
+            "X-Foo-Header": "foo"
+          },
+          key: "val"
         }
       },
       {
@@ -105,6 +76,14 @@ Chrome/39.0.2171.95 Safari/537.36"
             }
           }
         }
+      },
+      {
+        headers: {
+          Authorization: "ApiKey api:api-key",
+          "User-Agent": "bar",
+          "X-Foo-Header": "foo"
+        },
+        key: "val"
       }
     );
   });
@@ -121,7 +100,8 @@ Chrome/39.0.2171.95 Safari/537.36"
         data: {
           headers: {
             "User-Agent": "use this header"
-          }
+          },
+          key: "val"
         }
       },
       {
@@ -132,6 +112,13 @@ Chrome/39.0.2171.95 Safari/537.36"
             }
           }
         }
+      },
+      {
+        headers: {
+          Authorization: "ApiKey api:api-key",
+          "User-Agent": "use this header"
+        },
+        key: "val"
       }
     );
   });
