@@ -7,7 +7,6 @@ const { query } = require("../../db-utils");
 const highland = require("highland");
 const jpickle = require("jpickle");
 const obj = require("intel-obj");
-const conf = require("../../conf");
 
 const regexp = /sessionid=([^;|$]+)/;
 

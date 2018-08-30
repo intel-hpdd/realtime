@@ -100,6 +100,10 @@ describe("test host route", () => {
         stream = next.mock.calls[0][2];
       });
 
+      afterEach(() => {
+        stream.destroy();
+      });
+
       it("should call apiRequest", () => {
         expect(mockApiRequest).toHaveBeenCalledTimes(2);
         expect(mockApiRequest).toHaveBeenCalledWith("/test_host", data);
@@ -119,6 +123,11 @@ describe("test host route", () => {
 
       it("should not push a serialized error", () => {
         expect(mockPushSerializeError).not.toHaveBeenCalled();
+      });
+
+      it("should emit the body", () => {
+        expect(resp.socket.emit).toHaveBeenCalledTimes(1);
+        expect(resp.socket.emit).toHaveBeenCalledWith(req.messageName, 19903);
       });
     });
 
@@ -141,6 +150,10 @@ describe("test host route", () => {
       it("should push the serialized error", () => {
         expect(mockPushSerializeError).toHaveBeenCalledTimes(2);
         expect(mockPushSerializeError).toHaveBeenCalledWith(error, expect.any(Function));
+      });
+
+      it("should not emit", () => {
+        expect(resp.socket.emit).not.toHaveBeenCalled();
       });
     });
   });

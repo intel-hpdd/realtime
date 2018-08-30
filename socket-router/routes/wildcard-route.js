@@ -5,7 +5,7 @@
 
 "use strict";
 
-const λ = require("highland");
+const highland = require("highland");
 const obj = require("intel-obj");
 const fp = require("intel-fp/dist/fp");
 const through = require("intel-through");
@@ -42,7 +42,7 @@ module.exports = function wildcardRoute() {
           .through(through.unchangedFilter)
           .each(resp.socket.emit.bind(resp.socket, req.messageName));
       } else {
-        stream = λ(function generator(push, next) {
+        stream = highland(function generator(push, next) {
           request()
             .pluck("body")
             .errors(pushSerializeError)

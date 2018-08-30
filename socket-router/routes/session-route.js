@@ -7,11 +7,13 @@
 
 const socketRouter = require("../index");
 const apiRequest = require("../../api-request");
+const pushSerializeError = require("../../serialize-error/push-serialize-error");
 
 module.exports = () => {
   const getSessionRoute = (req, resp, data, next) => {
     const stream = apiRequest("/session", { method: "get", headers: resp.socket.request.headers })
-      .map(x => x.body)
+      .pluck("body")
+      .errors(pushSerializeError)
       .each(resp.socket.emit.bind(resp.socket, req.messageName));
 
     next(req, resp, stream);
