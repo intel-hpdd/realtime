@@ -1,14 +1,15 @@
 const highland = require("highland");
 
 describe("health route", () => {
-  let mockSocketGet, mockViewer, mockQuery, viewer$, mockSerializeError;
+  let mockViewer, mockQuery, viewer$, mockSerializeError, mockCheckGroup, mockSocketRouter, req, data, resp, next;
 
   beforeEach(() => {
-    mockSocketGet = jest.fn();
+    mockSocketRouter = {
+      route: jest.fn(() => mockSocketRouter),
+      get: jest.fn(() => mockSocketRouter)
+    };
 
-    jest.mock("../../../../socket-router/index", () => ({
-      get: mockSocketGet
-    }));
+    jest.mock("../../../../socket-router/index", () => mockSocketRouter);
 
     s$ = highland();
 
@@ -24,12 +25,16 @@ describe("health route", () => {
     mockViewer = jest.fn(() => viewer$);
     mockQuery = jest.fn();
     mockSerializeError = jest.fn();
+    mockCheckGroup = {
+      fsUsers: jest.fn(fn => fn)
+    };
 
     jest.mock("../../../../serialize-error/push-serialize-error", () => mockSerializeError);
     jest.mock("../../../../db-utils", () => ({
       viewer: mockViewer,
       query: mockQuery
     }));
+    jest.mock("../../../../socket-router/middleware/check-group", () => mockCheckGroup);
   });
 
   describe("get socket", () => {
@@ -55,14 +60,18 @@ describe("health route", () => {
       healthRoute();
     });
 
-    it("should get the health route", () => {
-      expect(mockSocketGet).toHaveBeenCalledWith("/health", expect.any(Function));
+    it("should route to /health", () => {
+      expect(mockSocketRouter.route).toHaveBeenCalledWith("/health");
+    });
+
+    it("should route with a get", () => {
+      expect(mockSocketRouter.get).toHaveBeenCalledWith(mockCheckGroup.fsUsers.mock.calls[0][0]);
     });
 
     describe("health route callback", () => {
-      let healthRouteCB, req, resp, next, p, next$;
+      let healthRouteCB, p, next$;
       beforeEach(() => {
-        healthRouteCB = mockSocketGet.mock.calls[0][1];
+        healthRouteCB = mockCheckGroup.fsUsers.mock.calls[0][0];
         req = {
           messageName: "health-message"
         };
@@ -71,9 +80,10 @@ describe("health route", () => {
             emit: jest.fn()
           }
         };
+        data = {};
         next = jest.fn();
 
-        healthRouteCB(req, resp, next);
+        healthRouteCB(req, resp, data, next);
         next$ = next.mock.calls[0][2];
 
         p = new Promise(res => {
@@ -119,10 +129,11 @@ describe("health route", () => {
       healthRoute = require("../../../../socket-router/routes/health-route");
       healthRoute();
 
-      healthRouteCB = mockSocketGet.mock.calls[0][1];
+      healthRouteCB = mockCheckGroup.fsUsers.mock.calls[0][0];
       req = {
         messageName: "health-message"
       };
+      data = {};
       resp = {
         socket: {
           emit: jest.fn()
@@ -130,7 +141,7 @@ describe("health route", () => {
       };
       next = jest.fn();
 
-      healthRouteCB(req, resp, next);
+      healthRouteCB(req, resp, data, next);
 
       p = new Promise(res => {
         mockSerializeError.mockImplementation((e, x) => {

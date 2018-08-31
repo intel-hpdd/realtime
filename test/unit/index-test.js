@@ -11,8 +11,11 @@ describe("realtime index test", () => {
     mockSocketRouter,
     mockSerializeError,
     mockEventWildcard,
+    mockAuthentication,
     consoleLog,
-    consoleError;
+    consoleError,
+    processOn,
+    processExit;
 
   beforeEach(() => {
     mockConf = {
@@ -30,14 +33,26 @@ describe("realtime index test", () => {
 
     consoleLog = console.log;
     consoleError = console.error;
+    processOn = process.on;
+    processExit = process.exit;
 
     console.log = jest.fn();
     console.error = jest.fn();
+    process.on = jest.fn();
+    process.exit = jest.fn();
 
     socket = {
       on: jest.fn(),
       emit: jest.fn(),
-      write: jest.fn()
+      write: jest.fn(),
+      request: {
+        data: {
+          user: {
+            id: 1,
+            groups: "fs_admin"
+          }
+        }
+      }
     };
 
     data = {
@@ -55,6 +70,7 @@ describe("realtime index test", () => {
     mockRequestValidator = jest.fn();
     mockSerializeError = jest.fn();
     mockEventWildcard = jest.fn();
+    mockAuthentication = jest.fn();
 
     jest.mock("../../conf", () => mockConf);
     jest.mock("socket.io", () => mockCreateIo);
@@ -62,11 +78,14 @@ describe("realtime index test", () => {
     jest.mock("../../socket-router", () => mockSocketRouter);
     jest.mock("../../serialize-error", () => mockSerializeError);
     jest.mock("../../event-wildcard", () => mockEventWildcard);
+    jest.mock("../../socketio/middleware/authentication", () => mockAuthentication);
   });
 
   afterEach(() => {
     console.log = consoleLog;
     console.error = consoleError;
+    process.on = processOn;
+    process.exit = processExit;
   });
 
   describe("setup events", () => {
@@ -74,9 +93,16 @@ describe("realtime index test", () => {
       require("../../index");
     });
 
-    it("should register the eventWildcard plugin", () => {
-      expect(io.use).toHaveBeenCalledTimes(1);
+    it("should register two middlewares", () => {
+      expect(io.use).toHaveBeenCalledTimes(2);
+    });
+
+    it("should register the eventWildcard middleware", () => {
       expect(io.use).toHaveBeenCalledWith(mockEventWildcard);
+    });
+
+    it("should register the authentication middleware", () => {
+      expect(io.use).toHaveBeenCalledWith(mockAuthentication);
     });
 
     it("should call createIo", () => {
@@ -109,68 +135,89 @@ describe("realtime index test", () => {
       });
 
       describe("on socket wildcard", () => {
-        beforeEach(() => {
-          socket.on.mockImplementation((evt, fn) => {
-            if (evt === "*") fn(data, ack);
-          });
-        });
-
-        describe("success", () => {
+        describe("with no matching event name", () => {
           beforeEach(() => {
-            mockRequestValidator.mockReturnValue([]);
+            data.eventName = "non-matching-event-name";
+            socket.on.mockImplementation((evt, fn) => {
+              if (evt === "*") fn(data, ack);
+            });
             require("../../index");
           });
 
-          it("should call requestValidator", () => {
-            expect(mockRequestValidator).toHaveBeenCalledTimes(1);
-            expect(mockRequestValidator).toHaveBeenCalledWith(data);
+          it("should not call the requestValidator", () => {
+            expect(mockRequestValidator).not.toHaveBeenCalled();
           });
 
-          it("should call socketRouter with the appropriate data", () => {
-            expect(mockSocketRouter.go).toHaveBeenCalledTimes(1);
-            expect(mockSocketRouter.go).toHaveBeenCalledWith(
-              data.path,
-              {
-                verb: data.method,
-                data: {
-                  qs: {}
-                },
-                messageName: "message1",
-                endName: "end1"
-              },
-              {
-                socket: socket,
-                ack: expect.any(Function)
-              }
-            );
+          it("should not call socketRouter.go", () => {
+            expect(mockSocketRouter.go).not.toHaveBeenCalled();
           });
         });
 
-        describe("error", () => {
-          let error, serializedError;
+        describe("when handling the request", () => {
           beforeEach(() => {
-            error = "something bad happened";
-            serializedError = "serialized error";
-            mockSerializeError.mockReturnValue(serializedError);
-            mockRequestValidator.mockReturnValue(error);
-          });
-
-          describe("with ack", () => {
-            it("should ack the error", () => {
-              require("../../index");
-
-              expect(ack).toHaveBeenCalledTimes(1);
-              expect(ack).toHaveBeenCalledWith(serializedError);
+            socket.on.mockImplementation((evt, fn) => {
+              if (evt === "*") fn(data, ack);
             });
           });
 
-          describe("without ack", () => {
-            it("should call socket.emit to the message with the error", () => {
-              ack = null;
+          describe("success", () => {
+            beforeEach(() => {
+              mockRequestValidator.mockReturnValue([]);
               require("../../index");
+            });
 
-              expect(socket.emit).toHaveBeenCalledTimes(1);
-              expect(socket.emit).toHaveBeenCalledWith("message1", serializedError);
+            it("should call requestValidator", () => {
+              expect(mockRequestValidator).toHaveBeenCalledTimes(1);
+              expect(mockRequestValidator).toHaveBeenCalledWith(data);
+            });
+
+            it("should call socketRouter with the appropriate data", () => {
+              expect(mockSocketRouter.go).toHaveBeenCalledTimes(1);
+              expect(mockSocketRouter.go).toHaveBeenCalledWith(
+                data.path,
+                {
+                  verb: data.method,
+                  data: {
+                    qs: {},
+                    groups: "fs_admin"
+                  },
+                  messageName: "message1",
+                  endName: "end1"
+                },
+                {
+                  socket: socket,
+                  ack: expect.any(Function)
+                }
+              );
+            });
+          });
+
+          describe("error", () => {
+            let error, serializedError;
+            beforeEach(() => {
+              error = "something bad happened";
+              serializedError = "serialized error";
+              mockSerializeError.mockReturnValue(serializedError);
+              mockRequestValidator.mockReturnValue(error);
+            });
+
+            describe("with ack", () => {
+              it("should ack the error", () => {
+                require("../../index");
+
+                expect(ack).toHaveBeenCalledTimes(1);
+                expect(ack).toHaveBeenCalledWith(serializedError);
+              });
+            });
+
+            describe("without ack", () => {
+              it("should call socket.emit to the message with the error", () => {
+                ack = null;
+                require("../../index");
+
+                expect(socket.emit).toHaveBeenCalledTimes(1);
+                expect(socket.emit).toHaveBeenCalledWith("message1", serializedError);
+              });
             });
           });
         });
@@ -206,6 +253,30 @@ describe("realtime index test", () => {
       shutdown();
 
       expect(io.close).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("on unhandled exception", () => {
+    let onUnhandledException, e;
+    beforeEach(() => {
+      e = new Error("An unhandled exception");
+      require("../../index");
+      onUnhandledException = process.on.mock.calls[0][1];
+      onUnhandledException(e);
+    });
+
+    it("should listen for unhandled exceptions", () => {
+      expect(process.on).toHaveBeenCalledWith("unhandledRejection", expect.any(Function));
+    });
+
+    it("should log the error", () => {
+      expect(console.error).toHaveBeenCalledTimes(1);
+      expect(console.error).toHaveBeenCalledWith(e);
+    });
+
+    it("should exit with a return code of 1", () => {
+      expect(process.exit).toHaveBeenCalledTimes(1);
+      expect(process.exit).toHaveBeenCalledWith(1);
     });
   });
 });

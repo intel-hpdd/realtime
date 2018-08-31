@@ -11,6 +11,7 @@ const pushSerializeError = require("../../serialize-error/push-serialize-error")
 const { viewer, query } = require("../../db-utils");
 const highland = require("highland");
 const broadcaster = require("../../broadcaster");
+const checkGroup = require("../middleware/check-group");
 
 const getHealth = () =>
   query("select * from health_status()")
@@ -31,14 +32,16 @@ const getHealth$ = broadcaster(
 );
 
 module.exports = function healthRoutes() {
-  socketRouter.get("/health", (req, resp, next) => {
-    const stream = getHealth$();
+  socketRouter.route("/health").get(
+    checkGroup.fsUsers((req, resp, data, next) => {
+      const stream = getHealth$();
 
-    stream
-      .errors(pushSerializeError)
-      .through(through.unchangedFilter)
-      .each(x => resp.socket.emit(req.messageName, x));
+      stream
+        .errors(pushSerializeError)
+        .through(through.unchangedFilter)
+        .each(x => resp.socket.emit(req.messageName, x));
 
-    next(req, resp, stream);
-  });
+      next(req, resp, stream);
+    })
+  );
 };

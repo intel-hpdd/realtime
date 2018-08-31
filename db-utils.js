@@ -31,6 +31,6 @@ const stream = highland(push => {
 
 exports.viewer = broadcaster(stream);
 
-const query = query => pool.query(query);
+const query = (...args) => pool.query(...args);
 
 exports.query = query;
