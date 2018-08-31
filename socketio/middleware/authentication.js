@@ -28,11 +28,11 @@ module.exports = (socket, next) => {
     .flatMap(x => {
       const s$ = highland(
         query(
-          "SELECT agroup.name\
-        FROM auth_user AS auser \
-        INNER JOIN auth_user_groups AS ugroup ON auser.id = ugroup.user_id \
-        INNER JOIN auth_group AS agroup ON ugroup.group_id = agroup.id \
-        WHERE auser.id = $1;",
+          "SELECT agroup.name \
+FROM auth_user AS auser \
+INNER JOIN auth_user_groups AS ugroup ON auser.id = ugroup.user_id \
+INNER JOIN auth_group AS agroup ON ugroup.group_id = agroup.id \
+WHERE auser.id = $1;",
           [x.id]
         )
       )
