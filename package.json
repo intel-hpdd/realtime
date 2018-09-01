@@ -17,8 +17,10 @@
   ],
   "files": [
     "*.js",
+    "group",
     "serialize-error",
     "socket-router",
+    "socketio",
     "iml-realtime.service"
   ],
   "repository": {
