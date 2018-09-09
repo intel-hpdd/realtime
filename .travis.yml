@@ -1,18 +1,18 @@
 sudo: required
 language: node_js
 node_js:
-  - 8
+  - 10
 services:
   - docker
 jobs:
   include:
     - stage: test
-      env: Type='Lint & Test'
+      name: "Lint & Test"
       script:
         - npm run eslint
         - npm run test
     - stage: deploy-npm
-      env: Type='npm Deploy'
+      name: "npm Deploy"
       script: skip
       deploy:
         provider: npm
@@ -21,7 +21,7 @@ jobs:
         on:
           all_branches: true
     - stage: deploy-copr
-      env: Type='Copr deploy'
+      name: "Copr deploy"
       language: generic
       script:
         - docker run -dit --name copr -v $(pwd):/builddir imlteam/dotnet-docker /usr/sbin/init
@@ -30,7 +30,7 @@ jobs:
     - stage: cd
       git:
         depth: 999999
-      env: 'Type=Continuous Deployment'
+      name: "Continuous Deployment"
       script:
         - docker run -dit --name copr -v $(pwd):/builddir imlteam/dotnet-docker /usr/sbin/init
         - docker exec -it copr bash -c 'yum install -y rpmdevtools copr-cli git'
