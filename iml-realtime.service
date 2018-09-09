@@ -2,6 +2,7 @@
 Description=IML Realtime Service
 PartOf=iml-manager.target
 After=iml-settings-populator.service
+After=postgresql.service
 Requires=iml-settings-populator.service
 
 [Service]
