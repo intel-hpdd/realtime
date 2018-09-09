@@ -1,22 +1,16 @@
 const highland = require("highland");
 
 describe("db utils", () => {
-  let client, dbUtils, mockStream, mockPool, pool, exit, warn, error, queryError;
+  let client, dbUtils, mockStream, mockPool, pool, warn;
   beforeEach(() => {
-    queryError = new Error("bad query");
     client = {
       on: jest.fn(),
       release: jest.fn(),
-      query: jest.fn(() => Promise.reject(queryError))
+      query: jest.fn(() => Promise.resolve({}))
     };
 
-    exit = process.exit;
     warn = console.warn;
-    error = console.error;
-
-    process.exit = jest.fn();
     console.warn = jest.fn();
-    console.error = jest.fn();
 
     pool = {
       connect: jest.fn(() => Promise.resolve(client)),
@@ -50,42 +44,21 @@ describe("db utils", () => {
   });
 
   afterEach(() => {
-    process.exit = exit;
     console.warn = warn;
-    console.error = error;
   });
 
   it("should create a pool", () => {
     expect(mockPool).toHaveBeenCalledWith({
-      user: "chroma",
-      password: "abc123",
+      connectionTimeoutMillis: 10000,
       database: "chroma",
-      host: "localhost"
+      host: "localhost",
+      password: "abc123",
+      user: "chroma"
     });
   });
 
   it("should have a pool property", () => {
     expect(dbUtils.pool).toEqual(pool);
-  });
-
-  it("should listen for errors on the pool", () => {
-    expect(pool.on).toHaveBeenCalledWith("error", expect.any(Function));
-  });
-
-  describe("handling pool error", () => {
-    let onError;
-    beforeEach(() => {
-      onError = pool.on.mock.calls[0][1];
-      onError(new Error("bad error"));
-    });
-
-    it("should end the pool", () => {
-      expect(pool.end).toHaveBeenCalledTimes(1);
-    });
-
-    it("should exit the process", () => {
-      expect(process.exit).toHaveBeenCalledWith(1);
-    });
   });
 
   describe("client connection", () => {
@@ -120,48 +93,8 @@ describe("db utils", () => {
       expect(console.warn).toHaveBeenCalledWith("notice: ", "this is a notice");
     });
 
-    it("should listen for errors", () => {
-      expect(client.on).toHaveBeenCalledWith("error", expect.any(Function));
-    });
-
-    describe("handling client errors", () => {
-      let onError, error;
-      beforeEach(() => {
-        onError = client.on.mock.calls[2][1];
-        error = new Error("e-r-r-o-r");
-      });
-
-      it("should release the client", () => {
-        try {
-          onError(error);
-        } catch (e) {
-        } finally {
-          expect(client.release).toHaveBeenCalledTimes(1);
-        }
-      });
-
-      it("should log the error", () => {
-        try {
-          onError(error);
-        } catch (e) {
-        } finally {
-          expect(console.error).toHaveBeenCalledWith("Error listening for table_update", error);
-        }
-      });
-
-      it("should release the client", () => {
-        expect(() => {
-          onError(error);
-        }).toThrow(error);
-      });
-    });
-
     it("should make a query", () => {
       expect(client.query).toHaveBeenCalledWith("LISTEN table_update");
-    });
-
-    it("should catch errors when running the query", () => {
-      expect(console.error).toHaveBeenCalledWith("got error", queryError);
     });
   });
 

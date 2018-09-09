@@ -12,6 +12,7 @@ const serializeError = require("./serialize-error");
 const eventWildcard = require("./event-wildcard");
 const conf = require("./conf");
 const obj = require("intel-obj");
+const { pool } = require("./db-utils");
 const authentication = require("./socketio/middleware/authentication");
 
 // Don't limit to pool to 5 in node 0.10.x
@@ -22,12 +23,24 @@ https.globalAgent.maxSockets = http.globalAgent.maxSockets = Infinity;
 const qs = require("querystring");
 const url = require("url");
 
-process.on("unhandledRejection", error => {
-  console.error(error);
-  process.exit(1);
-});
-
 const io = createIo();
+
+const errorHandler = msg => error => {
+  console.error(msg, error);
+
+  process.exitCode = 1;
+
+  io.close();
+  pool.end(() => {
+    pool._clients.forEach(c => {
+      c.connection.stream.destroy();
+      c.connection.stream.unref();
+    });
+  });
+};
+
+process.on("unhandledRejection", errorHandler("unhandled promise rejection"));
+process.on("uncaughtException", errorHandler("unhandled exception"));
 
 io.use(eventWildcard);
 io.use(authentication);
@@ -36,7 +49,7 @@ io.attach(conf.REALTIME_PORT, { wsEngine: "uws" });
 
 const isMessage = /message(\d+)/;
 
-io.on("connection", function(socket) {
+io.on("connection", socket => {
   console.log(`socket connected: ${socket.id}`);
   let groups = [];
   if (socket.request.data != null) groups = socket.request.data.user.groups;
@@ -88,8 +101,4 @@ function handleRequest(data, socket, ack, id, groups) {
   }
 }
 
-const shutdown = () => {
-  io.close();
-};
-
-module.exports = shutdown;
+module.exports = io.close.bind(io);
