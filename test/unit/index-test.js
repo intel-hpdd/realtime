@@ -14,8 +14,7 @@ describe("realtime index test", () => {
     mockAuthentication,
     consoleLog,
     consoleError,
-    processOn,
-    processExit;
+    processOn;
 
   beforeEach(() => {
     mockConf = {
@@ -34,7 +33,6 @@ describe("realtime index test", () => {
     consoleLog = console.log;
     consoleError = console.error;
     processOn = process.on;
-    processExit = process.exit;
 
     console.log = jest.fn();
     console.error = jest.fn();
@@ -85,7 +83,6 @@ describe("realtime index test", () => {
     console.log = consoleLog;
     console.error = consoleError;
     process.on = processOn;
-    process.exit = processExit;
   });
 
   describe("setup events", () => {
@@ -256,27 +253,26 @@ describe("realtime index test", () => {
     });
   });
 
-  describe("on unhandled exception", () => {
+  describe("on unhandled rejection", () => {
     let onUnhandledException, e;
     beforeEach(() => {
-      e = new Error("An unhandled exception");
+      e = new Error("An unhandled rejection");
       require("../../index");
       onUnhandledException = process.on.mock.calls[0][1];
       onUnhandledException(e);
     });
 
-    it("should listen for unhandled exceptions", () => {
+    it("should listen for unhandled promise rejections", () => {
       expect(process.on).toHaveBeenCalledWith("unhandledRejection", expect.any(Function));
     });
 
     it("should log the error", () => {
       expect(console.error).toHaveBeenCalledTimes(1);
-      expect(console.error).toHaveBeenCalledWith(e);
+      expect(console.error).toHaveBeenCalledWith("unhandled promise rejection", e);
     });
 
     it("should exit with a return code of 1", () => {
-      expect(process.exit).toHaveBeenCalledTimes(1);
-      expect(process.exit).toHaveBeenCalledWith(1);
+      expect(process.exitCode).toBe(1);
     });
   });
 });
