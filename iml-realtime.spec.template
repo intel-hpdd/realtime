@@ -1,7 +1,3 @@
-%{?nodejs_default_filter}
-%global __requires_exclude_from ^%{nodejs_sitelib}/.*$
-
-
 %define base_name realtime
 
 Name:     iml-%{base_name}
@@ -20,6 +16,7 @@ Requires: nodejs
 BuildRequires: nodejs-packaging
 BuildRequires: npm
 
+ExclusiveArch: %{nodejs_arches}
 
 %description
 This modules provides realtime data to the GUI.
