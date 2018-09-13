@@ -1,3 +1,5 @@
+%{?nodejs_default_filter}
+
 %define base_name realtime
 
 Name:     iml-%{base_name}
