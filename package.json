@@ -42,7 +42,7 @@
     "jsonschema": "1.1.1",
     "pg": "^7.4.3",
     "socket.io": "2.1.1",
-    "uws": "10.148.1"
+    "uws": "10.148.0"
   },
   "devDependencies": {
     "@iml/stub-daddy": "2.0.5",
