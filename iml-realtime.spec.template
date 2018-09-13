@@ -1,4 +1,6 @@
 %{?nodejs_default_filter}
+%global __requires_exclude_from ^%{nodejs_sitelib}/.*$
+
 
 %define base_name realtime
 
