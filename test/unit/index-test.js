@@ -12,9 +12,11 @@ describe("realtime index test", () => {
     mockSerializeError,
     mockEventWildcard,
     mockAuthentication,
+    mockPool,
     consoleLog,
     consoleError,
-    processOn;
+    processOn,
+    processExit;
 
   beforeEach(() => {
     mockConf = {
@@ -33,8 +35,9 @@ describe("realtime index test", () => {
     consoleLog = console.log;
     consoleError = console.error;
     processOn = process.on;
+    processExit = process.exit;
 
-    console.log = jest.fn();
+    console.log = jest.fn((...msg) => consoleLog(...msg));
     console.error = jest.fn();
     process.on = jest.fn();
     process.exit = jest.fn();
@@ -65,6 +68,13 @@ describe("realtime index test", () => {
       go: jest.fn()
     };
 
+    mockPool = {
+      pool: {
+        end: jest.fn(fn => fn()),
+        _clients: []
+      }
+    };
+
     mockRequestValidator = jest.fn();
     mockSerializeError = jest.fn();
     mockEventWildcard = jest.fn();
@@ -76,6 +86,7 @@ describe("realtime index test", () => {
     jest.mock("../../socket-router", () => mockSocketRouter);
     jest.mock("../../serialize-error", () => mockSerializeError);
     jest.mock("../../event-wildcard", () => mockEventWildcard);
+    jest.mock("../../db-utils", () => mockPool);
     jest.mock("../../socketio/middleware/authentication", () => mockAuthentication);
   });
 
@@ -83,6 +94,7 @@ describe("realtime index test", () => {
     console.log = consoleLog;
     console.error = consoleError;
     process.on = processOn;
+    process.exit = processExit;
   });
 
   describe("setup events", () => {
@@ -254,9 +266,18 @@ describe("realtime index test", () => {
   });
 
   describe("on unhandled rejection", () => {
-    let onUnhandledException, e;
+    let onUnhandledException, e, client;
     beforeEach(() => {
       e = new Error("An unhandled rejection");
+      client = {
+        connection: {
+          stream: {
+            destroy: jest.fn(),
+            unref: jest.fn()
+          }
+        }
+      };
+      mockPool.pool._clients = [client];
       require("../../index");
       onUnhandledException = process.on.mock.calls[0][1];
       onUnhandledException(e);
@@ -273,6 +294,23 @@ describe("realtime index test", () => {
 
     it("should exit with a return code of 1", () => {
       expect(process.exitCode).toBe(1);
+    });
+
+    it("should exit the process", () => {
+      expect(process.exit).toHaveBeenCalledTimes(1);
+      expect(process.exit).toHaveBeenCalledWith(1);
+    });
+
+    it("should end the pool", () => {
+      expect(mockPool.pool.end).toHaveBeenCalledTimes(1);
+    });
+
+    it("should destroy the client", () => {
+      expect(client.connection.stream.destroy).toHaveBeenCalledTimes(1);
+    });
+
+    it("should unref the client stream", () => {
+      expect(client.connection.stream.unref).toHaveBeenCalledTimes(1);
     });
   });
 });

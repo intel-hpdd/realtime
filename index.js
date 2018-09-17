@@ -37,6 +37,8 @@ const errorHandler = msg => error => {
       c.connection.stream.unref();
     });
   });
+
+  process.exit(process.exitCode);
 };
 
 process.on("unhandledRejection", errorHandler("unhandled promise rejection"));
