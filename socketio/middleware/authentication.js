@@ -13,7 +13,13 @@ const regexp = /sessionid=([^;|$]+)/;
 module.exports = (socket, next) => {
   const sessionKey = socket.request.headers.cookie.match(regexp)[1];
 
-  highland(query("SELECT session_data FROM django_session WHERE session_key = $1;", [sessionKey]))
+  highland(
+    query("SELECT session_data FROM django_session WHERE session_key = $1 AND expire_date > NOW();", [sessionKey])
+  )
+    .filter(x => {
+      if (x.rows.length > 0 && x.rows[0].session_data != null) return true;
+      else next();
+    })
     .map(x => x.rows[0].session_data)
     .map(x => Buffer.from(x, "base64"))
     .map(x => x.toString("binary"))
