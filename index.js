@@ -28,8 +28,6 @@ const io = createIo();
 const errorHandler = msg => error => {
   console.error(msg, error);
 
-  process.exitCode = 1;
-
   io.close();
   pool.end(() => {
     pool._clients.forEach(c => {
@@ -37,6 +35,8 @@ const errorHandler = msg => error => {
       c.connection.stream.unref();
     });
   });
+
+  process.exit(1);
 };
 
 process.on("unhandledRejection", errorHandler("unhandled promise rejection"));

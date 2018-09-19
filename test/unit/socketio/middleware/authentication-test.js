@@ -44,7 +44,7 @@ describe("authentication", () => {
     it("should query for the session data", () => {
       expect(mockDbUtils.query).toHaveBeenCalledTimes(3);
       expect(mockDbUtils.query).toHaveBeenCalledWith(
-        "SELECT session_data FROM django_session WHERE session_key = $1;",
+        "SELECT session_data FROM django_session WHERE session_key = $1 AND expire_date > NOW();",
         ["2c162490af12768563cef8fdc77f1eec"]
       );
     });
@@ -81,7 +81,7 @@ describe("authentication", () => {
     it("should query for the session data", () => {
       expect(mockDbUtils.query).toHaveBeenCalledTimes(2);
       expect(mockDbUtils.query).toHaveBeenCalledWith(
-        "SELECT session_data FROM django_session WHERE session_key = $1;",
+        "SELECT session_data FROM django_session WHERE session_key = $1 AND expire_date > NOW();",
         ["2c162490af12768563cef8fdc77f1eec"]
       );
     });
@@ -130,6 +130,31 @@ describe("authentication", () => {
 
         authentication(socket, next);
       });
+    });
+  });
+
+  describe("with no session data", () => {
+    beforeEach(() => {
+      mockDbUtils.query.mockReturnValueOnce([{ rows: [] }]);
+    });
+
+    it("should call next", () => {
+      authentication(socket, next);
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+
+    it("should only run the first query", () => {
+      authentication(socket, next);
+      expect(mockDbUtils.query).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not contain user data", done => {
+      next.mockImplementation(() => {
+        expect(socket.request.data).toEqual({});
+        done();
+      });
+
+      authentication(socket, next);
     });
   });
 });
