@@ -292,10 +292,6 @@ describe("realtime index test", () => {
       expect(console.error).toHaveBeenCalledWith("unhandled promise rejection", e);
     });
 
-    it("should exit with a return code of 1", () => {
-      expect(process.exitCode).toBe(1);
-    });
-
     it("should exit the process", () => {
       expect(process.exit).toHaveBeenCalledTimes(1);
       expect(process.exit).toHaveBeenCalledWith(1);

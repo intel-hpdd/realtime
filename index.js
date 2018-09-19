@@ -28,8 +28,6 @@ const io = createIo();
 const errorHandler = msg => error => {
   console.error(msg, error);
 
-  process.exitCode = 1;
-
   io.close();
   pool.end(() => {
     pool._clients.forEach(c => {
