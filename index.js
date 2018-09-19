@@ -38,7 +38,7 @@ const errorHandler = msg => error => {
     });
   });
 
-  process.exit(process.exitCode);
+  process.exit(1);
 };
 
 process.on("unhandledRejection", errorHandler("unhandled promise rejection"));
