@@ -4,6 +4,8 @@ describe("wildcard route", () => {
   let mockApiRequest,
     requestToPath,
     api$,
+    polling$,
+    mockPollingRequest,
     mockSocketRouter,
     mockPushSerializeError,
     mockCheckGroup,
@@ -15,6 +17,10 @@ describe("wildcard route", () => {
     requestToPath = jest.fn(() => api$);
     mockApiRequest = jest.fn(() => requestToPath);
     jest.mock("../../../../api-request", () => mockApiRequest);
+
+    polling$ = highland();
+    mockPollingRequest = jest.fn(() => polling$);
+    jest.mock("../../../../polling-request", () => mockPollingRequest);
 
     mockSocketRouter = {
       route: jest.fn(() => mockSocketRouter),
@@ -130,7 +136,52 @@ describe("wildcard route", () => {
       });
     });
 
-    describe("with no ack", () => {
+    describe("with no ack but matches polling route", () => {
+      beforeEach(() => {
+        delete resp.ack;
+        req.matches = ["/host", "host"];
+        handler(req, resp, data, next);
+      });
+
+      describe("on success", () => {
+        beforeEach(() => {
+          polling$.write({
+            body
+          });
+          polling$.end();
+        });
+
+        it("should not invoke request to path", () => {
+          expect(requestToPath).not.toHaveBeenCalled();
+        });
+
+        it("should emit the body", () => {
+          expect(resp.socket.emit).toHaveBeenCalledTimes(1);
+          expect(resp.socket.emit).toHaveBeenCalledWith(req.messageName, body);
+        });
+
+        it("should not push a serialized error", () => {
+          expect(mockPushSerializeError).not.toHaveBeenCalled();
+        });
+      });
+
+      describe("on error", () => {
+        beforeEach(() => {
+          polling$.write({
+            __HighlandStreamError__: true,
+            error
+          });
+          polling$.end();
+        });
+
+        it("should push the serialized error", () => {
+          expect(mockPushSerializeError).toHaveBeenCalledTimes(1);
+          expect(mockPushSerializeError).toHaveBeenCalledWith(error, expect.any(Function));
+        });
+      });
+    });
+
+    describe("with no ack and a route that is not in the polling list", () => {
       beforeEach(() => {
         delete resp.ack;
         handler(req, resp, data, next);
