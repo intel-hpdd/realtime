@@ -37,7 +37,6 @@
     "intel-obj": "6.0.0",
     "intel-req": "1.0.9",
     "intel-through": "1.0.8",
-    "jpickle": "^0.4.1",
     "json-mask": "0.3.8",
     "jsonschema": "1.1.1",
     "pg": "^7.4.3",
