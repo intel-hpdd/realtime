@@ -31,7 +31,6 @@ npm i --production
 %nodejs_fixdep -r intel-req
 %nodejs_fixdep -r @iml/router
 %nodejs_fixdep -r intel-through
-%nodejs_fixdep -r jpickle
 %nodejs_fixdep -r json-mask
 %nodejs_fixdep -r jsonschema
 %nodejs_fixdep -r socket.io
