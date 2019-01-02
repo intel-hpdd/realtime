@@ -1,13 +1,20 @@
+const jpickle = require("jpickle");
+
 describe("authentication", () => {
-  let mockDbUtils, encodedSessionData, socket, next;
+  let mockDbUtils, mockJPickle, encodedSessionData, socket, next;
   beforeEach(() => {
     encodedSessionData =
-      "ZDJkNmYzN2QzOWEwMDU0ZTI2MTFmYWNlMDkxNjI2M2U4ZmRhMzQyZDp7Il9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9pZCI6MX0=";
+      "ZTdhYjJiYzg3NTVjZmY3ODMyY2UzNzM2NWQyODI3Zjc4NTAxMDk3ZTqAAn1xAShVEl9hdXRoX3VzZXJfYmFja2VuZFUpZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmRVDV9hdXRoX3VzZXJfaWRLAXUu";
 
     mockDbUtils = {
       query: jest.fn()
     };
     jest.mock("../../../../db-utils", () => mockDbUtils);
+
+    mockJPickle = {
+      loads: jest.fn(x => jpickle.loads(x))
+    };
+    jest.mock("jpickle", () => mockJPickle);
 
     socket = {
       request: {
@@ -42,6 +49,15 @@ describe("authentication", () => {
       );
     });
 
+    it("should load the pickled string", () => {
+      expect(mockJPickle.loads).toHaveBeenCalledTimes(1);
+      expect(mockJPickle.loads).toHaveBeenCalledWith(
+        Buffer.from(encodedSessionData, "base64")
+          .toString("binary")
+          .split(":")[1]
+      );
+    });
+
     it("should query the user", () => {
       expect(mockDbUtils.query).toHaveBeenCalledWith("SELECT * FROM auth_user WHERE id = $1", [1]);
     });
@@ -67,6 +83,15 @@ describe("authentication", () => {
       expect(mockDbUtils.query).toHaveBeenCalledWith(
         "SELECT session_data FROM django_session WHERE session_key = $1 AND expire_date > NOW();",
         ["2c162490af12768563cef8fdc77f1eec"]
+      );
+    });
+
+    it("should load the pickled string", () => {
+      expect(mockJPickle.loads).toHaveBeenCalledTimes(1);
+      expect(mockJPickle.loads).toHaveBeenCalledWith(
+        Buffer.from(encodedSessionData, "base64")
+          .toString("binary")
+          .split(":")[1]
       );
     });
 
