@@ -5,16 +5,13 @@
 const fp = require("intel-fp/dist/fp");
 const { query } = require("../../db-utils");
 const highland = require("highland");
+const jpickle = require("jpickle");
 const obj = require("intel-obj");
 
 const regexp = /sessionid=([^;|$]+)/;
 
 module.exports = (socket, next) => {
-  const match = socket.request.headers.cookie.match(regexp);
-
-  if (!match) return next();
-
-  const sessionKey = match[1];
+  const sessionKey = socket.request.headers.cookie.match(regexp)[1];
 
   highland(
     query("SELECT session_data FROM django_session WHERE session_key = $1 AND expire_date > NOW();", [sessionKey])
@@ -26,8 +23,8 @@ module.exports = (socket, next) => {
     .map(x => x.rows[0].session_data)
     .map(x => Buffer.from(x, "base64"))
     .map(x => x.toString("binary"))
-    .map(x => x.split(/:(.+)/)[1])
-    .map(JSON.parse)
+    .map(x => x.split(":")[1])
+    .map(jpickle.loads)
     .flatMap(({ _auth_user_id: authUserId }) => highland(query("SELECT * FROM auth_user WHERE id = $1", [authUserId])))
     .filter(({ rows: { length: rowCount } }) => {
       if (rowCount > 0) return true;
@@ -54,7 +51,9 @@ WHERE auser.id = $1;",
     .sequence()
     .reduce1(obj.merge)
     .each(user => {
-      socket.request.data = obj.merge({}, socket.request.data, { user });
+      socket.request.data = obj.merge({}, socket.request.data, {
+        user
+      });
       next();
     });
 };

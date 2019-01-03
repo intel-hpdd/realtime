@@ -37,6 +37,7 @@
     "intel-obj": "6.0.0",
     "intel-req": "1.0.9",
     "intel-through": "1.0.8",
+    "jpickle": "^0.4.1",
     "json-mask": "0.3.8",
     "jsonschema": "1.1.1",
     "pg": "^7.4.3",
@@ -46,9 +47,9 @@
   "devDependencies": {
     "@iml/stub-daddy": "2.0.5",
     "eslint": "5.5.0",
-    "jest": "^23.6.0",
+    "jest": "^23.5.0",
     "pre-commit": "1.2.2",
-    "prettier": "^1.15.3",
+    "prettier": "^1.14.2",
     "socket.io-client": "2.1.1"
   }
 }
