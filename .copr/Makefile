@@ -1,5 +1,4 @@
 srpm:
-	yum install -y nodejs
 	npm pack
 	mkdir -p /tmp/_topdir/SOURCES
 	cp -r ./* /tmp/_topdir/SOURCES
