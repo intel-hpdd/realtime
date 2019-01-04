@@ -1,8 +1,8 @@
 %define base_name realtime
 
 Name:     iml-%{base_name}
-Version:  @version@
-Release:  @release@%{?dist}
+Version:  7.0.0
+Release:  2%{?dist}
 Summary:  Provides Realtime data to IML
 License:  MIT
 Group:    System Environment/Libraries
@@ -65,6 +65,9 @@ rm -rf %{buildroot}
 %attr(0644,root,root)%{_unitdir}/iml-realtime.service
 
 %changelog
+* Fri Jan 4 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.0-2
+  - Build using Docker copr image
+
 * Tue Jun 19 2018 Will Johnson <wjohnson@whamcloud.com> - 7.0.0-1
   - Build using FAKE
   - Initial standalone RPM package
