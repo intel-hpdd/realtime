@@ -7,10 +7,8 @@
 
 const highland = require("highland");
 const obj = require("intel-obj");
-const fp = require("intel-fp/dist/fp");
 const through = require("intel-through");
 const apiRequest = require("../../api-request");
-const pollingRequest = require("../../polling-request");
 const socketRouter = require("../index");
 const pushSerializeError = require("../../serialize-error/push-serialize-error");
 const checkGroup = require("../middleware/check-group");
@@ -23,9 +21,6 @@ module.exports = function wildcardRoute() {
       const request = requestToPath.bind(null, options);
       let stream;
 
-      const toPoll = ["host", "lnet_configuration", "alert", "command"];
-      const paths = fp.zipObject(toPoll, toPoll);
-
       if (resp.ack) {
         stream = request();
 
@@ -33,14 +28,6 @@ module.exports = function wildcardRoute() {
           .pluck("body")
           .errors(pushSerializeError)
           .each(resp.ack.bind(resp.ack));
-      } else if (req.matches[1] in paths) {
-        stream = pollingRequest(req.matches[0], options);
-
-        stream
-          .pluck("body")
-          .errors(pushSerializeError)
-          .through(through.unchangedFilter)
-          .each(resp.socket.emit.bind(resp.socket, req.messageName));
       } else {
         stream = highland(function generator(push, next) {
           request()
