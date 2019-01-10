@@ -1,6 +1,6 @@
 {
   "name": "@iml/realtime",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "Realtime communications layer between IML GUI and API",
   "scripts": {
     "eslint": "eslint ./",

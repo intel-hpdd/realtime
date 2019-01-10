@@ -1,8 +1,8 @@
 %define base_name realtime
 
 Name:     iml-%{base_name}
-Version:  7.0.0
-Release:  2%{?dist}
+Version:  7.0.1
+Release:  1%{?dist}
 Summary:  Provides Realtime data to IML
 License:  MIT
 Group:    System Environment/Libraries
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 %attr(0644,root,root)%{_unitdir}/iml-realtime.service
 
 %changelog
+* Thu Jan 10 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-1
+  - Refactor to be compatible with Django 1.6
+
 * Fri Jan 4 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.0-2
   - Build using Docker copr image
 
