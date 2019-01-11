@@ -3,9 +3,9 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var errorSerializer = require('intel-logger').serializers.err;
+const errorSerializer = require("intel-logger").serializers.err;
 /**
  * Returns a normalized error
  * object for consumption
@@ -13,11 +13,10 @@ var errorSerializer = require('intel-logger').serializers.err;
  * @param {Error} error
  * @returns {Object}
  */
-module.exports = function serializeError (error) {
-  if (!error.statusCode)
-    error.statusCode = 500;
+module.exports = function serializeError(error) {
+  if (!error.statusCode) error.statusCode = 500;
 
-  var serialized = errorSerializer(error);
+  const serialized = errorSerializer(error);
   serialized.statusCode = error.statusCode;
 
   return { error: serialized };

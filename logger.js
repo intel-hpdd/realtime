@@ -3,16 +3,16 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var conf = require('./conf');
-var logger = require('intel-logger');
-var path = require('path');
+const conf = require("./conf");
+const logger = require("intel-logger");
+const path = require("path");
 
-var level = (conf.NODE_ENV === 'production' ? logger.LEVELS.ERROR : logger.LEVELS.INFO);
+const level = conf.NODE_ENV === "production" ? logger.LEVELS.ERROR : logger.LEVELS.INFO;
 
 module.exports = logger.default({
-  name: 'realtime',
+  name: "realtime",
   path: path.join(conf.LOG_PATH, conf.LOG_FILE),
   level: level,
   serializers: {
@@ -22,20 +22,18 @@ module.exports = logger.default({
   }
 });
 
-function socketSerializer (sock) {
-  if (!sock)
-    return false;
+function socketSerializer(sock) {
+  if (!sock) return false;
 
   return {
     id: sock.id
   };
 }
 
-var message = /message(\d+)/;
+const message = /message(\d+)/;
 
-function reqSerializer (req) {
-  if (!req)
-    return false;
+function reqSerializer(req) {
+  if (!req) return false;
 
   return {
     path: (req.matches && req.matches[0]) || null,

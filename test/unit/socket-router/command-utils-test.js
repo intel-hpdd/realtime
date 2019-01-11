@@ -1,41 +1,31 @@
-'use strict';
+"use strict";
 
-var rewire = require('rewire');
-var commandUtils = rewire('../../../socket-router/command-utils');
-var fixtures = require('../../integration/fixtures');
-var λ = require('highland');
-var obj = require('intel-obj');
-var fp = require('intel-fp/dist/fp');
+const fixtures = require("../../integration/fixtures");
+const λ = require("highland");
+const obj = require("intel-obj");
+const fp = require("intel-fp/dist/fp");
 
-describe('command utils', function () {
-  var revoke, apiRequest, responseStream,
-    pollingRequest, pollStream;
+describe("command utils", () => {
+  let mockApiRequest, responseStream, mockPollingRequest, pollStream, commandUtils;
 
-  beforeEach(function () {
+  beforeEach(() => {
     responseStream = λ();
-    apiRequest = jasmine.createSpy('apiRequest')
-      .and.returnValue(responseStream);
+    mockApiRequest = jest.fn(() => responseStream);
 
     pollStream = λ();
-    spyOn(pollStream, 'destroy')
-      .and.callThrough();
-    pollingRequest = jasmine.createSpy('pollingRequest')
-      .and.returnValue(pollStream);
+    jest.spyOn(pollStream, "destroy");
+    mockPollingRequest = jest.fn(() => pollStream);
 
-    revoke = commandUtils.__set__({
-      apiRequest: apiRequest,
-      pollingRequest: pollingRequest
-    });
+    jest.mock("../../../api-request", () => mockApiRequest);
+    jest.mock("../../../polling-request", () => mockPollingRequest);
+
+    commandUtils = require("../../../socket-router/command-utils");
   });
 
-  afterEach(function () {
-    revoke();
-  });
+  describe("wait for commands", () => {
+    let waiter, commandData;
 
-  describe('wait for commands', function () {
-    var waiter, commandData;
-
-    beforeEach(function () {
+    beforeEach(() => {
       commandData = {
         body: {
           objects: [
@@ -51,78 +41,81 @@ describe('command utils', function () {
         }
       };
 
-      waiter = commandUtils.waitForCommands({
-        Cookie: 'sessionid=123'
-      }, ['1', '2']);
+      waiter = commandUtils.waitForCommands(
+        {
+          Cookie: "sessionid=123"
+        },
+        ["1", "2"]
+      );
     });
 
-    it('should be a function', function () {
-      expect(commandUtils.waitForCommands)
-        .toEqual(jasmine.any(Function));
+    it("should be a function", () => {
+      expect(commandUtils.waitForCommands).toEqual(expect.any(Function));
     });
 
-    it('should return a stream', function () {
+    it("should return a stream", () => {
       expect(λ.isStream(waiter)).toBe(true);
     });
 
-    describe('getting values', function () {
-      var spy;
+    describe("getting values", () => {
+      let spy;
 
-      beforeEach(function () {
-        spy = jasmine.createSpy('spy');
+      beforeEach(() => {
+        spy = jest.fn();
         waiter.pull(spy);
       });
 
-      it('should pass the headers and ids to pollingRequest', function () {
-        expect(pollingRequest)
-          .toHaveBeenCalledOnceWith('/command', {
-            headers: {
-              Cookie: 'sessionid=123'
-            },
-            qs: {
-              id__in: [ '1', '2' ],
-              limit: 0
-            }
-          });
+      it("should pass the headers and ids to pollingRequest", () => {
+        expect(mockPollingRequest).toHaveBeenCalledTimes(1);
+        expect(mockPollingRequest).toHaveBeenCalledWith("/command", {
+          headers: {
+            Cookie: "sessionid=123"
+          },
+          qs: {
+            id__in: ["1", "2"],
+            limit: 0
+          }
+        });
       });
 
-      it('should push the value downstream', function () {
+      it("should push the value downstream", () => {
         pollStream.write(commandData);
 
-        expect(spy)
-          .toHaveBeenCalledOnceWith(null, commandData.body.objects);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(null, commandData.body.objects);
       });
 
-      it('should push nil downstream', function (done) {
+      it("should push nil downstream", function(done) {
         pollStream.write(commandData);
-        waiter
-          .errors(done.fail)
-          .pull(spy);
+        pollStream.write(λ.nil);
+        waiter.errors(done.fail).pull(spy);
 
-        process.nextTick(function () {
-          expect(spy).toHaveBeenCalledOnceWith(null, λ.nil);
+        process.nextTick(() => {
+          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledWith(null, λ.nil);
           done();
         });
       });
 
-      it('should destroy on data', function (done) {
+      it("should destroy on data", done => {
         pollStream.write(commandData);
 
-        process.nextTick(function () {
-          expect(pollStream.destroy).toHaveBeenCalledOnce();
+        process.nextTick(() => {
+          expect(pollStream.destroy).toHaveBeenCalledTimes(1);
           done();
         });
       });
 
-      it('should push an error downstream', function () {
-        var err = new Error('boom!');
+      it("should push an error downstream", () => {
+        const err = new Error("boom!");
         pollStream.write(new StreamError(err));
 
-        expect(spy).toHaveBeenCalledOnceWith(err, undefined);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(err, undefined);
       });
 
-      it('should not return on unfinished commands', function () {
-        var incompleteData = obj.clone(commandData);
+      it("should not return on unfinished commands", () => {
+        const incompleteData = obj.clone(commandData);
         incompleteData.body.objects[0].complete = false;
 
         pollStream.write(incompleteData);
@@ -132,42 +125,44 @@ describe('command utils', function () {
     });
   });
 
-  describe('get steps', function () {
-    var commands, jobs, commandStream, resultStream, spy;
+  describe("get steps", () => {
+    let commands, jobs, commandStream, resultStream, spy;
 
-    beforeEach(function () {
-      spy = jasmine.createSpy('spy');
-      commands = fixtures.command()
-        .twoServers.response.data.objects;
+    beforeEach(() => {
+      spy = jest.fn();
+      commands = fixtures.command().twoServers.response.data.objects;
 
-      jobs = fixtures.job()
-        .twoServers.response.data;
+      jobs = fixtures.job().twoServers.response.data;
 
       commandStream = λ();
-      resultStream = commandUtils.getSteps({
-        Cookie: 'sessionid=123'
-      }, commandStream);
+      resultStream = commandUtils.getSteps(
+        {
+          Cookie: "sessionid=123"
+        },
+        commandStream
+      );
     });
 
-    it('should call apiRequest with job ids', function () {
+    it("should call apiRequest with job ids", () => {
       commandStream.write(commands);
       commandStream.end();
 
       resultStream.each(fp.noop);
 
-      expect(apiRequest).toHaveBeenCalledOnceWith('/job', {
+      expect(mockApiRequest).toHaveBeenCalledTimes(1);
+      expect(mockApiRequest).toHaveBeenCalledWith("/job", {
         headers: {
-          Cookie: 'sessionid=123'
+          Cookie: "sessionid=123"
         },
         qs: {
-          id__in: ['2', '3'],
+          id__in: ["2", "3"],
           limit: 0
         },
-        jsonMask: 'objects(step_results,steps)'
+        jsonMask: "objects(step_results,steps)"
       });
     });
 
-    it('should return the steps', function (done) {
+    it("should return the steps", done => {
       commandStream.write(commands);
       commandStream.end();
       responseStream.write({
@@ -175,37 +170,34 @@ describe('command utils', function () {
       });
       responseStream.end();
 
-      resultStream
-        .errors(done.fail)
-        .each(function (x) {
-          var result = fp.flow(
-            fp.lensProp('objects'),
-            fp.map(fp.lensProp('step_results')),
-            fp.map(obj.values),
-            fp.unwrap
-          )(jobs);
+      resultStream.errors(done.fail).each(x => {
+        const result = fp.flow(
+          fp.lensProp("objects"),
+          fp.map(fp.lensProp("step_results")),
+          fp.map(obj.values),
+          fp.unwrap
+        )(jobs);
 
-          expect(x).toEqual(result);
-          done();
-        });
+        expect(x).toEqual(result);
+        done();
+      });
     });
 
-    it('should return empty on no data', function () {
+    it("should return empty on no data", () => {
       commandStream.end();
 
-      resultStream
-        .otherwise(λ(['nope']))
-        .each(spy);
+      resultStream.otherwise(λ(["nope"])).each(spy);
 
-      expect(spy).toHaveBeenCalledOnceWith('nope');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith("nope");
     });
 
-    it('should throw on error', function (done) {
-      var boom = new Error('boom!');
+    it("should throw on error", function(done) {
+      const boom = new Error("boom!");
       commandStream.write(new StreamError(boom));
 
       resultStream
-        .errors(function (err) {
+        .errors(function(err) {
           expect(err).toEqual(err);
           done();
         })
@@ -214,7 +206,7 @@ describe('command utils', function () {
   });
 });
 
-function StreamError (err) {
+function StreamError(err) {
   this.__HighlandStreamError__ = true;
   this.error = err;
 }

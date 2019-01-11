@@ -1,22 +1,45 @@
 {
   "rules": {
-    "quotes": [
+    "linebreak-style": [2, "unix"],
+    "semi": [2, "always"],
+    "indent": [2, 2],
+    "no-console": 0,
+    "no-var": "error",
+    "no-unused-vars": "error",
+    "comma-dangle": ["error", "never"],
+    "no-func-assign": 0,
+    "no-constant-condition": 0,
+    "no-unsafe-finally": 0,
+    "no-multiple-empty-lines": [
       2,
-      "single"
+      {
+        "max": 2,
+        "maxEOF": 1
+      }
     ],
-    "linebreak-style": [
-      2,
-      "unix"
+    "curly": [2, "multi", "consistent"],
+    "eol-last": [2, "unix"],
+    "eqeqeq": ["error", "allow-null"],
+    "camelcase": [
+      "error",
+      {
+        "properties": "never"
+      }
     ],
-    "semi": [
-      2,
-      "always"
+    "brace-style": [
+      "error",
+      "1tbs",
+      {
+        "allowSingleLine": true
+      }
     ],
-    "indent": [
-      2,
-      2
-    ],
-    "no-console": 0
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "all",
+        "ignoreReadBeforeAssign": false
+      }
+    ]
   },
   "globals": {
     "describe": false,
@@ -29,7 +52,8 @@
   },
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "parserOptions": {
     "ecmaVersion": 6,

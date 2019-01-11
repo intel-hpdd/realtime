@@ -3,10 +3,10 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var serializeError = require('./index');
+const serializeError = require("./index");
 
-module.exports = function pushSerializeError (err, push) {
+module.exports = function pushSerializeError(err, push) {
   push(null, serializeError(err));
 };

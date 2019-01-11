@@ -1,200 +1,214 @@
-'use strict';
+"use strict";
 
-var rewire = require('rewire');
-var start = rewire('../../index');
+describe("realtime index test", () => {
+  let mockCreateIo,
+    io,
+    mockConf,
+    logger,
+    mockLogger,
+    socket,
+    data,
+    ack,
+    mockRequestValidator,
+    mockSocketRouter,
+    mockSerializeError,
+    mockEventWildcard,
+    start;
 
-describe('realtime index test', function () {
-  var createIo, io, conf, revert, logger, socket, data, ack, requestValidator, socketRouter,
-    serializeError, eventWildcard;
-
-  describe('setup events', function () {
-    beforeEach(function () {
-      conf = {
+  describe("setup events", () => {
+    beforeEach(function() {
+      mockConf = {
         REALTIME_PORT: 8888
       };
 
       io = {
-        attach: jasmine.createSpy('attach'),
-        on: jasmine.createSpy('on'),
-        close: jasmine.createSpy('close'),
-        use: jasmine.createSpy('use')
+        attach: jest.fn(),
+        on: jest.fn(),
+        close: jest.fn(),
+        use: jest.fn()
       };
 
-      createIo = jasmine.createSpy('createIo').and.returnValue(io);
+      mockCreateIo = jest.fn(() => io);
 
       logger = {
-        info: jasmine.createSpy('debug'),
-        error: jasmine.createSpy('error')
+        info: jest.fn(),
+        error: jest.fn()
       };
 
-      logger.child = jasmine.createSpy('child').and.returnValue(logger);
+      mockLogger = {
+        child: jest.fn(() => logger)
+      };
 
       socket = {
-        on: jasmine.createSpy('socket.on'),
-        emit: jasmine.createSpy('emit'),
-        write: jasmine.createSpy('write')
+        on: jest.fn(),
+        emit: jest.fn(),
+        write: jest.fn()
       };
 
       data = {
         options: {},
-        path: '/api/alert/',
-        method: 'get',
-        eventName: 'message1'
+        path: "/api/alert/",
+        method: "get",
+        eventName: "message1"
       };
 
-      ack = jasmine.createSpy('ack');
+      ack = jest.fn();
 
-      socketRouter = {
-        go: jasmine.createSpy('socketRouter')
+      mockSocketRouter = {
+        go: jest.fn()
       };
 
-      requestValidator = jasmine.createSpy('requestValidator');
+      mockRequestValidator = jest.fn();
 
-      serializeError = jasmine.createSpy('serializeError');
+      mockSerializeError = jest.fn();
 
-      eventWildcard = jasmine.createSpy('eventWildcard');
+      mockEventWildcard = jest.fn();
 
-      revert = start.__set__({
-        conf: conf,
-        createIo: createIo,
-        logger: logger,
-        requestValidator: requestValidator,
-        socketRouter: socketRouter,
-        serializeError: serializeError,
-        eventWildcard: eventWildcard
-      });
+      jest.mock("../../conf", () => mockConf);
+      jest.mock("socket.io", () => mockCreateIo);
+      jest.mock("../../logger", () => mockLogger);
+      jest.mock("../../request-validator", () => mockRequestValidator);
+      jest.mock("../../socket-router", () => mockSocketRouter);
+      jest.mock("../../serialize-error", () => mockSerializeError);
+      jest.mock("../../event-wildcard", () => mockEventWildcard);
+
+      start = require("../../index");
     });
 
-    afterEach(function () {
-      revert();
-    });
-
-    it('should register the eventWildcard plugin', function () {
+    it("should register the eventWildcard plugin", () => {
       start();
-      expect(io.use).toHaveBeenCalledOnceWith(eventWildcard);
+      expect(io.use).toHaveBeenCalledTimes(1);
+      expect(io.use).toHaveBeenCalledWith(mockEventWildcard);
     });
 
-    it('should call createIo', function () {
+    it("should call createIo", () => {
       start();
-      expect(createIo).toHaveBeenCalledOnce();
+      expect(mockCreateIo).toHaveBeenCalledTimes(1);
     });
 
-    it('should call io.attach with the realtime port', function () {
+    it("should call io.attach with the realtime port", () => {
       start();
-      expect(io.attach).toHaveBeenCalledOnceWith(conf.REALTIME_PORT);
+      expect(io.attach).toHaveBeenCalledTimes(1);
+      expect(io.attach).toHaveBeenCalledWith(mockConf.REALTIME_PORT);
     });
 
-    it('should register a connection event handler on io', function () {
+    it("should register a connection event handler on io", () => {
       start();
-      expect(io.on).toHaveBeenCalledOnceWith('connection', jasmine.any(Function));
+      expect(io.on).toHaveBeenCalledTimes(1);
+      expect(io.on).toHaveBeenCalledWith("connection", expect.any(Function));
     });
 
-    describe('on io', function () {
-      beforeEach(function () {
-        io.on.and.callFake(function (evt, fn) {
-          if (evt === 'connection')
-            fn(socket);
+    describe("on io", () => {
+      beforeEach(() => {
+        io.on.mockImplementation((evt, fn) => {
+          if (evt === "connection") fn(socket);
         });
       });
 
-      describe('connection event', function () {
-        it('should register the socket wildcard event', function () {
+      describe("connection event", () => {
+        it("should register the socket wildcard event", () => {
           start();
-          expect(socket.on).toHaveBeenCalledOnceWith('*', jasmine.any(Function));
+          expect(socket.on).toHaveBeenCalledTimes(2);
+          expect(socket.on).toHaveBeenCalledWith("*", expect.any(Function));
         });
 
-        describe('on socket wildcard', function () {
-          beforeEach(function () {
-            socket.on.and.callFake(function (evt, fn) {
-              if (evt === '*')
-                fn(data, ack);
+        describe("on socket wildcard", () => {
+          beforeEach(() => {
+            socket.on.mockImplementation((evt, fn) => {
+              if (evt === "*") fn(data, ack);
             });
           });
 
-          describe('success', function () {
-            beforeEach(function () {
-              requestValidator.and.returnValue([]);
+          describe("success", () => {
+            beforeEach(() => {
+              mockRequestValidator.mockReturnValue([]);
             });
 
-            it('should call requestValidator', function () {
+            it("should call requestValidator", () => {
               start();
-              expect(requestValidator).toHaveBeenCalledOnceWith(data);
+              expect(mockRequestValidator).toHaveBeenCalledTimes(1);
+              expect(mockRequestValidator).toHaveBeenCalledWith(data);
             });
 
-            it('should call socketRouter with the appropriate data', function () {
+            it("should call socketRouter with the appropriate data", () => {
               start();
-              expect(socketRouter.go).toHaveBeenCalledOnceWith(data.path,
+              expect(mockSocketRouter.go).toHaveBeenCalledTimes(1);
+              expect(mockSocketRouter.go).toHaveBeenCalledWith(
+                data.path,
                 {
                   verb: data.method,
                   data: {
                     qs: {}
                   },
-                  messageName: 'message1',
-                  endName: 'end1'
+                  messageName: "message1",
+                  endName: "end1"
                 },
                 {
                   socket: socket,
-                  ack: jasmine.any(Function)
+                  ack: expect.any(Function)
                 }
               );
             });
           });
 
-          describe('error', function () {
-            var error, serializedError;
-            beforeEach(function () {
-              error = 'something bad happened';
-              serializedError = 'serialized error';
-              serializeError.and.returnValue(serializedError);
-              requestValidator.and.returnValue(error);
+          describe("error", () => {
+            let error, serializedError;
+            beforeEach(() => {
+              error = "something bad happened";
+              serializedError = "serialized error";
+              mockSerializeError.mockReturnValue(serializedError);
+              mockRequestValidator.mockReturnValue(error);
             });
 
-            describe('with ack', function () {
-              it('should ack the error', function () {
+            describe("with ack", () => {
+              it("should ack the error", () => {
                 start();
-                expect(ack).toHaveBeenCalledOnceWith(serializedError);
+                expect(ack).toHaveBeenCalledTimes(1);
+                expect(ack).toHaveBeenCalledWith(serializedError);
               });
             });
 
-            describe('without ack', function () {
-              it('should call socket.emit to the message with the error', function () {
+            describe("without ack", () => {
+              it("should call socket.emit to the message with the error", () => {
                 ack = null;
                 start();
-                expect(socket.emit).toHaveBeenCalledOnceWith('message1', serializedError);
+                expect(socket.emit).toHaveBeenCalledTimes(1);
+                expect(socket.emit).toHaveBeenCalledWith("message1", serializedError);
               });
             });
           });
         });
 
-        it('should register the socket error event', function () {
+        it("should register the socket error event", () => {
           start();
-          expect(socket.on).toHaveBeenCalledOnceWith('error', jasmine.any(Function));
+          expect(socket.on).toHaveBeenCalledTimes(2);
+          expect(socket.on).toHaveBeenCalledWith("error", expect.any(Function));
         });
 
-        describe('on socket error', function () {
-          var err;
-          beforeEach(function () {
-            err = new Error('something bad happend');
-            socket.on.and.callFake(function (evt, fn) {
-              if (evt === 'error')
-                fn(err);
+        describe("on socket error", () => {
+          let err;
+          beforeEach(() => {
+            err = new Error("something bad happend");
+            socket.on.mockImplementation((evt, fn) => {
+              if (evt === "error") fn(err);
             });
           });
 
-          it('should log the error', function () {
+          it("should log the error", () => {
             start();
-            expect(logger.error).toHaveBeenCalledOnceWith({err: err}, 'socket error');
+            expect(logger.error).toHaveBeenCalledTimes(1);
+            expect(logger.error).toHaveBeenCalledWith({ err: err }, "socket error");
           });
         });
       });
     });
 
-    describe('shutdown', function () {
-      it('should call io.close', function () {
-        var shutdown = start();
+    describe("shutdown", () => {
+      it("should call io.close", () => {
+        const shutdown = start();
         shutdown();
 
-        expect(io.close).toHaveBeenCalledOnce();
+        expect(io.close).toHaveBeenCalledTimes(1);
       });
     });
   });

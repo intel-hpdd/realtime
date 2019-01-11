@@ -3,10 +3,10 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-'use strict';
+"use strict";
 
-var routes = require('./routes');
-var fp = require('intel-fp/dist/fp');
+const routes = require("./routes");
+const fp = require("intel-fp/dist/fp");
 
 module.exports = fp.once(function addRoutes() {
   routes.testHostRoute();

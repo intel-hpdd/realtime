@@ -1,32 +1,27 @@
-'use strict';
+"use strict";
 
-var rewire = require('rewire');
-var logStart = rewire('../../../../socket-router/middleware/log-start');
+describe("log start", () => {
+  let logStart, mockLogger, next, req, resp;
 
-describe('log start', function () {
-  var logger, revert, next, req, resp;
-
-  beforeEach(function () {
-    logger = {
-      info: jasmine.createSpy('info')
+  beforeEach(() => {
+    mockLogger = {
+      info: jest.fn()
     };
 
-    revert = logStart.__set__('logger', logger);
+    jest.mock("../../../../logger", () => mockLogger);
 
-    req = { matches: ['foo'] };
+    req = { matches: ["foo"] };
 
     resp = {};
 
-    next = jasmine.createSpy('next');
+    next = jest.fn();
 
+    logStart = require("../../../../socket-router/middleware/log-start");
     logStart(req, resp, next);
   });
 
-  afterEach(function () {
-    revert();
-  });
-
-  it('should call next with the request and response', function () {
-    expect(next).toHaveBeenCalledOnceWith(req, resp);
+  it("should call next with the request and response", () => {
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith(req, resp);
   });
 });

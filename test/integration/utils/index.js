@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  getStubDaddy: require('./get-stub-daddy'),
-  getSocket: require('./get-socket'),
-  clone: require('./clone')
+  getStubDaddy: require("./get-stub-daddy"),
+  getSocket: require("./get-socket"),
+  clone: require("./clone")
 };

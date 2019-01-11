@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-var getStubDaddy = require('@iml/stub-daddy').default;
-var conf = require('../../../conf');
-var url = require('url');
+const getStubDaddy = require("@iml/stub-daddy").default;
+const conf = require("../../../conf");
+const url = require("url");
 
-module.exports = function invokeStubDaddy () {
-  var stubDaddy = getStubDaddy({port: url.parse(conf.SERVER_HTTP_URL).port});
+module.exports = function invokeStubDaddy() {
+  const stubDaddy = getStubDaddy({ port: url.parse(conf.SERVER_HTTP_URL).port });
 
   return stubDaddy;
 };

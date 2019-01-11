@@ -1,83 +1,87 @@
-'use strict';
+"use strict";
 
-var rewire = require('rewire');
-var eventWildcard = rewire('../../event-wildcard');
+describe("event wildcard", () => {
+  let emit, socket, acker, next, mockEvents, eventWildcard;
 
-describe('event wildcard', function () {
-  var revert, emit, socket, acker, next;
-
-  beforeEach(function () {
+  beforeEach(() => {
     emit = {
-      apply: jasmine.createSpy('apply')
+      apply: jest.fn()
     };
 
-    revert = eventWildcard.__set__({
-      emit: emit
-    });
+    mockEvents = {
+      EventEmitter: {
+        prototype: {
+          emit
+        }
+      }
+    };
+    jest.mock("events", () => mockEvents);
 
     acker = {};
 
+    eventWildcard = require("../../event-wildcard");
+
     socket = {
-      ack: jasmine.createSpy('ack').and.returnValue(acker)
+      ack: jest.fn(() => acker)
     };
 
-    next = jasmine.createSpy('next');
+    next = jest.fn();
 
     eventWildcard(socket, next);
   });
 
-  afterEach(function () {
-    revert();
+  it("should call next", () => {
+    expect(next).toHaveBeenCalledTimes(1);
   });
 
-  it('should call next', function () {
-    expect(next).toHaveBeenCalledOnce();
+  it("should override socket.onevent", () => {
+    expect(socket.onevent).toEqual(expect.any(Function));
   });
 
-  it('should override socket.onevent', function () {
-    expect(socket.onevent).toEqual(jasmine.any(Function));
-  });
+  describe("socket.onevent", () => {
+    let packet;
 
-  describe('socket.onevent', function () {
-    var packet;
-
-    beforeEach(function () {
+    beforeEach(() => {
       packet = {};
-
     });
 
-    it('should default to empty data', function () {
+    it("should default to empty data", () => {
       socket.onevent(packet);
 
-      expect(emit.apply).toHaveBeenCalledOnceWith(socket, []);
+      expect(emit.apply).toHaveBeenCalledTimes(2);
+      expect(emit.apply).toHaveBeenCalledWith(socket, []);
     });
 
-    it('should call wildcard with empty data', function () {
+    it("should call wildcard with empty data", () => {
       socket.onevent(packet);
 
-      expect(emit.apply).toHaveBeenCalledOnceWith(socket, ['*', { eventName: undefined }]);
+      expect(emit.apply).toHaveBeenCalledTimes(2);
+      expect(emit.apply).toHaveBeenCalledWith(socket, ["*", { eventName: undefined }]);
     });
 
-    it('should push an ack if there is a packet.id', function () {
+    it("should push an ack if there is a packet.id", () => {
       packet.id = 2;
-      packet.data = ['name', {}];
+      packet.data = ["name", {}];
       socket.onevent(packet);
 
-      expect(socket.ack).toHaveBeenCalledOnceWith(packet.id);
+      expect(socket.ack).toHaveBeenCalledTimes(1);
+      expect(socket.ack).toHaveBeenCalledWith(packet.id);
     });
 
-    it('should emit the args', function () {
-      packet.data = ['name', {}];
+    it("should emit the args", () => {
+      packet.data = ["name", {}];
       socket.onevent(packet);
 
-      expect(emit.apply).toHaveBeenCalledOnceWith(socket, ['name', {}]);
+      expect(emit.apply).toHaveBeenCalledTimes(2);
+      expect(emit.apply).toHaveBeenCalledWith(socket, ["name", {}]);
     });
 
-    it('should emit wildcard args', function () {
-      packet.data = ['name', {foo: 'bar'}];
+    it("should emit wildcard args", () => {
+      packet.data = ["name", { foo: "bar" }];
       socket.onevent(packet);
 
-      expect(emit.apply).toHaveBeenCalledOnceWith(socket, ['*', {foo: 'bar', eventName: 'name'}]);
+      expect(emit.apply).toHaveBeenCalledTimes(2);
+      expect(emit.apply).toHaveBeenCalledWith(socket, ["*", { foo: "bar", eventName: "name" }]);
     });
   });
 });
