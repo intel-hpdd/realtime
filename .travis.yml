@@ -25,11 +25,11 @@ jobs:
         - export CLONE_URL=https://github.com/whamcloud/realtime.git
         - export SPEC=iml-realtime.spec
         - docker run -it -e OWNER="$OWNER" -e PROJECT="$PROJECT" -e PACKAGE="$PACKAGE" -e CLONE_URL="$CLONE_URL" -e SPEC="$SPEC" -e KEY="$encrypted_253525cedcf6_key" -e IV="$encrypted_253525cedcf6_iv" -v $(pwd):/build:rw imlteam/copr
-    - stage: deploy-copr
+    - stage: deploy-copr-r5.0
       name: "Copr deploy"
       script:
         - export OWNER=managerforlustre
-        - export PROJECT=manager-for-lustre
+        - export PROJECT=manager-for-lustre-5.0
         - export PACKAGE=iml-realtime
         - export CLONE_URL=https://github.com/whamcloud/realtime.git
         - export SPEC=iml-realtime.spec
@@ -38,7 +38,7 @@ stages:
   - test
   - name: deploy-npm
     if: branch =~ ^v\d+\.\d+\.\d+-1.*$
-  - name: deploy-copr
-    if: branch =~ ^v\d+\.\d+\.\d+-.+$
+  - name: deploy-copr-r5.0
+    if: branch =~ ^v\d+\.\d+\.\d+-.+-r5\.0$
   - name: cd
     if: branch = master AND type = push AND fork = false
