@@ -2,7 +2,9 @@
 
 Name:     iml-%{base_name}
 Version:  7.0.1
-Release:  1%{?dist}
+# Release Start
+Release:    1%{?dist}
+# Release End
 Summary:  Provides Realtime data to IML
 License:  MIT
 Group:    System Environment/Libraries
