@@ -2,7 +2,7 @@
 
 Name:     iml-%{base_name}
 Version:  7.0.1
-Release:  1%{?dist}
+Release:  2%{?dist}
 Summary:  Provides Realtime data to IML
 License:  MIT
 Group:    System Environment/Libraries
@@ -12,9 +12,8 @@ Source0:  %{name}-%{version}.tgz
 %{?systemd_requires}
 BuildRequires: systemd
 
-Requires: nodejs
+Requires: nodejs =  6.14.2-1.01.el7
 BuildRequires: nodejs-packaging
-BuildRequires: npm
 
 ExclusiveArch: %{nodejs_arches}
 
@@ -64,6 +63,9 @@ rm -rf %{buildroot}
 %attr(0644,root,root)%{_unitdir}/iml-realtime.service
 
 %changelog
+* Thu Jun 27 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-2
+  - Pin version of node being used
+
 * Thu Jan 10 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-1
   - Refactor to be compatible with Django 1.6
 
