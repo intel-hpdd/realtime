@@ -11,9 +11,10 @@ Source0:  %{name}-%{version}.tgz
 
 %{?systemd_requires}
 BuildRequires: systemd
-
-Requires: nodejs =  6.14.2-1.01.el7
+BuildRequires: nodejs = 2:6.14.2
 BuildRequires: nodejs-packaging
+
+Requires: nodejs
 
 ExclusiveArch: %{nodejs_arches}
 
@@ -64,7 +65,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Thu Jun 27 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-2
-  - Pin version of node being used
+  - Use Nodesource node for building
 
 * Thu Jan 10 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-1
   - Refactor to be compatible with Django 1.6
