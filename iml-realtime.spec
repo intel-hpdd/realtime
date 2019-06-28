@@ -3,7 +3,7 @@
 Name:     iml-%{base_name}
 Version:  7.0.1
 # Release Start
-Release:    1%{?dist}
+Release:    3%{?dist}
 # Release End
 Summary:  Provides Realtime data to IML
 License:  MIT
@@ -66,6 +66,12 @@ rm -rf %{buildroot}
 %attr(0644,root,root)%{_unitdir}/iml-realtime.service
 
 %changelog
+* Thu Jun 27 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-3
+  - Bump to re-enable abi restriction
+
+* Thu Jun 27 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-2
+  - Use Nodesource node for building
+
 * Thu Jan 10 2019 Joe Grund <jgrund@whamcloud.com> - 7.0.1-1
   - Refactor to be compatible with Django 1.6
 
