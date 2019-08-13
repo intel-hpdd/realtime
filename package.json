@@ -45,10 +45,10 @@
   },
   "devDependencies": {
     "@iml/stub-daddy": "2.0.5",
-    "eslint": "5.5.0",
-    "jest": "^23.6.0",
+    "eslint": "6.1.0",
+    "jest": "^24.8.0",
     "pre-commit": "1.2.2",
-    "prettier": "^1.15.3",
-    "socket.io-client": "2.1.1"
+    "prettier": "^1.18.2",
+    "socket.io-client": "2.2.0"
   }
 }
