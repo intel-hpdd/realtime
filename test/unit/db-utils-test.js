@@ -1,7 +1,7 @@
 const highland = require("highland");
 
 describe("db utils", () => {
-  let client, dbUtils, mockStream, mockPool, pool, warn;
+  let client, dbUtils, mockPool, pool, warn;
   beforeEach(() => {
     client = {
       on: jest.fn(),
@@ -37,8 +37,6 @@ describe("db utils", () => {
     }));
 
     stream = highland();
-    mockStream = jest.fn(s => s);
-    jest.mock("../../broadcaster", () => mockStream);
 
     dbUtils = require("../../db-utils");
   });
@@ -59,43 +57,6 @@ describe("db utils", () => {
 
   it("should have a pool property", () => {
     expect(dbUtils.pool).toEqual(pool);
-  });
-
-  describe("client connection", () => {
-    let spy;
-    beforeEach(() => {
-      spy = jest.fn();
-      dbUtils.viewer.write("data");
-      dbUtils.viewer.each(spy);
-    });
-
-    it("should connect to the pool", () => {
-      expect(pool.connect).toHaveBeenCalledTimes(1);
-    });
-
-    it("should listen for notifications", () => {
-      expect(client.on).toHaveBeenCalledWith("notification", expect.any(Function));
-    });
-
-    it("should push when a notification is received", () => {
-      const onNotification = client.on.mock.calls[0][1];
-      onNotification("notify");
-      expect(spy).toHaveBeenCalledWith("notify");
-    });
-
-    it("should listen for a notice", () => {
-      expect(client.on).toHaveBeenCalledWith("notice", expect.any(Function));
-    });
-
-    it("should log when a notice occurs", () => {
-      const onNotice = client.on.mock.calls[1][1];
-      onNotice("this is a notice");
-      expect(console.warn).toHaveBeenCalledWith("notice: ", "this is a notice");
-    });
-
-    it("should make a query", () => {
-      expect(client.query).toHaveBeenCalledWith("LISTEN table_update");
-    });
   });
 
   describe("query", () => {

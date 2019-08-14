@@ -7,7 +7,6 @@
 
 module.exports = {
   testHostRoute: require("./test-host-route"),
-  healthRoute: require("./health-route"),
   sessionRoute: require("./session-route"),
   wildcardRoute: require("./wildcard-route")
 };

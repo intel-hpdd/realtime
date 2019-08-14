@@ -10,7 +10,6 @@ const fp = require("intel-fp/dist/fp");
 
 module.exports = fp.once(function addRoutes() {
   routes.testHostRoute();
-  routes.healthRoute();
   routes.sessionRoute();
   //These should always be last.
   routes.wildcardRoute();

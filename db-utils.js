@@ -4,8 +4,6 @@
 
 const { Pool } = require("pg");
 const conf = require("./conf.js");
-const highland = require("highland");
-const broadcaster = require("./broadcaster");
 
 const pool = new Pool({
   user: conf.DB_USER,
@@ -16,17 +14,6 @@ const pool = new Pool({
 });
 
 exports.pool = pool;
-
-const stream = highland(push => {
-  pool.connect().then(c => {
-    c.on("notification", x => push(null, x));
-    c.on("notice", msg => console.warn("notice: ", msg));
-
-    return c.query("LISTEN table_update");
-  });
-});
-
-exports.viewer = broadcaster(stream);
 
 const query = (...args) => pool.query(...args);
 
