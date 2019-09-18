@@ -1,9 +1,9 @@
 %define base_name realtime
 
 Name:     iml-%{base_name}
-Version:  7.0.1
+Version:  7.0.2
 # Release Start
-Release:    3%{?dist}
+Release:  1%{?dist}
 # Release End
 Summary:  Provides Realtime data to IML
 License:  MIT
